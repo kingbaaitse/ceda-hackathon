@@ -14,8 +14,9 @@ import { supabase } from '../lib/supabase';
 import { getAttachmentUrls } from '../lib/storage';
 import { SDGS } from '../lib/sdgs';
 
-/* three.js is heavy — load the showcase only when it is on screen */
-const ArtGallery = lazy(() => import('@/components/block/art-gallery'));
+/* three.js is heavy - load the showcase only when it is on screen.
+   The original component has a named export only, so map it to default. */
+const ArtGallery = lazy(() => import('@/components/block/art-gallery').then(m => ({ default: m.ArtGallery })));
 
 export default function Gallery({ onBack }) {
     const [awarded, setAwarded] = useState(null);
@@ -149,39 +150,31 @@ export default function Gallery({ onBack }) {
                     </div>
                 )}
                 {awarded && awarded.length > 0 && (
-                    <HoverImage
-                        items={tiles.filter(t => t.src).map(t => ({ id: t.id, src: t.src, title: t.title }))}
-                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
-                    >
-                        {awarded.map((s, i) => {
-                            const img = (s.attachments || []).find(a => a.kind === 'image');
-                            const preview = img ? mediaUrls[img.path] : null;
-                            return (
-                                <motion.button
-                                    key={s.id}
-                                    data-hover-item={preview ? s.id : undefined}
-                                    initial={{ opacity: 0, y: 16 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: i * 0.06 }}
-                                    onClick={() => setOpen(s)}
-                                    className="glass-panel rounded-3xl p-6 text-left hover:border-accent-500/40 transition-colors group"
-                                >
-                                    <div className="flex items-center justify-between">
-                                        <span className="px-2.5 py-1 rounded-full text-[11px] bg-accent-500/15 text-accent-300">
-                                            {s.stage_of_development || 'Idea'}
-                                        </span>
-                                        <Trophy className="w-4 h-4 text-accent-400 group-hover:scale-110 transition-transform" />
-                                    </div>
-                                    <h3 className="mt-4 text-lg tracking-tight line-clamp-2">{s.title}</h3>
-                                    <p className="mt-2 text-sm text-white/50 line-clamp-3">{s.description}</p>
-                                    <div className="mt-4 flex items-center justify-between text-xs text-white/40">
-                                        <span className="truncate">{s.owner_name || 'Anonymous innovator'}</span>
-                                        <span>{(s.sdgs || []).length} SDG{s.sdgs?.length === 1 ? '' : 's'}</span>
-                                    </div>
-                                </motion.button>
-                            );
-                        })}
-                    </HoverImage>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                        {awarded.map((s, i) => (
+                            <motion.button
+                                key={s.id}
+                                initial={{ opacity: 0, y: 16 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: i * 0.06 }}
+                                onClick={() => setOpen(s)}
+                                className="glass-panel rounded-3xl p-6 text-left hover:border-accent-500/40 transition-colors group"
+                            >
+                                <div className="flex items-center justify-between">
+                                    <span className="px-2.5 py-1 rounded-full text-[11px] bg-accent-500/15 text-accent-300">
+                                        {s.stage_of_development || 'Idea'}
+                                    </span>
+                                    <Trophy className="w-4 h-4 text-accent-400 group-hover:scale-110 transition-transform" />
+                                </div>
+                                <h3 className="mt-4 text-lg tracking-tight line-clamp-2">{s.title}</h3>
+                                <p className="mt-2 text-sm text-white/50 line-clamp-3">{s.description}</p>
+                                <div className="mt-4 flex items-center justify-between text-xs text-white/40">
+                                    <span className="truncate">{s.owner_name || 'Anonymous innovator'}</span>
+                                    <span>{(s.sdgs || []).length} SDG{s.sdgs?.length === 1 ? '' : 's'}</span>
+                                </div>
+                            </motion.button>
+                        ))}
+                    </div>
                 )}
             </div>
 
