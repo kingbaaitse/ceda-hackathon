@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CEDA Hackathon — Execution Map</title>
+<style>
+  :root{
+    --ink:#1b1f24; --paper:#faf8f4; --card:#ffffff; --orange:#e0662a; --deep:#7a3018;
+    --muted:#6b7280; --line:#e5e0d8; --green:#2e7d5b; --red:#b3402e;
+  }
+  *{box-sizing:border-box; margin:0}
+  body{font-family:"Segoe UI",system-ui,sans-serif; background:var(--paper); color:var(--ink); padding:28px;}
+  .wrap{max-width:1080px; margin:0 auto;}
+  h1{font-size:26px; letter-spacing:-.5px}
+  .sub{color:var(--muted); font-size:13px; margin-top:4px}
+  .badge{display:inline-block; background:var(--orange); color:#fff; font-size:11px; font-weight:700;
+         padding:3px 10px; border-radius:20px; letter-spacing:.5px}
+  .badge.warn{background:var(--red)}
+  section{margin-top:26px}
+  h2{font-size:13px; text-transform:uppercase; letter-spacing:1.5px; color:var(--deep); margin-bottom:12px}
+
+  /* timeline */
+  .tl{display:flex; gap:0; border:1px solid var(--line); border-radius:12px; overflow:hidden; background:var(--card)}
+  .tl .seg{flex:1; padding:14px 16px; border-right:1px solid var(--line); position:relative}
+  .tl .seg:last-child{border-right:none}
+  .seg .d{font-weight:700; font-size:14px}
+  .seg .t{font-size:12px; color:var(--muted); margin-top:3px}
+  .seg.hot{background:#fdeee4}
+  .seg .dot{position:absolute; top:14px; right:14px; width:9px; height:9px; border-radius:50%}
+  .dot.g{background:var(--green)} .dot.r{background:var(--red)} .dot.o{background:var(--orange)}
+
+  /* phases */
+  .phases{display:flex; align-items:stretch; gap:10px}
+  .ph{flex:1; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px}
+  .ph .n{font-size:11px; font-weight:700; color:var(--orange); letter-spacing:1px}
+  .ph .t{font-weight:700; margin-top:2px}
+  .ph .x{font-size:12px; color:var(--muted); margin-top:6px; line-height:1.45}
+  .arrow{align-self:center; color:var(--orange); font-size:22px; font-weight:700}
+
+  /* pillars */
+  .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px}
+  .pill{background:var(--card); border:1px solid var(--line); border-left:4px solid var(--orange);
+        border-radius:10px; padding:12px 14px}
+  .pill .t{font-weight:700; font-size:13px}
+  .pill .x{font-size:12px; color:var(--muted); margin-top:5px; line-height:1.4}
+  .pill .w{margin-top:8px; font-size:11px; font-weight:700; color:var(--deep)}
+  .pill .bar{height:5px; background:#eee7dd; border-radius:4px; margin-top:4px; overflow:hidden}
+  .pill .bar i{display:block; height:100%; background:var(--orange)}
+
+  /* tracks */
+  .tracks{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px}
+  .trk{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px}
+  .trk h3{font-size:13px; margin-bottom:8px}
+  .trk .tag{font-size:10px; font-weight:800; padding:2px 8px; border-radius:12px; letter-spacing:.5px}
+  .tag.must{background:#e8f2ec; color:var(--green)} .tag.diff{background:#fdeee4; color:var(--deep)}
+  .tag.gate{background:#fbe9e6; color:var(--red)}
+  .trk ul{margin:8px 0 0 16px; font-size:12px; line-height:1.7; color:#333}
+
+  .foot{margin-top:30px; padding-top:14px; border-top:1px solid var(--line);
+        font-size:12px; color:var(--muted); display:flex; justify-content:space-between}
+  @media print{ body{padding:0; background:#fff} .seg.hot{-webkit-print-color-adjust:exact} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div>
+    <span class="badge warn">⏱ CLOSES 12 NOV 2026 — TOMORROW</span>
+    <span class="badge" style="margin-left:6px">COMPLIANCE SCREENING 14 NOV</span>
+    <h1 style="margin-top:10px">CEDA Innovation Platform Hackathon — Execution Map</h1>
+    <div class="sub">Goal: a complete, rubric-mapped technical proposal + visual proof, submitted early via the CEDA portal.</div>
+  </div>
+
+  <section>
+    <h2>Timeline</h2>
+    <div class="tl">
+      <div class="seg"><div class="d">9–11 Nov</div><div class="t">Window open · entry submitted · refinement phase (NOW)</div><div class="dot o"></div></div>
+      <div class="seg hot"><div class="d">12 Nov</div><div class="t">Submission closes — final QA &amp; upload before end of day</div><div class="dot r"></div></div>
+      <div class="seg"><div class="d">14 Nov</div><div class="t">Eligibility &amp; compliance checks complete (mechanical gate)</div><div class="dot g"></div></div>
+      <div class="seg"><div class="d">After</div><div class="t">Evaluation → selection → awards</div><div class="dot g"></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>The ask — what you submit maps to</h2>
+    <div class="phases">
+      <div class="ph"><div class="n">PHASE 1</div><div class="t">Ideation &amp; Design</div>
+        <div class="x">Your proposal: how registration + idea submission works end-to-end</div></div>
+      <div class="arrow">→</div>
+      <div class="ph"><div class="n">PHASE 2</div><div class="t">Prototype &amp; Develop</div>
+        <div class="x">Your architecture: stage-gated review, roles, feedback loop</div></div>
+      <div class="arrow">→</div>
+      <div class="ph"><div class="n">PHASE 3</div><div class="t">Final Pitch</div>
+        <div class="x">Pipeline to CEDA funding — reporting, metrics, scalability story</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Six scoring pillars — effort weights</h2>
+    <div class="grid">
+      <div class="pill"><div class="t">1 · RBAC &amp; IP Protection</div><div class="x">4-role permission matrix, NDA flow, judges see only assigned work</div><div class="w">★★★★★</div><div class="bar"><i style="width:100%"></i></div></div>
+      <div class="pill"><div class="t">2 · Stage-Gated Workflow</div><div class="x">Screening → Evaluation → Selection → Award, rubric + feedback at each gate</div><div class="w">★★★★★</div><div class="bar"><i style="width:100%"></i></div></div>
+      <div class="pill"><div class="t">3 · Feedback &amp; Iteration</div><div class="x">Submit → track status → revise → resubmit, with notifications</div><div class="w">★★★★</div><div class="bar"><i style="width:80%"></i></div></div>
+      <div class="pill"><div class="t">4 · DPA Compliance</div><div class="x">Data map: collected, stored, retained only as long as necessary</div><div class="w">★★★★</div><div class="bar"><i style="width:80%"></i></div></div>
+      <div class="pill"><div class="t">5 · Reporting &amp; Metrics</div><div class="x">Dashboard: participation, scores, volumes, pipeline activity</div><div class="w">★★★</div><div class="bar"><i style="width:60%"></i></div></div>
+      <div class="pill"><div class="t">6 · Scalability &amp; Cloud</div><div class="x">Modular, cloud-hosted, API-ready — ML is future scope, don't build it</div><div class="w">★★★</div><div class="bar"><i style="width:60%"></i></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Execution tracks</h2>
+    <div class="tracks">
+      <div class="trk"><span class="tag must">MUST</span><h3>A · Proposal document</h3>
+        <ul><li>Exec summary + user walkthrough</li><li>One section per pillar, mirroring guidelines' wording</li><li>Team: 2 people × 4 roles, hats named</li><li>DPA compliance statement</li></ul></div>
+      <div class="trk"><span class="tag diff">DIFFERENTIATOR</span><h3>B · Visual artifacts</h3>
+        <ul><li>Architecture diagram (cloud, modular, API-ready)</li><li>RBAC permission matrix</li><li>Workflow diagram w/ feedback loop</li><li>3–5 key screens (submit, tracker, judge view, dashboard)</li></ul></div>
+      <div class="trk"><span class="tag gate">GATE</span><h3>C · Compliance &amp; QA</h3>
+        <ul><li>All §4.3 attachments attached</li><li>Eligibility evidence ready</li><li>Submit via portal (not email fallback)</li><li>Confirmation screenshot saved</li></ul></div>
+    </div>
+  </section>
+
+  <div class="foot">
+    <span>Full detail: PLAN.md (same folder)</span>
+    <span>Rule of the endgame: complete beats brilliant.</span>
+  </div>
+
+</div>
+</body>
+</html>

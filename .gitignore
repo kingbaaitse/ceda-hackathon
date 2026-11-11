@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-ssr/
+*.local
+
+# Environment (secrets live here - never commit)
+.env
+.env.*
+!.env.example
+
+# Local-only SQL with credentials
+*.local.sql
+
+# Tooling
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Playwright / browser artefacts
+.playwright-mcp/
+.playwright/
+test-results/
+playwright-report/

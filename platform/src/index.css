@@ -1,0 +1,493 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* CEDA Innovation Hub brand fonts — self-hosted so the app never depends on the Google Fonts CDN. */
+@font-face {
+  font-family: 'Elms Sans';
+  src: url('/src/assets/fonts/elms-sans-400.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Elms Sans';
+  src: url('/src/assets/fonts/elms-sans-500.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Elms Sans';
+  src: url('/src/assets/fonts/elms-sans-700.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Rouge Script';
+  src: url('/src/assets/fonts/rouge-script-400.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    --background: 40 20% 97%;
+    --foreground: 240 10% 4%;
+    --primary: 19 89% 54%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 40 15% 95%;
+    --accent: 19 89% 54%;
+    --muted: 40 10% 94%;
+    --border: 40 10% 90%;
+    --radius: 0.75rem;
+
+    --glass-bg: rgba(255, 255, 255, 0.80);
+    --glass-bg-strong: rgba(255, 255, 255, 0.88);
+    --glass-border: rgba(0, 0, 0, 0.06);
+    --glass-border-accent: rgba(242, 101, 34, 0.12);
+    --glass-shadow: none;
+    --glass-shadow-lg: none;
+
+    --field-fill: #e8e6e0;
+  }
+
+  .dark {
+    --field-fill: rgba(255, 255, 255, 0.08);
+    --glass-bg: rgba(10, 10, 10, 0.80);
+    --glass-bg-strong: rgba(10, 10, 10, 0.88);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-border-accent: rgba(242, 101, 34, 0.15);
+    --glass-shadow: none;
+    --glass-shadow-lg: none;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    border-color: hsl(var(--border));
+    font-weight: 400 !important;
+  }
+
+  html,
+  body,
+  #root {
+    min-height: 100vh;
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: clip;
+  }
+
+  body {
+    font-family: 'Elms Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background-color: #f7f6f3;
+    background-image:
+      url("data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h1v1H0z' fill='%23000' fill-opacity='.03'/%3E%3C/svg%3E");
+    color: #1a1a1a;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 400 !important;
+  }
+
+  .dark body {
+    background-color: #0a0a0a;
+    background-image:
+      url("data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h1v1H0z' fill='%23fff' fill-opacity='.03'/%3E%3C/svg%3E");
+    color: #f0f0f0;
+  }
+
+  h1, h2, h3, h4, h5, h6, b, strong, span, p, button, input, select, textarea {
+    font-family: 'Elms Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight: 400 !important;
+    letter-spacing: -0.02em;
+  }
+
+  ::selection {
+    background-color: #f26522;
+    color: white;
+  }
+
+  /* Global glossy sheen on all buttons */
+  button, .btn-pill {
+    position: relative;
+    overflow: hidden;
+    border-radius: 9999px;
+  }
+
+  button::before, .btn-pill::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      120deg,
+      transparent 0%,
+      transparent 30%,
+      rgba(255, 255, 255, 0.35) 50%,
+      transparent 70%,
+      transparent 100%
+    );
+    transition: left 0.45s ease;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  button:hover::before, .btn-pill:hover::before {
+    left: 100%;
+  }
+
+  .dark button::before, .dark .btn-pill::before {
+    background: linear-gradient(
+      120deg,
+      transparent 0%,
+      transparent 30%,
+      rgba(255, 255, 255, 0.18) 50%,
+      transparent 70%,
+      transparent 100%
+    );
+  }
+
+  * {
+    scrollbar-width: none;
+  }
+
+  ::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    background: transparent;
+  }
+}
+
+@layer components {
+  /* Clean minimal buttons - the primary action is the CEDA accent, never black */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.75rem;
+    font-family: 'Elms Sans', sans-serif;
+    font-weight: 400;
+    font-size: 0.9375rem;
+    border-radius: 9999px;
+    border: 1px solid var(--primary, #f26522);
+    background-color: var(--primary, #f26522);
+    color: white;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-decoration: none;
+    line-height: 1.4;
+  }
+
+  .dark .btn-primary {
+    background-color: var(--primary, #f26522);
+    border-color: var(--primary, #f26522);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background-color: #de5212;
+    border-color: #de5212;
+  }
+
+  .dark .btn-primary:hover {
+    background-color: #de5212;
+    border-color: #de5212;
+  }
+
+  /* Destructive action (sign out, revoke, delete) */
+  .btn-danger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.75rem;
+    font-family: 'Elms Sans', sans-serif;
+    font-weight: 400;
+    font-size: 0.9375rem;
+    border-radius: 9999px;
+    border: 1px solid #e11d48;
+    background-color: #e11d48;
+    color: white;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-decoration: none;
+    line-height: 1.4;
+  }
+
+  .btn-danger:hover {
+    background-color: #be123c;
+    border-color: #be123c;
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.75rem;
+    font-family: 'Elms Sans', sans-serif;
+    font-weight: 400;
+    font-size: 0.9375rem;
+    border-radius: 9999px;
+    border: 1px solid #d4d4d4;
+    background-color: transparent;
+    color: #1a1a1a;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-decoration: none;
+    line-height: 1.4;
+  }
+
+  .dark .btn-secondary {
+    border-color: #333;
+    color: #f0f0f0;
+  }
+
+  .btn-secondary:hover {
+    border-color: #1a1a1a;
+    background-color: rgba(0, 0, 0, 0.03);
+  }
+
+  .dark .btn-secondary:hover {
+    border-color: #f0f0f0;
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .btn-accent {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.75rem;
+    font-family: 'Elms Sans', sans-serif;
+    font-weight: 400;
+    font-size: 0.9375rem;
+    border-radius: 9999px;
+    border: 1px solid var(--primary, #f26522);
+    background-color: #f26522;
+    color: white;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-decoration: none;
+    line-height: 1.4;
+  }
+
+  .btn-accent:hover {
+    background-color: #de5212;
+    border-color: #de5212;
+  }
+
+  /* Glossy sheen effect for buttons */
+  .btn-primary,
+  .btn-secondary,
+  .btn-accent,
+  .btn-danger {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary::before,
+  .btn-secondary::before,
+  .btn-accent::before,
+  .btn-danger::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      120deg,
+      transparent 0%,
+      transparent 30%,
+      rgba(255, 255, 255, 0.35) 50%,
+      transparent 70%,
+      transparent 100%
+    );
+    transition: left 0.45s ease;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .btn-primary:hover::before,
+  .btn-secondary:hover::before,
+  .btn-accent:hover::before {
+    left: 100%;
+  }
+
+  .dark .btn-primary::before {
+    background: linear-gradient(
+      120deg,
+      transparent 0%,
+      transparent 30%,
+      rgba(0, 0, 0, 0.2) 50%,
+      transparent 70%,
+      transparent 100%
+    );
+  }
+
+  .dark .btn-secondary::before {
+    background: linear-gradient(
+      120deg,
+      transparent 0%,
+      transparent 30%,
+      rgba(255, 255, 255, 0.18) 50%,
+      transparent 70%,
+      transparent 100%
+    );
+  }
+
+  /* Auto-sheen keyframe for CTA buttons */
+  @keyframes sheen-sweep {
+    0% { left: -100%; }
+    50% { left: 100%; }
+    100% { left: 100%; }
+  }
+
+  .btn-sheen-auto::before {
+    animation: sheen-sweep 1.2s ease 0.3s 1;
+  }
+
+  /* Clean minimal cards */
+  .card, .glass-card {
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 0.75rem;
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+  }
+
+  .dark .card {
+    background: #161616;
+    border-color: #2a2a2a;
+  }
+
+  .card:hover {
+    border-color: #d4d4d4;
+  }
+
+  .dark .card:hover {
+    border-color: #333;
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    background: linear-gradient(135deg, #1a1a1a 0%, #666 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .dark .gradient-text {
+    background: linear-gradient(135deg, #f0f0f0 0%, #888 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Serif accent font */
+  .font-serif-italic {
+    font-family: 'Rouge Script', cursive;
+    font-weight: 400;
+  }
+}
+
+@layer components {
+  .field-fill,
+  input:not([type="checkbox"]):not([type="radio"]):not([class*="rounded-none"])[class*="rounded-"],
+  select[class*="rounded-"],
+  textarea[class*="rounded-"] {
+    background-color: var(--field-fill);
+    border-width: 0 !important;
+    border-color: transparent !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  /* dark: re-assert to beat Tailwind's .dark .dark\:bg-* */
+  .dark input:not([type="checkbox"]):not([type="radio"]):not([class*="rounded-none"])[class*="rounded-"],
+  .dark select[class*="rounded-"],
+  .dark textarea[class*="rounded-"] {
+    background-color: var(--field-fill);
+  }
+
+  input:not([type="checkbox"]):not([type="radio"]):not([class*="rounded-none"])[class*="rounded-"],
+  select[class*="rounded-"] { border-radius: 9999px; }
+
+  textarea[class*="rounded-"] { border-radius: 1rem; }
+}
+
+@layer utilities {
+  .glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+  }
+
+  .glass-panel-strong {
+    background: var(--glass-bg-strong);
+    backdrop-filter: blur(32px);
+    -webkit-backdrop-filter: blur(32px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow-lg);
+  }
+
+  .glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+  }
+
+  .scroll-fade-edges {
+    mask-image: linear-gradient(to bottom, transparent 0, black 3rem, black calc(100% - 3rem), transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, black 3rem, black calc(100% - 3rem), transparent 100%);
+  }
+}
+
+/* Flat design: remove all shadows globally */
+@layer utilities {
+  .shadow-sm,
+  .shadow,
+  .shadow-md,
+  .shadow-lg,
+  .shadow-xl,
+  .shadow-2xl,
+  .shadow-3xl {
+    box-shadow: none !important;
+  }
+
+  .drop-shadow-sm,
+  .drop-shadow,
+  .drop-shadow-md,
+  .drop-shadow-lg,
+  .drop-shadow-xl,
+  .drop-shadow-2xl {
+    filter: none !important;
+  }
+
+  .shadow-inner {
+    box-shadow: none !important;
+  }
+}
+
+/* Override any custom shadow-[...] values */
+[class*="shadow-"]:not(.shadow-none) {
+  box-shadow: none !important;
+}
+
+/* Override drop-shadow filter utilities */
+[class*="drop-shadow-"] {
+  filter: none !important;
+}

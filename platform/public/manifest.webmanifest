@@ -1,0 +1,23 @@
+{
+  "name": "CEDA Innovation Hub",
+  "short_name": "CEDA Hub",
+  "description": "Submit, track and evaluate innovations through the full CEDA innovation pipeline.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f8f7f4",
+  "theme_color": "#F26522",
+  "icons": [
+    {
+      "src": "/ceda-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    { "name": "My submission", "url": "/participant" },
+    { "name": "Awards gallery", "url": "/gallery" }
+  ]
+}
