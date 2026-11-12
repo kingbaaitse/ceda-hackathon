@@ -4,10 +4,12 @@
  * Public pages: they render for signed-out visitors and for signed-in users
  * alike, and they are plain reading pages with a table of contents.
  */
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronDown, Mail, ShieldCheck, Scale, Accessibility as AccessibilityIcon, FileText } from 'lucide-react';
 import MarketingNav from '../components/marketing/MarketingNav';
 import MarketingFooter from '../components/marketing/MarketingFooter';
+import CursorFollower from '../components/CursorFollower';
 
 const PAGES = {
     privacy: {
@@ -249,80 +251,169 @@ const PAGES = {
 
 const SLUGS = Object.keys(PAGES);
 
+const ICONS = {
+    privacy: ShieldCheck,
+    terms: FileText,
+    'data-protection': Scale,
+    accessibility: AccessibilityIcon,
+};
+
 export default function Legal({ slug = 'privacy', onSignIn, onRegister }) {
     const [active, setActive] = useState(PAGES[slug] ? slug : 'privacy');
+    const [openSection, setOpenSection] = useState(null);
     const page = PAGES[active];
+    const Icon = ICONS[active] || FileText;
+
+    /* keep the address bar in step with the document being read */
+    useEffect(() => {
+        const url = `/${active === 'data-protection' ? 'data-protection' : active}`;
+        if (window.location.pathname !== url) window.history.replaceState({}, '', url);
+    }, [active]);
 
     return (
         <div className="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#0a0a0a] dark:text-white transition-colors duration-300">
+            <CursorFollower />
             <MarketingNav
                 links={SLUGS.map(s => ({ id: s, label: PAGES[s].title.replace(' Policy', '').replace(' of Use', '').replace('Data Protection', 'Data') }))}
                 onSignIn={onSignIn}
                 onRegister={onRegister}
             />
 
-            <main className="max-w-4xl mx-auto px-6 pt-32 pb-20">
-                <motion.p
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-sm text-gray-500 dark:text-white/45"
-                >
-                    Legal · updated {page.updated}
-                </motion.p>
-                <motion.h1
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.05 }}
-                    className="mt-4 text-4xl sm:text-5xl font-semibold tracking-[-0.03em]"
-                >
-                    {page.title}
-                </motion.h1>
-                <p className="mt-4 text-lg text-gray-600 dark:text-white/55">{page.intro}</p>
-
-                {/* switcher */}
-                <div className="mt-8 flex flex-wrap gap-2">
-                    {SLUGS.map(s => (
-                        <button
-                            key={s}
-                            onClick={() => setActive(s)}
-                            className={`px-3.5 py-1.5 rounded-full text-sm transition-colors ${active === s
-                                ? 'bg-accent-500 text-white'
-                                : 'border border-gray-200 dark:border-white/10 text-gray-600 dark:text-white/60 hover:border-accent-500/40'}`}
-                        >
-                            {PAGES[s].title}
-                        </button>
-                    ))}
+            {/* ── Hero ── */}
+            <section className="relative overflow-hidden">
+                <div
+                    className="absolute inset-0 opacity-80 dark:opacity-100"
+                    style={{ background: 'radial-gradient(700px 380px at 50% 0%, rgba(242,101,34,0.16), transparent 70%)' }}
+                />
+                <div className="relative max-w-5xl mx-auto px-6 pt-32 pb-12 text-center">
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-accent-500/12 mb-6">
+                        <Icon className="w-5 h-5 text-accent-500" />
+                    </div>
+                    <p className="text-sm text-gray-500 dark:text-white/45">Legal · updated {page.updated}</p>
+                    <h1 className="mt-4 text-4xl sm:text-6xl font-semibold tracking-[-0.035em]">{page.title}</h1>
+                    <p className="mt-5 text-lg text-gray-600 dark:text-white/55 mx-auto max-w-2xl">{page.intro}</p>
                 </div>
+            </section>
 
-                <div className="mt-10 space-y-10">
-                    {page.sections.map((s, i) => (
-                        <motion.section
-                            key={s.h}
-                            initial={{ opacity: 0, y: 14 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, margin: '-60px' }}
-                            transition={{ delay: Math.min(i, 4) * 0.04 }}
-                        >
-                            <h2 className="text-xl font-medium tracking-tight">{s.h}</h2>
-                            <div className="mt-3 space-y-3">
-                                {s.p.map((para, j) => (
-                                    <p key={j} className="text-gray-600 dark:text-gray-300 leading-relaxed">{para}</p>
+            {/* ── Document switcher ── */}
+            <section className="max-w-5xl mx-auto px-6">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                    {SLUGS.map(s => {
+                        const I = ICONS[s];
+                        const on = active === s;
+                        return (
+                            <button
+                                key={s}
+                                onClick={() => { setActive(s); setOpenSection(null); }}
+                                className={`group rounded-3xl border p-5 text-left transition-all hover:-translate-y-0.5 ${on
+                                    ? 'border-accent-500/50 bg-white dark:bg-white/[0.06] shadow-[0_18px_44px_-28px_rgba(242,101,34,0.6)]'
+                                    : 'border-gray-200 dark:border-white/10 bg-white/60 dark:bg-white/[0.02] hover:border-accent-500/30'}`}
+                            >
+                                <div className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${on ? 'bg-accent-500 text-white' : 'bg-gray-100 dark:bg-white/10 text-gray-500 dark:text-white/60 group-hover:text-accent-500'}`}>
+                                    <I className="w-4 h-4" />
+                                </div>
+                                <p className={`mt-3 text-sm font-medium ${on ? 'text-accent-600 dark:text-accent-300' : 'text-gray-900 dark:text-white'}`}>
+                                    {PAGES[s].title}
+                                </p>
+                                <p className="text-[11px] text-gray-400 dark:text-white/35 mt-1">
+                                    {PAGES[s].sections.length} sections
+                                </p>
+                            </button>
+                        );
+                    })}
+                </div>
+            </section>
+
+            {/* ── Document ── */}
+            <section className="max-w-5xl mx-auto px-6 py-16">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                    {/* table of contents */}
+                    <aside className="lg:col-span-3 hidden lg:block">
+                        <div className="sticky top-28">
+                            <p className="text-[10px] uppercase tracking-[0.16em] text-gray-400 dark:text-white/35">
+                                On this page
+                            </p>
+                            <nav className="mt-4 space-y-1.5">
+                                {page.sections.map(s => (
+                                    <a
+                                        key={s.h}
+                                        href={`#${s.h.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
+                                        className="block text-sm text-gray-600 dark:text-white/50 hover:text-accent-600 dark:hover:text-accent-400 transition-colors"
+                                    >
+                                        {s.h}
+                                    </a>
                                 ))}
-                            </div>
-                        </motion.section>
-                    ))}
-                </div>
+                            </nav>
+                        </div>
+                    </aside>
 
-                <div className="mt-14 rounded-3xl border border-gray-200 dark:border-white/10 p-6">
-                    <p className="text-sm text-gray-600 dark:text-white/55">
-                        Questions about this document? Write to{' '}
-                        <a href="mailto:kingbaaitse@oratoryleague.xyz" className="text-accent-600 dark:text-accent-400 hover:underline">
-                            kingbaaitse@oratoryleague.xyz
-                        </a>
-                        .
-                    </p>
+                    {/* the sections */}
+                    <div className="lg:col-span-9">
+                        <div className="space-y-3">
+                            {page.sections.map((s, i) => {
+                                const id = s.h.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                                const open = openSection === id;
+                                return (
+                                    <motion.div
+                                        key={s.h}
+                                        id={id}
+                                        initial={{ opacity: 0, y: 12 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        viewport={{ once: true, margin: '-40px' }}
+                                        transition={{ delay: Math.min(i, 5) * 0.03 }}
+                                        className="rounded-3xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.03] overflow-hidden scroll-mt-28"
+                                    >
+                                        <button
+                                            onClick={() => setOpenSection(open ? null : id)}
+                                            aria-expanded={open}
+                                            className="w-full flex items-center gap-3 px-5 sm:px-6 py-4 text-left hover:bg-gray-50/70 dark:hover:bg-white/[0.03] transition-colors"
+                                        >
+                                            <span className="w-7 h-7 rounded-full bg-accent-500/10 text-accent-600 dark:text-accent-300 text-[11px] font-mono flex items-center justify-center flex-shrink-0">
+                                                {String(i + 1).padStart(2, '0')}
+                                            </span>
+                                            <span className="text-sm sm:text-base font-medium flex-1">{s.h}</span>
+                                            <ChevronDown className={`w-4 h-4 text-gray-400 flex-shrink-0 transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
+                                        </button>
+                                        <AnimatePresence initial={false}>
+                                            {open && (
+                                                <motion.div
+                                                    initial={{ height: 0, opacity: 0 }}
+                                                    animate={{ height: 'auto', opacity: 1 }}
+                                                    exit={{ height: 0, opacity: 0 }}
+                                                    transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                                                    className="overflow-hidden"
+                                                >
+                                                    <div className="px-5 sm:px-6 pb-6 space-y-3">
+                                                        {s.p.map((para, j) => (
+                                                            <p key={j} className="text-gray-600 dark:text-gray-300 leading-relaxed">{para}</p>
+                                                        ))}
+                                                    </div>
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
+                                    </motion.div>
+                                );
+                            })}
+                        </div>
+
+                        <div className="mt-10 rounded-3xl border border-accent-500/25 bg-accent-500/5 p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                            <div className="w-10 h-10 rounded-full bg-accent-500/15 flex items-center justify-center flex-shrink-0">
+                                <Mail className="w-4 h-4 text-accent-500" />
+                            </div>
+                            <div>
+                                <p className="text-sm font-medium">Questions about this document?</p>
+                                <p className="text-sm text-gray-600 dark:text-white/55 mt-1">
+                                    Write to{' '}
+                                    <a href="mailto:kingbaaitse@oratoryleague.xyz" className="text-accent-600 dark:text-accent-400 hover:underline">
+                                        kingbaaitse@oratoryleague.xyz
+                                    </a>
+                                    . We answer within two working days.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </main>
+            </section>
 
             <MarketingFooter />
         </div>

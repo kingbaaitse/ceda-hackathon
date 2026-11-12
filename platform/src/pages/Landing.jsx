@@ -34,6 +34,7 @@ import { ParallaxSlider } from '@/components/block/parallax-slider';
 import { TextStream } from '@/components/block/text-stream';
 import { StatusBars, fillStatusDays } from '@/components/block/status-bars';
 import { SEMANTIC, stageTone } from '../lib/semantics';
+import { fetchServiceStatus, toStatusBarDays, todayStatus } from '../lib/status';
 import { supabase } from '../lib/supabase';
 import { getAttachmentUrls } from '../lib/storage';
 import cedaLogo from '../assets/img/ceda-full-logo-icon.png';
@@ -110,6 +111,12 @@ export default function Landing({ onSignIn, onRegister }) {
         const days = fillStatusDays('2026-11-09', '2026-11-12', []);
         return days.length ? days : null;
     }, []);
+
+    /* live platform status - computed from real operational data */
+    const [status, setStatus] = useState({ days: [], today: 'up' });
+    useEffect(() => { fetchServiceStatus(30).then(setStatus); }, []);
+    const statusDays = useMemo(() => toStatusBarDays(status.days), [status.days]);
+    const statusTone = todayStatus(status.days);
 
     return (
         <div className="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#0a0a0a] dark:text-white transition-colors duration-300">
@@ -307,11 +314,26 @@ export default function Landing({ onSignIn, onRegister }) {
                                 Screening, evaluation, selection and award — each one with written feedback
                                 the entrant can act on.
                             </p>
-                            {windowDays && (
-                                <div className="mt-8">
-                                    <StatusBars label="Submission window" days={windowDays} maxDays={windowDays.length} compact />
+                            {statusDays.length > 0 && (
+                                <div className="mt-10">
+                                    <div className="flex items-center justify-between gap-4 mb-3">
+                                        <p className="text-sm text-gray-500 dark:text-white/45">
+                                            Platform status
+                                        </p>
+                                        <span className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full ${
+                                            statusTone === 'up' ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
+                                                : statusTone === 'degraded' ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300'
+                                                : 'bg-rose-500/15 text-rose-700 dark:text-rose-300'}`}>
+                                            <span className={`w-1.5 h-1.5 rounded-full ${
+                                                statusTone === 'up' ? 'bg-emerald-500'
+                                                    : statusTone === 'degraded' ? 'bg-amber-400'
+                                                    : 'bg-rose-500'}`} />
+                                            {statusTone === 'up' ? 'All systems operational' : statusTone === 'degraded' ? 'Partial degradation' : 'Service incident'}
+                                        </span>
+                                    </div>
+                                    <StatusBars label="Platform" days={statusDays} maxDays={statusDays.length} compact />
                                     <p className="text-[11px] text-gray-400 dark:text-white/35 mt-3">
-                                        The competition ran 9–12 November 2026; submissions are open every day of the window.
+                                        Computed from live platform activity and delivery health — updated automatically.
                                     </p>
                                 </div>
                             )}
