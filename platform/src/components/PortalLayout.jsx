@@ -24,6 +24,8 @@ import Logo from './Logo';
 import ThemeToggle from './ThemeToggle';
 import ModalSheet from './ui/ModalSheet';
 import ActiveSessions from '@/components/block/active-sessions';
+import Avatar, { avatarUrl } from './Avatar';
+import ProfileDialog from './ProfileDialog';
 import { parseUserAgent } from '../lib/device';
 import { supabase } from '../lib/supabase';
 
@@ -132,6 +134,13 @@ export default function PortalLayout({
     const [sessions, setSessions] = useState([]);
     const [sessionsLoading, setSessionsLoading] = useState(false);
     const [sessionsError, setSessionsError] = useState('');
+    const [showProfile, setShowProfile] = useState(false);
+    const [profile, setProfile] = useState(null);
+    const [editing, setEditing] = useState(false);
+    const [draft, setDraft] = useState(null);
+    const [avatarFile, setAvatarFile] = useState(null);
+    const [avatarPreview, setAvatarPreview] = useState(null);
+    const [savingProfile, setSavingProfile] = useState(false);
     const [online, setOnline] = useState(() => (typeof navigator === 'undefined' ? true : navigator.onLine));
     const { items: notifications, unread, markAllRead } = useNotifications(userId);
 
@@ -151,6 +160,63 @@ export default function PortalLayout({
     }, [userId]);
 
     useEffect(() => { loadPrefs(); }, [loadPrefs]);
+
+    /* Profile ------------------------------------------------------------ */
+    const loadProfile = useCallback(async () => {
+        if (!userId) return;
+        const { data } = await supabase
+            .from('ceda_profiles')
+            .select('*')
+            .eq('id', userId)
+            .maybeSingle();
+        if (data) {
+            setProfile(data);
+            setDraft({
+                full_name: data.full_name || '',
+                title: data.title || '',
+                org_name: data.org_name || '',
+                team_name: data.team_name || '',
+                bio: data.bio || '',
+                phone: data.phone || '',
+                location: data.location || '',
+            });
+        }
+    }, [userId]);
+
+    useEffect(() => { loadProfile(); }, [loadProfile]);
+
+    const uploadAvatar = async (file) => {
+        if (!file || !userId) return null;
+        const ext = (file.name.split('.').pop() || 'png').toLowerCase();
+        const path = `${userId}/${Date.now()}.${ext}`;
+        const { error } = await supabase.storage.from('ceda-avatars').upload(path, file, {
+            cacheControl: '3600', upsert: true, contentType: file.type || 'image/png',
+        });
+        if (error) throw error;
+        return path;
+    };
+
+    const saveProfile = async () => {
+        if (!userId || !draft) return;
+        setSavingProfile(true);
+        try {
+            let avatarPath = profile?.avatar_path || null;
+            if (avatarFile) avatarPath = await uploadAvatar(avatarFile);
+            const { error } = await supabase
+                .from('ceda_profiles')
+                .update({ ...draft, avatar_path: avatarPath })
+                .eq('id', userId);
+            if (error) throw error;
+            await loadProfile();
+            setAvatarFile(null);
+            setAvatarPreview(null);
+            setEditing(false);
+        } catch (e) {
+            setSessionsError(e.message || 'Could not save your profile.');
+        } finally {
+            setSavingProfile(false);
+        }
+    };
 
     const toggleEmail = async () => {
         if (!userId) return;
@@ -462,11 +528,13 @@ export default function PortalLayout({
                                 <p className="text-xs text-gray-900 dark:text-white leading-none">{userName}</p>
                                 <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5 capitalize">{userRole}</p>
                             </div>
-                            <div className="w-9 h-9 rounded-full bg-accent-500 flex items-center justify-center overflow-hidden ring-2 ring-white dark:ring-[#0a0a0a]">
-                                <span className="text-white text-sm">
-                                    {userName?.charAt(0)?.toUpperCase() || 'U'}
-                                </span>
-                            </div>
+                            <Avatar
+                                src={avatarUrl(profile?.avatar_path)}
+                                name={profile?.full_name || userName}
+                                size={36}
+                                ring
+                                onClick={() => setShowProfile(true)}
+                            />
                         </div>
                     </div>
                 </header>
@@ -498,6 +566,113 @@ export default function PortalLayout({
                 maxWidth="max-w-md"
             >
                 <div className="space-y-5">
+                    {/* Profile */}
+                    <div className="rounded-2xl border border-gray-100 dark:border-white/10 p-4">
+                        <div className="flex items-start gap-4">
+                            <Avatar
+                                src={avatarPreview || avatarUrl(profile?.avatar_path)}
+                                name={profile?.full_name || userName}
+                                size={56}
+                                ring
+                            />
+                            <div className="min-w-0 flex-1">
+                                {editing ? (
+                                    <div className="space-y-2.5">
+                                        <input
+                                            value={draft?.full_name || ''}
+                                            onChange={e => setDraft(d => ({ ...d, full_name: e.target.value }))}
+                                            placeholder="Full name"
+                                            className="w-full rounded-full field-fill py-2.5 px-4 text-sm text-gray-900 dark:text-white"
+                                        />
+                                        <input
+                                            value={draft?.title || ''}
+                                            onChange={e => setDraft(d => ({ ...d, title: e.target.value }))}
+                                            placeholder="Title (e.g. Co-founder, Engineer)"
+                                            className="w-full rounded-full field-fill py-2.5 px-4 text-sm text-gray-900 dark:text-white"
+                                        />
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                            <input
+                                                value={draft?.org_name || ''}
+                                                onChange={e => setDraft(d => ({ ...d, org_name: e.target.value }))}
+                                                placeholder="Organisation"
+                                                className="w-full rounded-full field-fill py-2.5 px-4 text-sm text-gray-900 dark:text-white"
+                                            />
+                                            <input
+                                                value={draft?.team_name || ''}
+                                                onChange={e => setDraft(d => ({ ...d, team_name: e.target.value }))}
+                                                placeholder="Team name"
+                                                className="w-full rounded-full field-fill py-2.5 px-4 text-sm text-gray-900 dark:text-white"
+                                            />
+                                            <input
+                                                value={draft?.phone || ''}
+                                                onChange={e => setDraft(d => ({ ...d, phone: e.target.value }))}
+                                                placeholder="Phone"
+                                                className="w-full rounded-full field-fill py-2.5 px-4 text-sm text-gray-900 dark:text-white"
+                                            />
+                                            <input
+                                                value={draft?.location || ''}
+                                                onChange={e => setDraft(d => ({ ...d, location: e.target.value }))}
+                                                placeholder="Location"
+                                                className="w-full rounded-full field-fill py-2.5 px-4 text-sm text-gray-900 dark:text-white"
+                                            />
+                                        </div>
+                                        <textarea
+                                            value={draft?.bio || ''}
+                                            onChange={e => setDraft(d => ({ ...d, bio: e.target.value }))}
+                                            rows={3}
+                                            placeholder="A short bio - shown when someone opens your profile"
+                                            className="w-full field-fill rounded-2xl py-2.5 px-4 text-sm text-gray-900 dark:text-white"
+                                        />
+                                        <label className="inline-flex items-center gap-2 cursor-pointer text-xs text-accent-600 dark:text-accent-400">
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                className="hidden"
+                                                onChange={e => {
+                                                    const file = e.target.files?.[0];
+                                                    if (!file) return;
+                                                    setAvatarFile(file);
+                                                    setAvatarPreview(URL.createObjectURL(file));
+                                                }}
+                                            />
+                                            {avatarFile ? 'Replace photo' : 'Upload a profile photo'}
+                                        </label>
+                                        <div className="flex gap-2 pt-1">
+                                            <button onClick={saveProfile} disabled={savingProfile} className="btn-accent !py-2 !px-4 !text-xs">
+                                                {savingProfile ? 'Saving...' : 'Save profile'}
+                                            </button>
+                                            <button onClick={() => { setEditing(false); setAvatarFile(null); setAvatarPreview(null); }} className="btn-secondary !py-2 !px-4 !text-xs">
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <p className="text-sm text-gray-900 dark:text-white truncate">
+                                            {profile?.full_name || userName}
+                                        </p>
+                                        <p className="text-xs text-gray-500 dark:text-white/45 truncate">
+                                            {profile?.title || userRole}
+                                        </p>
+                                        {(profile?.team_name || profile?.org_name) && (
+                                            <p className="text-xs text-gray-500 dark:text-white/45 truncate mt-0.5">
+                                                {profile?.team_name || profile?.org_name}
+                                            </p>
+                                        )}
+                                        <div className="flex gap-2 mt-3">
+                                            <button onClick={() => setEditing(true)} className="btn-secondary !py-2 !px-4 !text-xs">
+                                                Edit profile
+                                            </button>
+                                            <button onClick={() => setShowProfile(true)} className="btn-secondary !py-2 !px-4 !text-xs">
+                                                Preview
+                                            </button>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="flex items-center gap-3 p-4 rounded-2xl bg-gray-50 dark:bg-white/5">
                         <div className="w-10 h-10 rounded-full bg-accent-500 flex items-center justify-center text-white">
                             <User className="w-5 h-5" />
@@ -562,6 +737,12 @@ export default function PortalLayout({
                     </div>
                 </div>
             </ModalSheet>
+
+            <ProfileDialog
+                profile={profile}
+                open={showProfile}
+                onClose={() => setShowProfile(false)}
+            />
 
             {/* ══════════════ Logout Confirmation ══════════════ */}
             <AnimatePresence>

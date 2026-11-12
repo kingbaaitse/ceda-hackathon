@@ -16,6 +16,8 @@ import {
     MessageCircle,
 } from 'lucide-react';
 import Select from './ui/Select';
+import Avatar, { avatarUrl } from './Avatar';
+import ProfileDialog from './ProfileDialog';
 import { supabase } from '../lib/supabase';
 import { ButtonLoader, InlineLoader } from './Loader';
 
@@ -27,6 +29,8 @@ const VISIBILITY_OPTIONS = [
 
 export default function MessageThread({ submissionId, role = 'participant', onPosted }) {
     const [messages, setMessages] = useState([]);
+    const [people, setPeople] = useState({});
+    const [viewing, setViewing] = useState(null);
     const [body, setBody] = useState('');
     const [visibility, setVisibility] = useState('participant');
     const [sending, setSending] = useState(false);
@@ -43,6 +47,18 @@ export default function MessageThread({ submissionId, role = 'participant', onPo
         if (err) setError(err.message);
         setMessages(data || []);
         setLoading(false);
+
+        /* the people in the thread, for their avatars */
+        const ids = [...new Set((data || []).map(m => m.author_id))];
+        if (ids.length) {
+            const { data: profiles } = await supabase
+                .from('ceda_profiles')
+                .select('id, full_name, title, org_name, avatar_path, role')
+                .in('id', ids);
+            const map = {};
+            (profiles || []).forEach(p => { map[p.id] = p; });
+            setPeople(map);
+        }
     }, [submissionId]);
 
     useEffect(() => { load(); }, [load]);
@@ -92,20 +108,28 @@ export default function MessageThread({ submissionId, role = 'participant', onPo
                     <AnimatePresence initial={false}>
                         {messages.map(m => {
                             const mine = role !== 'participant';
+                            const person = people[m.author_id];
                             return (
                                 <motion.div
                                     key={m.id}
                                     initial={{ opacity: 0, y: 8 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    className={`flex ${mine ? 'justify-end' : 'justify-start'}`}
+                                    className={`flex items-end gap-2 ${mine ? 'flex-row-reverse' : ''}`}
                                 >
+                                    <Avatar
+                                        src={avatarUrl(person?.avatar_path)}
+                                        name={person?.full_name || m.author_role}
+                                        size={30}
+                                        className="mb-0.5"
+                                        onClick={person ? () => setViewing(person) : undefined}
+                                    />
                                     <div className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-sm ${mine
                                         ? 'bg-accent-500 text-white rounded-br-md'
                                         : 'bg-gray-100 dark:bg-white/5 text-gray-800 dark:text-gray-100 rounded-bl-md'}`}
                                     >
                                         <p className="whitespace-pre-wrap">{m.body}</p>
                                         <p className={`text-[10px] mt-1 ${mine ? 'text-white/70' : 'text-gray-400'}`}>
-                                            {m.author_role} · {new Date(m.created_at).toLocaleString()}
+                                            {person?.full_name || m.author_role} · {new Date(m.created_at).toLocaleString()}
                                             {m.visibility !== 'participant' && (
                                                 <span className="inline-flex items-center gap-1 ml-2">
                                                     <Lock className="w-2.5 h-2.5" /> {m.visibility}
@@ -148,10 +172,12 @@ export default function MessageThread({ submissionId, role = 'participant', onPo
             </div>
             {error && <p className="text-royal-600 dark:text-royal-400 text-xs">{error}</p>}
             {role === 'participant' && (
-                <p className="text-[11px] text-gray-400 flex items-center gap-1.5">
+                <p className="text-[11px] text-gray-400 dark:text-white/35 flex items-center gap-1.5">
                     <Users className="w-3 h-3" /> CEDA and your assigned judges can see this thread.
                 </p>
             )}
+
+            <ProfileDialog profile={viewing} open={!!viewing} onClose={() => setViewing(null)} />
         </div>
     );
 }
