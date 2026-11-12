@@ -3,10 +3,11 @@
  * Read by CEDA administrators and reviewers; the same content lives in
  * CHANGELOG.md at the repository root.
  */
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
     GitCommitVertical,
+    ChevronDown,
     History,
     ShieldCheck,
     Layers,
@@ -117,8 +118,13 @@ const RELEASES = [
 ];
 
 export default function Changelog({ onBack }) {
+    const [openRelease, setOpenRelease] = useState(RELEASES[0].version);
+    const [openGroups, setOpenGroups] = useState({});
+
+    const toggleGroup = (key) => setOpenGroups(g => ({ ...g, [key]: !g[key] }));
+
     return (
-        <div className="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#0a0a0a] dark:text-gray-900 dark:text-white">
+        <div className="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#0a0a0a] dark:text-white transition-colors duration-300">
             <MarketingNav
                 links={[
                     { id: 'changelog', label: 'Changelog' },
@@ -128,60 +134,118 @@ export default function Changelog({ onBack }) {
                 onRegister={onBack}
             />
 
-            <main className="max-w-4xl mx-auto px-6 py-16">
-                <div className="flex items-center gap-2 text-accent-400 text-xs uppercase tracking-[0.18em]">
+            <main className="max-w-4xl mx-auto px-6 pt-32 pb-20">
+                <div className="flex items-center gap-2 text-accent-600 dark:text-accent-400 text-xs uppercase tracking-[0.18em]">
                     <GitCommitVertical className="w-3.5 h-3.5" /> Changelog
                 </div>
-                <h1 className="mt-5 text-4xl sm:text-5xl tracking-tight">What changed, and when</h1>
-                <p className="mt-4 text-gray-900/55 dark:text-gray-900 dark:text-white/55 max-w-2xl">
-                    Every release of the CEDA Innovation Hub, newest first — what was added,
-                    why it matters for the competition, and what it means for the entrant.
+                <h1 className="mt-5 text-4xl sm:text-5xl font-semibold tracking-[-0.03em]">What changed, and when</h1>
+                <p className="mt-4 text-gray-600 dark:text-white/55 max-w-2xl">
+                    Every release of the CEDA Innovation Hub, newest first. Open a release to read
+                    what it changed and why it matters.
                 </p>
 
-                <div className="mt-14 space-y-16">
-                    {RELEASES.map((rel, ri) => (
-                        <motion.section
-                            key={rel.version}
-                            initial={{ opacity: 0, y: 16 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, margin: '-80px' }}
-                            transition={{ duration: 0.4 }}
-                        >
-                            <div className="flex items-baseline gap-4">
-                                <span className="px-3 py-1 rounded-full text-xs bg-accent-500/15 text-accent-600 dark:text-accent-300 font-medium">
-                                    v{rel.version}
-                                </span>
-                                <span className="text-xs text-gray-900/35 dark:text-gray-900 dark:text-white/35">{rel.date}</span>
-                            </div>
-                            <h2 className="mt-4 text-2xl tracking-tight">{rel.title}</h2>
-                            <p className="mt-2 text-gray-900/55 dark:text-gray-900 dark:text-white/55 max-w-2xl">{rel.summary}</p>
+                {/* ── Timeline ── */}
+                <div className="mt-14 relative">
+                    {/* the rail */}
+                    <div className="absolute left-[19px] top-2 bottom-2 w-px bg-gray-200 dark:bg-white/10" />
 
-                            <div className="mt-8 space-y-6">
-                                {rel.groups.map(g => (
-                                    <div key={g.title} className="rounded-3xl border border-gray-200 dark:border-white/10 p-6">
-                                        <div className="flex items-center gap-2.5">
-                                            <div className="w-8 h-8 rounded-full bg-accent-500/12 flex items-center justify-center">
-                                                <g.icon className="w-4 h-4 text-accent-400" />
-                                            </div>
-                                            <h3 className="text-gray-900 dark:text-white">{g.title}</h3>
+                    <div className="space-y-6">
+                        {RELEASES.map((rel, ri) => {
+                            const open = openRelease === rel.version;
+                            return (
+                                <motion.section
+                                    key={rel.version}
+                                    initial={{ opacity: 0, y: 16 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true, margin: '-80px' }}
+                                    transition={{ duration: 0.4 }}
+                                    className="relative pl-14"
+                                >
+                                    {/* node */}
+                                    <span className={`absolute left-0 top-1 w-10 h-10 rounded-full border-4 border-gray-50 dark:border-[#0a0a0a] flex items-center justify-center text-[10px] font-mono ${open ? 'bg-accent-500 text-white' : 'bg-white dark:bg-white/10 text-gray-500 dark:text-white/50'}`}>
+                                        {ri + 1}
+                                    </span>
+
+                                    <button
+                                        onClick={() => setOpenRelease(open ? '' : rel.version)}
+                                        className="w-full text-left group"
+                                        aria-expanded={open}
+                                    >
+                                        <div className="flex items-center gap-3 flex-wrap">
+                                            <span className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${open ? 'bg-accent-500/15 text-accent-600 dark:text-accent-300' : 'bg-gray-100 dark:bg-white/10 text-gray-500 dark:text-white/60'}`}>
+                                                v{rel.version}
+                                            </span>
+                                            <span className="text-xs text-gray-400 dark:text-white/35">{rel.date}</span>
+                                            <ChevronDown
+                                                className={`w-4 h-4 text-gray-400 ml-auto transition-transform duration-300 ${open ? 'rotate-180' : ''}`}
+                                            />
                                         </div>
-                                        <ul className="mt-4 space-y-2.5">
-                                            {g.items.map((item, i) => (
-                                                <li key={i} className="flex gap-2.5 text-sm text-gray-900/60 dark:text-gray-900 dark:text-white/60">
-                                                    <span className="mt-[7px] w-1 h-1 rounded-full bg-accent-500 flex-shrink-0" />
-                                                    <span className="leading-relaxed">{item}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                ))}
-                            </div>
-                        </motion.section>
-                    ))}
-                </div>
+                                        <h2 className="mt-3 text-2xl font-medium tracking-tight group-hover:text-accent-600 dark:group-hover:text-accent-400 transition-colors">
+                                            {rel.title}
+                                        </h2>
+                                        <p className="mt-1.5 text-gray-600 dark:text-white/55 max-w-2xl">{rel.summary}</p>
+                                    </button>
 
-                <MarketingFooter />
+                                    <AnimatePresence initial={false}>
+                                        {open && (
+                                            <motion.div
+                                                initial={{ height: 0, opacity: 0 }}
+                                                animate={{ height: 'auto', opacity: 1 }}
+                                                exit={{ height: 0, opacity: 0 }}
+                                                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                                                className="overflow-hidden"
+                                            >
+                                                <div className="mt-6 space-y-3">
+                                                    {rel.groups.map((g, gi) => {
+                                                        const key = `${rel.version}-${g.title}`;
+                                                        const gOpen = openGroups[key] !== false;
+                                                        return (
+                                                            <div key={g.title} className="rounded-3xl border border-gray-200 dark:border-white/10 overflow-hidden">
+                                                                <button
+                                                                    onClick={() => toggleGroup(key)}
+                                                                    aria-expanded={gOpen}
+                                                                    className="w-full flex items-center gap-3 px-5 py-4 text-left hover:bg-gray-50 dark:hover:bg-white/[0.03] transition-colors"
+                                                                >
+                                                                    <div className="w-8 h-8 rounded-full bg-accent-500/12 flex items-center justify-center flex-shrink-0">
+                                                                        <g.icon className="w-4 h-4 text-accent-500" />
+                                                                    </div>
+                                                                    <span className="text-sm font-medium">{g.title}</span>
+                                                                    <span className="text-[11px] text-gray-400 dark:text-white/35">{g.items.length}</span>
+                                                                    <ChevronDown className={`w-4 h-4 text-gray-400 ml-auto transition-transform duration-300 ${gOpen ? 'rotate-180' : ''}`} />
+                                                                </button>
+                                                                <AnimatePresence initial={false}>
+                                                                    {gOpen && (
+                                                                        <motion.ul
+                                                                            initial={{ height: 0, opacity: 0 }}
+                                                                            animate={{ height: 'auto', opacity: 1 }}
+                                                                            exit={{ height: 0, opacity: 0 }}
+                                                                            transition={{ duration: 0.28 }}
+                                                                            className="overflow-hidden px-5 pb-5 space-y-2"
+                                                                        >
+                                                                            {g.items.map((item, ii) => (
+                                                                                <li key={ii} className="flex items-start gap-2.5 text-sm text-gray-600 dark:text-gray-300">
+                                                                                    <span className="mt-1.5 w-1 h-1 rounded-full bg-accent-500 flex-shrink-0" />
+                                                                                    <span className="leading-relaxed">{item}</span>
+                                                                                </li>
+                                                                            ))}
+                                                                        </motion.ul>
+                                                                    )}
+                                                                </AnimatePresence>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </motion.section>
+                            );
+                        })}
+                    </div>
+                </div>
             </main>
+
+            <MarketingFooter />
         </div>
     );
 }
