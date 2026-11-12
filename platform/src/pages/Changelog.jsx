@@ -27,6 +27,15 @@ const RELEASES = [
                 ],
             },
             {
+                icon: Sparkles,
+                title: 'Partner & showcase',
+                items: [
+                    'CEDA and Oratory League presented as the two sides of the project: CEDA owns the competition and the pipeline, Oratory League is the official partner and the developer behind the platform.',
+                    'The public page shows the awarded work as a draggable, infinitely tiled showcase, a parallax strip of the winners, and the competition window as a daily status strip.',
+                    'Every showcase component is the original Obsidian UI build, pulled from their public registry and kept in sync by a script.',
+                ],
+            },
+            {
                 icon: Bell,
                 title: 'Communication',
                 items: [

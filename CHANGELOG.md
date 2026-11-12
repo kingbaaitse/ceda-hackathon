@@ -6,6 +6,13 @@ All notable changes to the CEDA Innovation Hub. The same content is rendered in 
 ## 1.0.0 — Phase 3: Trust, insight and reach
 
 ### Added
+- **Partner section on the landing page**: CEDA and Oratory League shown as the two sides of the
+  project — CEDA owns the competition, Oratory League is the official partner and developer —
+  using the Obsidian *Split Showcase* with both marks.
+- **Obsidian UI originals, pulled from their public registry** (`tools/sync-obsidian.mjs`):
+  Active Sessions, Art Gallery, Draggable Marquee, Flip Text, Hover Image, Parallax Slider,
+  Split Showcase, Status Bars, Text Stream and V Prism. Their assets are mirrored locally
+  (`tools/mirror-obsidian-assets.mjs`) because their CDN blocks CORS.
 - **Audit trail** (`ceda_audit_log`): every gate decision, evaluation, judge assignment,
   stage change, message and session revocation is recorded with actor, role and timestamp.
   Admins can filter by action and actor and export the trail to CSV.
@@ -47,6 +54,11 @@ All notable changes to the CEDA Innovation Hub. The same content is rendered in 
 - The administrator notification bell showed other users' notifications.
 - The audit trail, message thread and calibration functions are now reachable from the UI.
 - The email template renderer had unbalanced parentheses and never compiled.
+- The mail worker used `PERFORM` inside a dynamic `EXECUTE`, which is not valid SQL; it now uses
+  `SELECT` (phase 3D).
+- Tailwind never scanned `.tsx` files, so every class used only inside the Obsidian components
+  was missing from the stylesheet. The content glob now covers `.ts` and `.tsx`, and an unlayered
+  compatibility sheet (`src/obsidian-compat.css`) covers their Tailwind v4 variable syntax.
 
 ## 0.9.0 — Phase 2: The full innovation pipeline
 

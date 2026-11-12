@@ -8,12 +8,18 @@
  */
 import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Award, Sparkles, Trophy } from 'lucide-react';
+import { ArrowRight, Award, Sparkles, Trophy, Handshake } from 'lucide-react';
 import Logo from '../components/Logo';
 import { FlipText } from '@/components/block/flip-text';
 import { DraggableMarquee } from '@/components/block/draggable-marquee';
+import { SplitShowcase } from '@/components/block/split-showcase';
+import { ParallaxSlider } from '@/components/block/parallax-slider';
+import { TextStream } from '@/components/block/text-stream';
+import { StatusBars, fillStatusDays } from '@/components/block/status-bars';
 import { SEMANTIC, stageTone } from '../lib/semantics';
 import { supabase } from '../lib/supabase';
+import { getAttachmentUrls } from '../lib/storage';
+import cedaLogo from '../assets/img/ceda-full-logo-icon.png';
 
 const PIPELINE = [
     { key: 'draft', label: 'Draft', detail: 'Guided submission with autosave' },
@@ -34,13 +40,19 @@ const FEATURES = [
 export default function Landing({ onSignIn, onRegister }) {
     const [awarded, setAwarded] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [mediaUrls, setMediaUrls] = useState({});
 
     useEffect(() => {
         supabase
             .from('ceda_submissions')
-            .select('id, title, sdgs, stage_of_development, updated_at')
+            .select('id, title, sdgs, stage_of_development, updated_at, attachments')
             .eq('stage', 'awarded')
-            .then(({ data }) => { setAwarded(data || []); setLoading(false); });
+            .then(async ({ data }) => {
+                setAwarded(data || []);
+                setLoading(false);
+                const paths = (data || []).flatMap(s => (s.attachments || []).filter(a => a.kind === 'image').map(a => a.path));
+                if (paths.length) setMediaUrls(await getAttachmentUrls(paths));
+            });
     }, []);
 
     const goals = useMemo(() => {
@@ -48,6 +60,18 @@ export default function Landing({ onSignIn, onRegister }) {
         awarded.forEach(a => (a.sdgs || []).forEach(g => set.add(g)));
         return set.size;
     }, [awarded]);
+
+    /* slides for the parallax slider: the awarded work itself */
+    const slides = useMemo(() => awarded.map(a => {
+        const img = (a.attachments || []).find(x => x.kind === 'image');
+        return { title: a.title, image: img ? mediaUrls[img.path] : null, focus: '50% 50%' };
+    }).filter(s => s.image), [awarded, mediaUrls]);
+
+    /* the competition window (9-12 Nov) - the days submissions were open */
+    const windowDays = useMemo(() => {
+        const days = fillStatusDays('2026-11-09', '2026-11-12', []);
+        return days.length ? days : null;
+    }, []);
 
     return (
         <div className="min-h-screen bg-[#0a0a0a] text-white dark">
@@ -60,6 +84,7 @@ export default function Landing({ onSignIn, onRegister }) {
                     <nav className="flex items-center gap-2">
                         <a href="#pipeline" className="hidden sm:block px-3 py-2 text-sm text-white/60 hover:text-white transition-colors">The pipeline</a>
                         <a href="#awards" className="hidden sm:block px-3 py-2 text-sm text-white/60 hover:text-white transition-colors">Awards</a>
+                        <a href="#partner" className="hidden sm:block px-3 py-2 text-sm text-white/60 hover:text-white transition-colors">Partner</a>
                         <a href="/changelog" className="hidden sm:block px-3 py-2 text-sm text-white/60 hover:text-white transition-colors">Changelog</a>
                         <button onClick={onSignIn} className="px-4 py-2 rounded-full text-sm text-white/80 hover:bg-white/10 transition-colors">Sign in</button>
                         <button onClick={onRegister} className="px-4 py-2 rounded-full text-sm bg-accent-500 text-white hover:bg-accent-600 transition-colors">Register</button>
@@ -79,7 +104,7 @@ export default function Landing({ onSignIn, onRegister }) {
                     </div>
 
                     <h1 className="mt-6 text-5xl sm:text-7xl leading-[1.05] tracking-tight max-w-4xl">
-                        From idea to <FlipText loop={false} duration={1.8} delay={0.4}>award</FlipText>
+                        From idea to <FlipText className="text-accent-400">award</FlipText>
                         <span className="block text-accent-400">on one platform.</span>
                     </h1>
 
@@ -160,31 +185,107 @@ export default function Landing({ onSignIn, onRegister }) {
                     Awarded entries are published openly. Everything still in the pipeline stays private.
                 </p>
                 {awarded.length > 0 ? (
-                    <div className="mt-6 flex items-center gap-6">
-                        <span className="text-[10px] uppercase tracking-[0.2em] text-white/30 flex-shrink-0">Awarded</span>
-                        <div className="flex-1 min-w-0">
-                            <DraggableMarquee
-                                items={awarded.map(a => ({
-                                    id: a.id,
-                                    src: '',
-                                    alt: a.title,
-                                    width: 320,
-                                    height: 200,
-                                    title: a.title,
-                                }))}
-                                speed={0.5}
-                                repeatCount={2}
-                                renderItem={(item) => (
-                                    <span className="px-3 py-1.5 rounded-full text-xs bg-white/5 text-white/60 whitespace-nowrap">
-                                        {item.title}
-                                    </span>
-                                )}
-                            />
+                    <>
+                        <div className="mt-6 flex items-center gap-6">
+                            <span className="text-[10px] uppercase tracking-[0.2em] text-white/30 flex-shrink-0">Awarded</span>
+                            <div className="flex-1 min-w-0">
+                                <DraggableMarquee
+                                    items={awarded.map(a => ({
+                                        id: a.id,
+                                        src: '',
+                                        alt: a.title,
+                                        width: 320,
+                                        height: 200,
+                                        title: a.title,
+                                    }))}
+                                    speed={0.5}
+                                    repeatCount={2}
+                                    renderItem={(item) => (
+                                        <span className="px-3 py-1.5 rounded-full text-xs bg-white/5 text-white/60 whitespace-nowrap">
+                                            {item.title}
+                                        </span>
+                                    )}
+                                />
+                            </div>
                         </div>
-                    </div>
+
+                        {slides.length > 0 && (
+                            <div className="mt-12">
+                                <ParallaxSlider
+                                    slides={slides}
+                                    eyebrow="Awarded work"
+                                    title="Drag through the winners"
+                                    description="Every entry here cleared every gate."
+                                    orientation="landscape"
+                                    className="text-white"
+                                />
+                            </div>
+                        )}
+                    </>
                 ) : (
                     <p className="text-white/40 text-sm mt-6">No entries awarded yet — the first winners will appear here.</p>
                 )}
+            </section>
+
+            {/* Partner */}
+            <section id="partner" className="border-y border-white/5 bg-white/[0.02]">
+                <div className="max-w-6xl mx-auto px-6 py-16">
+                    <div className="flex items-center gap-2 text-accent-400 text-xs uppercase tracking-[0.18em]">
+                        <Handshake className="w-3.5 h-3.5" /> Who builds this
+                    </div>
+                    <h2 className="mt-4 text-3xl tracking-tight">CEDA and Oratory League</h2>
+                    <p className="text-white/50 mt-3 max-w-xl">
+                        CEDA owns the competition and the pipeline. Oratory League is the official
+                        partner and the developer behind the platform.
+                    </p>
+
+                    <div className="mt-10">
+                        <SplitShowcase
+                            items={[
+                                {
+                                    id: 'ceda',
+                                    title: 'CEDA',
+                                    tag: 'The competition',
+                                    description: 'Runs the innovation competition end to end: eligibility, screening, the judging panel and the award.',
+                                    icon: <img src={cedaLogo} alt="CEDA" className="h-10 w-10 object-contain" />,
+                                },
+                                {
+                                    id: 'oratory-league',
+                                    title: 'Oratory League',
+                                    tag: 'Official partner & developer',
+                                    description: 'Designs and engineers the Innovation Hub: the submission wizard, the judging workflow, the security model and the analytics.',
+                                    icon: <img src="/partners/oratory-league-logo.png" alt="Oratory League" className="h-9 w-auto max-w-[150px] object-contain object-left" />,
+                                },
+                            ]}
+                            className="text-left"
+                        />
+                    </div>
+
+                    {windowDays && (
+                        <div className="mt-12">
+                            <StatusBars label="Submission window" days={windowDays} maxDays={windowDays.length} compact />
+                            <p className="text-[11px] text-white/35 mt-3">
+                                The competition ran 9–12 November 2026; submissions are open every day of the window.
+                            </p>
+                        </div>
+                    )}
+
+                    <div className="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+                        <div className="lg:col-span-2">
+                            <h3 className="text-white text-lg">Every gate, in order</h3>
+                            <p className="text-white/45 text-sm mt-2">
+                                Screening, evaluation, selection and award — each one with written feedback.
+                            </p>
+                        </div>
+                        <TextStream
+                            items={['Screening', 'Evaluation', 'Selection', 'Award']}
+                            prefix="The pipeline"
+                            height="220px"
+                            fontSize="1.75rem"
+                            className="text-white"
+                        />
+                    </div>
+                </div>
             </section>
 
             <footer className="border-t border-white/5">

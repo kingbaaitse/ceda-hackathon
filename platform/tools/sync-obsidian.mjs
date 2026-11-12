@@ -19,12 +19,17 @@ const BLOCKS = [
     'active-sessions',
     'art-gallery',
     'draggable-marquee',
-    'flip-text',
     'hover-img',
     'parallax-slider',
+    'split-showcase',
     'status-bars',
+    'text-stream',
     'v-prism',
 ];
+
+/* Pinned: our flip-text is the hover-to-flip variant supplied by hand, which
+   differs from the registry build (that one loops on its own). */
+const PINNED = ['flip-text'];
 
 async function fetchItem(name) {
     const res = await fetch(`${REGISTRY}/${name}.json`, { headers: { 'User-Agent': 'Mozilla/5.0' } });
@@ -47,6 +52,10 @@ async function writeFiles(name, item) {
 
 const run = async () => {
     for (const name of BLOCKS) {
+        if (PINNED.includes(name)) {
+            console.log(`- ${name} (pinned, left as supplied)`);
+            continue;
+        }
         try {
             const item = await fetchItem(name);
             const written = await writeFiles(name, item);

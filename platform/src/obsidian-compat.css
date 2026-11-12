@@ -1,0 +1,27 @@
+/*
+ * Compatibility layer for the Obsidian UI originals.
+ *
+ * Some of their components use Tailwind v4 syntax (bg-(--var)/75) that our
+ * Tailwind 3.4 does not compile, so those elements would render invisible.
+ * These rules are deliberately unlayered: unlayered CSS wins over any
+ * @layer, so they always apply.
+ */
+
+/* Status Bars - day cells */
+.obsidian-status-bars [data-status='up'] {
+    background-color: color-mix(in srgb, var(--obsidian-status-up, #22c55e) 80%, transparent);
+}
+.obsidian-status-bars [data-status='degraded'] {
+    background-color: color-mix(in srgb, var(--obsidian-status-degraded, #f59e0b) 80%, transparent);
+}
+.obsidian-status-bars [data-status='down'] {
+    background-color: color-mix(in srgb, var(--obsidian-status-down, #ef4444) 80%, transparent);
+}
+.obsidian-status-bars [data-status='none'] {
+    background-color: color-mix(in srgb, var(--obsidian-status-empty, #71717a) 45%, transparent);
+}
+
+/* Status Bars - the strip itself keeps a subtle floor colour */
+.obsidian-status-bars [role='grid'] {
+    background-color: transparent;
+}

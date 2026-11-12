@@ -106,7 +106,7 @@ const Login = ({ onSignup }) => {
                         </div>
 
                         <h1 className="text-white text-[44px] xl:text-5xl leading-[1.08] tracking-tight mt-12">
-                            From idea to <FlipText loop={false} duration={1.8} delay={0.4}>award</FlipText>.
+                            From idea to <FlipText className="font-serif-italic text-accent-300">award</FlipText>.
                         </h1>
 
                         <p className="text-white/65 text-lg mt-5 leading-relaxed max-w-lg">

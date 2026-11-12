@@ -426,6 +426,21 @@
 }
 
 @layer utilities {
+  /* Obsidian StatusBars uses Tailwind v4 syntax (bg-(--var)/75) which our
+     Tailwind 3.4 does not compile, so the bars would render invisible. */
+  .obsidian-status-bars [data-status='up'] {
+    background-color: color-mix(in srgb, var(--obsidian-status-up, #22c55e) 78%, transparent);
+  }
+  .obsidian-status-bars [data-status='degraded'] {
+    background-color: color-mix(in srgb, var(--obsidian-status-degraded, #f59e0b) 78%, transparent);
+  }
+  .obsidian-status-bars [data-status='down'] {
+    background-color: color-mix(in srgb, var(--obsidian-status-down, #ef4444) 78%, transparent);
+  }
+  .obsidian-status-bars [data-status='none'] {
+    background-color: color-mix(in srgb, var(--obsidian-status-empty, #71717a) 40%, transparent);
+  }
+
   .glass-panel {
     background: var(--glass-bg);
     backdrop-filter: blur(24px);

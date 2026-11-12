@@ -15,13 +15,15 @@ Run in order, in the Supabase SQL editor (or `supabase db push`):
 | `supabase-ceda-phase2.sql` | Storage bucket + policies, notifications + triggers + realtime, rubric weights, submission versions, public gallery, `sdgs` column |
 | `supabase-ceda-phase3.sql` | Audit trail + triggers, Q&A threads, email preferences + delivery log, judge calibration functions, email pipeline (pg_net) |
 | `supabase-ceda-phase3b-email.sql` | Vault-stored provider key, email templates, in-database (pg_net) sender, delivery log |
+| `supabase-ceda-phase3c-email-key.local.sql` | stores the Resend key in Vault or the private schema (git-ignored) |
+| `supabase-ceda-phase3d-email-fix.sql` | fixes the dynamic provider call (`SELECT`, not `PERFORM`) |
 | `supabase-ceda-phase4-sessions.sql` | Active sessions: list the signed-in devices, revoke one, revoke all others (backed by `auth.sessions`) |
 
 Every file is idempotent — re-running is safe.
 
-> **Re-run needed:** `supabase-ceda-phase3b-email.sql` (fixed the template-render function) and
-> `supabase-ceda-phase4-sessions.sql` (reads the caller's session id from the JWT claims, so the
-> current device is marked correctly). Both are quick, single-paste runs.
+> **Re-run needed:** `supabase-ceda-phase3d-email-fix.sql` — the sender used `PERFORM` inside a
+> dynamic `EXECUTE`, which Postgres rejects ("syntax error at or near perform"), so every send was
+> logged as failed. One quick paste fixes it and email alerts start flowing.
 
 ### Sending domain
 `oratoryleague.xyz` is verified with Resend. The sender address is
