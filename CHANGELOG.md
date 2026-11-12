@@ -3,6 +3,27 @@
 All notable changes to the CEDA Innovation Hub. The same content is rendered in the app at
 `/changelog`.
 
+## 1.0.1 - Phase 3 polish
+
+### Added
+- **Animated icons** throughout the signed-in portal: every icon responds to hover and to a
+  tap, and the notification bell keeps ringing while something is unread.
+- **A working notification centre**: a frosted panel over a heavy blur, unread items tinted and
+  marked, read items faded back, a badge that matches the panel, mark-all-read, and a short,
+  soft chime when a notification arrives while the portal is open.
+- **Full-screen loading on every portal**, not only the dashboard, while data is fetched.
+
+### Changed
+- **Search rests as a circle** and expands only when opened or typed into, giving the header
+  back its space.
+- **Refresh reports its own state**: a calm spinner while loading, a green tick when the view is
+  current, and a red mark when a refresh fails.
+- **Loading buttons grey out** and show the CEDA mark instead of text dots. No screen uses an
+  ellipsis as a placeholder.
+- **Theme switch moved to Settings**, which is now fully working.
+- **Phone numbers use a flag picker** with a searchable country list, matching the rest of the
+  sign-up experience.
+
 ## 1.0.0 — Phase 3: Trust, insight and reach
 
 ### Added

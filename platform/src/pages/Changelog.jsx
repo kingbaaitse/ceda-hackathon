@@ -20,6 +20,37 @@ import MarketingFooter from '../components/marketing/MarketingFooter';
 
 const RELEASES = [
     {
+        version: '1.0.1',
+        date: '2026-11-12',
+        title: 'Phase 3 polish',
+        summary: 'A calmer, faster portal: animated icons, a real notification centre, a collapsible search, clearer refresh states and a Settings panel that controls the theme.',
+        groups: [
+            {
+                icon: Layers,
+                title: 'Interface',
+                items: [
+                    'Every icon in the signed-in portal now responds to hover and to a tap, and the notification bell keeps ringing while something is unread.',
+                    'The top-bar search rests as a circle and expands only when it is opened or typed into, giving the header back its space.',
+                    'The refresh control reports its own state: a calm spinner while loading, a green tick when the view is current, and a red mark when a refresh fails.',
+                    'Loading buttons across the portal grey out and show the CEDA mark instead of text dots, and no screen uses an ellipsis as a placeholder.',
+                    'Full-screen loading now covers every portal while its data arrives, not only the dashboard.',
+                    'The Settings panel is fully working, and the light and dark theme switch now lives there instead of the top bar.',
+                    'Phone numbers use a flag picker with a searchable country list, matching the rest of the sign-up experience.',
+                ],
+            },
+            {
+                icon: Bell,
+                title: 'Notifications',
+                items: [
+                    'The notification panel is frosted rather than flat: the page behind it stays visible through a heavy blur.',
+                    'Unread items are tinted and marked, read items fade back, and the badge, the panel and the bell all agree on what is unread.',
+                    'A short, soft chime plays when a new notification arrives while the portal is open.',
+                    'Mark all read clears the badge and the panel in one step.',
+                ],
+            },
+        ],
+    },
+    {
         version: '1.0.0',
         date: '2026-11-11',
         title: 'Phase 3 — Trust, insight and reach',
@@ -168,7 +199,7 @@ export default function Changelog({ onBack }) {
 
                                     <button
                                         onClick={() => setOpenRelease(open ? '' : rel.version)}
-                                        className="w-full text-left group"
+                                        className="w-full text-left group rounded-none"
                                         aria-expanded={open}
                                     >
                                         <div className="flex items-center gap-3 flex-wrap">

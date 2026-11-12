@@ -1,18 +1,13 @@
 import React, { useState } from 'react';
 import PasswordField from '../components/ui/PasswordField';
 import { motion } from 'framer-motion';
-import {
-    Mail,
-    ArrowRight,
-    ArrowLeft,
-    User,
-    Users,
-    Building2,
-    CheckCircle2,
-} from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import Logo from '../components/Logo';
 import { ButtonLoader, InlineLoader } from '../components/Loader';
+import PhoneInput, { COUNTRIES, flagOf } from '../components/ui/PhoneInput';
+import { ArrowLeft, ArrowRight, Building2, CheckCircle2, Mail, User, Users } from '../components/AnimatedIcons';
+
+const dialOf = (code) => (COUNTRIES.find(c => c.code === code) || COUNTRIES[0]).dial;
 
 const Signup = ({ onLogin, onLanding }) => {
     const { signup } = useAuth();
@@ -22,6 +17,8 @@ const Signup = ({ onLogin, onLanding }) => {
     const [orgName, setOrgName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [phone, setPhone] = useState('');
+    const [phoneCountry, setPhoneCountry] = useState('BW');
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -37,6 +34,7 @@ const Signup = ({ onLogin, onLanding }) => {
                 org_name: entryType === 'team' ? orgName : null,
                 entry_type: entryType,
                 requested_role: 'participant',
+                phone: phone ? `${dialOf(phoneCountry)} ${phone}`.trim() : null,
             });
             if (!data.session) setConfirmSent(true);
         } catch (err) {
@@ -144,6 +142,19 @@ const Signup = ({ onLogin, onLanding }) => {
                                 placeholder="Full name"
                                 className="w-full rounded-full field-fill py-3.5 pl-11 pr-4 text-sm text-gray-900 dark:text-white placeholder-gray-400"
                             />
+                        </div>
+
+                        <div>
+                            <label className="text-xs text-gray-500 mb-1.5 block">Phone number</label>
+                            <PhoneInput
+                                value={phone}
+                                onChange={setPhone}
+                                country={phoneCountry}
+                                onCountryChange={setPhoneCountry}
+                            />
+                            <p className="text-xs text-gray-400 px-4 mt-1.5">
+                                Used only if CEDA needs to reach you about your entry.
+                            </p>
                         </div>
 
                         {entryType === 'team' && (

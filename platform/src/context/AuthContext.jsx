@@ -28,6 +28,7 @@ export const AuthProvider = ({ children }) => {
       full_name: u.user_metadata?.full_name || u.email?.split('@')[0] || 'User',
       role,
       org_name: u.user_metadata?.org_name || null,
+      phone: u.user_metadata?.phone || null,
     };
     const { data: created, error } = await supabase.from('ceda_profiles').insert(row).select().single();
     if (error) {

@@ -9,17 +9,12 @@
  */
 import React, { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-    Send,
-    Lock,
-    Users,
-    MessageCircle,
-} from 'lucide-react';
 import Select from './ui/Select';
 import Avatar, { avatarUrl } from './Avatar';
 import ProfileDialog from './ProfileDialog';
 import { supabase } from '../lib/supabase';
 import { ButtonLoader, InlineLoader } from './Loader';
+import { Lock, MessageCircle, Send, Users } from './AnimatedIcons';
 
 const VISIBILITY_OPTIONS = [
     { value: 'participant', label: 'Participant + judges', hint: 'Visible to everyone on this submission' },
@@ -159,7 +154,7 @@ export default function MessageThread({ submissionId, role = 'participant', onPo
                     onChange={e => setBody(e.target.value)}
                     rows={2}
                     onKeyDown={e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) send(); }}
-                    placeholder={role === 'participant' ? 'Ask CEDA a question…' : 'Write a message…'}
+                    placeholder={role === 'participant' ? 'Ask CEDA a question' : 'Write a message'}
                     className="flex-1 field-fill rounded-2xl py-2.5 px-4 text-sm text-gray-900 dark:text-white placeholder-gray-400 resize-none"
                 />
                 <button

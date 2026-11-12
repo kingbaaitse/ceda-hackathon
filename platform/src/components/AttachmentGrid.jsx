@@ -2,8 +2,8 @@
    judges and admins. Renders image grids and document rows. */
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { FileText, ExternalLink } from 'lucide-react';
 import { getAttachmentUrls, prettySize } from '../lib/storage';
+import { ExternalLink, FileText } from './AnimatedIcons';
 
 export default function AttachmentGrid({ attachments = [] }) {
     const [urls, setUrls] = useState({});

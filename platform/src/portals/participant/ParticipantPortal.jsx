@@ -5,26 +5,8 @@
  * ═══════════════════════════════════════════════════════════════ */
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-    LayoutDashboard,
-    FileEdit,
-    MessageSquareText,
-    Lightbulb,
-    CheckCircle2,
-    Clock,
-    Award,
-    Send,
-    RefreshCw,
-    AlertCircle,
-    ChevronLeft,
-    ChevronRight,
-    Plus,
-    Trash2,
-    History,
-    Users,
-    MessageCircle,
-} from 'lucide-react';
 import PortalLayout from '../../components/PortalLayout';
+import { RefreshButton } from '../../components/TopBar';
 import AttachmentGrid from '../../components/AttachmentGrid';
 import MediaUploader from '../../components/MediaUploader';
 import MessageThread from '../../components/MessageThread';
@@ -41,6 +23,7 @@ import { useRubric } from '../../lib/rubric';
 import { SDGS, TEAM_ROLES } from '../../lib/sdgs';
 import { queueDraft, flushDrafts } from '../../lib/offline';
 import { ButtonLoader, InlineLoader } from '../../components/Loader';
+import { CheckCircle2, ChevronLeft, ChevronRight, FileEdit, History, LayoutDashboard, Lightbulb, MessageCircle, MessageSquareText, Plus, Send, Trash2, Users } from '../../components/AnimatedIcons';
 
 const NAV = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
@@ -113,9 +96,7 @@ export default function ParticipantPortal() {
             userId={user.id}
             onLogout={logout}
             headerActions={
-                <button onClick={refresh} className="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 rounded-full" title="Refresh">
-                    <RefreshCw className="w-4 h-4" />
-                </button>
+                <RefreshButton onRefresh={refresh} />
             }
         >
             {loading ? (
@@ -488,7 +469,7 @@ function StepIdea({ form, set }) {
                     className="w-full rounded-full field-fill py-3.5 px-5 text-sm text-gray-900 dark:text-white placeholder-gray-400" />
             </Field>
             <Field label="Description" hint="Problem, solution, how it works. Judges score what they can picture.">
-                <textarea value={form.description} onChange={set('description')} rows={7} placeholder="Describe the problem, your solution, and how it works…"
+                <textarea value={form.description} onChange={set('description')} rows={7} placeholder="Describe the problem, your solution, and how it works"
                     className="w-full field-fill py-3.5 px-5 text-sm text-gray-900 dark:text-white placeholder-gray-400" />
             </Field>
             <Field label="Stage of development">
@@ -509,7 +490,7 @@ function StepTeam({ form, set, setArray }) {
         <div className="space-y-5">
             <div className="card p-8 space-y-5">
                 <Field label="SDG alignment" hint="Pick the goals your innovation advances.">
-                    <MultiSelect value={form.sdgs || []} onChange={setArray.bind(null, 'sdgs')} options={SDGS} placeholder="Select SDGs…" max={4} />
+                    <MultiSelect value={form.sdgs || []} onChange={setArray.bind(null, 'sdgs')} options={SDGS} placeholder="Select SDGs" max={4} />
                 </Field>
             </div>
             <div className="card p-8 space-y-4">
@@ -536,7 +517,7 @@ function StepTeam({ form, set, setArray }) {
                                 <Trash2 className="w-4 h-4" />
                             </button>
                         </div>
-                        <MultiSelect compact value={m.roles || []} onChange={(roles) => setMember(i, { roles })} options={TEAM_ROLES} placeholder="Assign roles…" max={2} />
+                        <MultiSelect compact value={m.roles || []} onChange={(roles) => setMember(i, { roles })} options={TEAM_ROLES} placeholder="Assign roles" max={2} />
                     </motion.div>
                 ))}
             </div>

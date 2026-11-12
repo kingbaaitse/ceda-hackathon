@@ -155,7 +155,7 @@ export default function Landing({ onSignIn, onRegister }) {
                         </div>
                     }
                     preview={
-                        <Suspense fallback={<div className="h-full w-full flex items-center justify-center text-white/30 text-sm">Loading the preview…</div>}>
+                        <Suspense fallback={<div className="h-full w-full flex items-center justify-center text-white/30 text-sm">Loading the preview</div>}>
                             <VPrism settings={DARK_PRESET} />
                         </Suspense>
                     }

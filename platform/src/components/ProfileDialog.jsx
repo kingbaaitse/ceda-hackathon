@@ -6,9 +6,9 @@
  */
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Mail, Phone, MapPin, Building2, Users } from 'lucide-react';
 import Avatar, { avatarUrl } from './Avatar';
 import { supabase } from '../lib/supabase';
+import { Building2, Mail, MapPin, Phone, Users, X } from './AnimatedIcons';
 
 export default function ProfileDialog({ profile, open, onClose }) {
     const [team, setTeam] = useState(null);

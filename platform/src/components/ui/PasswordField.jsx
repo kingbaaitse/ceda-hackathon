@@ -7,12 +7,7 @@
  */
 import React, { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import {
-    Eye,
-    EyeOff,
-    Check,
-    X,
-} from 'lucide-react';
+import { Check, Eye, EyeOff, X } from '../AnimatedIcons';
 
 const RULES = [
     { id: 'len', label: 'At least 10 characters', test: v => v.length >= 10 },

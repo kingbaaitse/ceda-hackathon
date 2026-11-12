@@ -244,7 +244,7 @@ export function StatusBars({
               )}
               <span className={cn("size-1.5 rounded-full", loading ? "bg-muted-foreground/50" : DOT[now])} />
             </span>
-            {loading ? "Checking…" : CURRENT[now]}
+            {loading ? "Checking" : CURRENT[now]}
           </span>
         </div>
       )}
@@ -379,7 +379,7 @@ export function StatusBars({
           <span aria-hidden className="h-px flex-1 bg-border" />
           <span className="shrink-0 tabular-nums text-muted-foreground">
             {loading ? (
-              "Loading…"
+              "Loading"
             ) : uptime === null ? (
               "No data yet"
             ) : (

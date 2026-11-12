@@ -6,25 +6,8 @@
  * ═══════════════════════════════════════════════════════════════ */
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import {
-    GitBranch,
-    Users as UsersIcon,
-    RefreshCw,
-    UserPlus,
-    Send,
-    ChevronDown,
-    SlidersHorizontal,
-    Download,
-    MessageCircle,
-    ScrollText,
-    Mail,
-    LayoutDashboard,
-    Lightbulb,
-    TrendingUp,
-    TriangleAlert,
-    ChevronRight,
-} from 'lucide-react';
 import PortalLayout from '../../components/PortalLayout';
+import { RefreshButton } from '../../components/TopBar';
 import ModalSheet from '../../components/ui/ModalSheet';
 import Select from '../../components/ui/Select';
 import Slider from '../../components/ui/Slider';
@@ -40,6 +23,7 @@ import { supabase } from '../../lib/supabase';
 import { STAGES, STAGE_LABELS, STAGE_COLORS, GATE_ACTIONS } from '../../lib/pipeline';
 import { useRubric, normalizeWeights } from '../../lib/rubric';
 import { ButtonLoader, InlineLoader } from '../../components/Loader';
+import { ChevronDown, ChevronRight, Download, GitBranch, LayoutDashboard, Lightbulb, Mail, MessageCircle, ScrollText, Send, SlidersHorizontal, TrendingUp, TriangleAlert, UserPlus, Users as UsersIcon } from '../../components/AnimatedIcons';
 
 const NAV = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -141,9 +125,7 @@ export default function AdminPortal() {
             onSearch={setSearch}
             onLogout={logout}
             headerActions={
-                <button onClick={refresh} className="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 rounded-full" title="Refresh">
-                    <RefreshCw className="w-4 h-4" />
-                </button>
+                <RefreshButton onRefresh={refresh} />
             }
         >
             {loading ? (
@@ -236,7 +218,7 @@ function Pipeline({ submissions, allCount, search, evaluations, assignments, pro
                         <div className="flex items-start justify-between gap-4 flex-wrap">
                             <div className="min-w-0">
                                 <h3 className="text-gray-900 dark:text-white text-lg truncate">{s.title}</h3>
-                                <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5 truncate">{s.description?.slice(0, 120)}…</p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5 truncate">{s.description?.slice(0, 120)}</p>
                                 <div className="flex items-center gap-2 mt-2 flex-wrap">
                                     <span className={`px-2.5 py-1 rounded-full text-[11px] ${STAGE_COLORS[s.stage]}`}>{STAGE_LABELS[s.stage]}</span>
                                     <span className="text-[11px] text-gray-400 capitalize">{s.entry_type} · {s.owner_name}</span>
@@ -387,7 +369,7 @@ function GateModal({ data, onClose, onDone }) {
                         value={feedback}
                         onChange={e => { setFeedback(e.target.value); setError(''); }}
                         rows={3}
-                        placeholder="What the participant will see at this gate…"
+                        placeholder="What the participant will see at this gate"
                         className="w-full field-fill py-3.5 px-5 text-sm text-gray-900 dark:text-white placeholder-gray-400"
                     />
                 </div>
@@ -452,7 +434,7 @@ function AssignModal({ submission, profiles, assignments, onClose, onDone }) {
                     label="Judge"
                     value={judgeId}
                     onChange={setJudgeId}
-                    placeholder="Select a judge…"
+                    placeholder="Select a judge"
                     options={judges.map(j => ({ value: j.id, label: j.full_name || j.email }))}
                 />
                 {judges.length === 0 && (
@@ -649,7 +631,7 @@ function Users({ profiles, onRefresh }) {
             <input
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                placeholder="Filter users…"
+                placeholder="Filter users"
                 className="w-full max-w-xs rounded-full field-fill py-2.5 px-4 text-sm text-gray-900 dark:text-white placeholder-gray-400"
             />
             {visible.map(p => (

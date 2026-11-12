@@ -6,17 +6,13 @@
 import React, { useState, useRef, useEffect, useLayoutEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-    ChevronDown,
-    Check,
-    X,
-} from 'lucide-react';
+import { Check, ChevronDown, X } from '../AnimatedIcons';
 
 export default function MultiSelect({
     value = [],
     onChange,
     options = [],
-    placeholder = 'Select...',
+    placeholder = 'Select',
     max = null,
     className = '',
     allowOther = false,
@@ -136,7 +132,7 @@ export default function MultiSelect({
                                 onClick={() => setOtherMode(true)}
                                 className="w-full text-left px-3 py-2 rounded-xl text-sm text-accent-600 dark:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-500/5"
                             >
-                                + Add custom…
+                                + Add custom
                             </button>
                         )}
                         {allowOther && otherMode && (

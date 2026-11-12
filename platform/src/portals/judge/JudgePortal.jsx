@@ -7,17 +7,12 @@
  * ═══════════════════════════════════════════════════════════════ */
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import {
-    ClipboardList,
-    FileText,
-    RefreshCw,
-    Star,
-} from 'lucide-react';
 import PortalLayout from '../../components/PortalLayout';
+import { RefreshButton } from '../../components/TopBar';
+import { FullscreenLoader } from '../../components/Loader';
 import AttachmentGrid from '../../components/AttachmentGrid';
 import ModalSheet from '../../components/ui/ModalSheet';
 import Slider from '../../components/ui/Slider';
-import { SkeletonCard } from '../../components/ui/Skeleton';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { supabase } from '../../lib/supabase';
@@ -26,6 +21,7 @@ import { useRubric, weightedTotal } from '../../lib/rubric';
 import EmptyState from '../../components/EmptyState';
 import emptyArt from '../../assets/img/illustrations/organising.svg';
 import { ButtonLoader, InlineLoader } from '../../components/Loader';
+import { ClipboardList, FileText, Star } from '../../components/AnimatedIcons';
 
 const NAV = [
     { id: 'assigned', label: 'Assigned Submissions', icon: ClipboardList },
@@ -86,16 +82,11 @@ export default function JudgePortal() {
             onSearch={setSearch}
             onLogout={logout}
             headerActions={
-                <button onClick={refresh} className="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 rounded-full" title="Refresh">
-                    <RefreshCw className="w-4 h-4" />
-                </button>
+                <RefreshButton onRefresh={refresh} />
             }
         >
             {loading ? (
-                <div className="max-w-5xl space-y-4">
-                    <SkeletonCard lines={3} />
-                    <SkeletonCard lines={3} />
-                </div>
+                <FullscreenLoader label="Loading your assignments" />
             ) : fatal ? (
                 <div className="card p-6 text-royal-600 text-sm">{fatal}</div>
             ) : rows.length === 0 ? (
@@ -380,7 +371,7 @@ function ScoringSheet({ submission, existing, onClose, onDone }) {
                         value={feedback}
                         onChange={e => setFeedback(e.target.value)}
                         rows={4}
-                        placeholder="Structured feedback the participant will receive at this gate…"
+                        placeholder="Structured feedback the participant will receive at this gate"
                         className="w-full field-fill py-3.5 px-5 text-sm text-gray-900 dark:text-white placeholder-gray-400"
                     />
                 </div>

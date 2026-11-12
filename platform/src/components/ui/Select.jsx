@@ -8,13 +8,13 @@
 import React, { useState, useRef, useEffect, useLayoutEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Check } from 'lucide-react';
+import { Check, ChevronDown } from '../AnimatedIcons';
 
 export default function Select({
     value,
     onChange,
     options = [],          // [{ value, label, hint? }] or ['string']
-    placeholder = 'Select...',
+    placeholder = 'Select',
     className = '',
     triggerClassName = '',
     disabled = false,

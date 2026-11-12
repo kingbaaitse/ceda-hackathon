@@ -2,13 +2,9 @@
    Uploads straight to the private ceda-attachments bucket. */
 import React, { useRef, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-    UploadCloud,
-    X,
-    FileText,
-} from 'lucide-react';
 import { uploadAttachment, deleteAttachment, getAttachmentUrl, prettySize } from '../lib/storage';
 import { InlineLoader } from './Loader';
+import { FileText, UploadCloud, X } from './AnimatedIcons';
 
 export default function MediaUploader({ ownerId, submissionId, attachments = [], onChange }) {
     const inputRef = useRef(null);

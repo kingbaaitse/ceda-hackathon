@@ -6,28 +6,17 @@
  */
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-    Menu,
-    X,
-    Bell,
-    LogOut,
-    Settings,
-    ChevronRight,
-    Search,
-    ChevronLeft,
-    Mail,
-    WifiOff,
-    User,
-    Check,
-} from 'lucide-react';
 import Logo from './Logo';
 import ThemeToggle from './ThemeToggle';
 import ModalSheet from './ui/ModalSheet';
 import ActiveSessions from '@/components/block/active-sessions';
 import Avatar, { avatarUrl } from './Avatar';
 import ProfileDialog from './ProfileDialog';
+import { TopSearch, RefreshButton, playNotificationSound } from './TopBar';
+import { ButtonLoader } from './Loader';
 import { parseUserAgent } from '../lib/device';
 import { supabase } from '../lib/supabase';
+import { Bell, BellRing, Check, ChevronLeft, ChevronRight, LogOut, Mail, Menu, Settings, User, WifiOff, X } from './AnimatedIcons';
 
 /* Live notifications for the signed-in user: initial fetch + realtime
    INSERTs from the ceda_notifications publication. Mark-read on open. */
@@ -55,7 +44,11 @@ function useNotifications(userId) {
             .channel(`ceda-notifs-${userId.slice(0, 8)}`)
             .on('postgres_changes',
                 { event: 'INSERT', schema: 'public', table: 'ceda_notifications', filter: `user_id=eq.${userId}` },
-                () => load())
+                (payload) => {
+                    load();
+                    // a soft chime for anything that arrives while you are working
+                    playNotificationSound();
+                })
             .subscribe();
         return () => { supabase.removeChannel(channel); };
     }, [userId, load]);
@@ -438,7 +431,7 @@ export default function PortalLayout({
                 {/* ── Floating Pill Top Header ── */}
                 <header
                     className="glass-panel-strong flex items-center justify-between mx-6 px-5 h-14 sticky top-0 z-10"
-                    style={{ borderRadius: 9999 }}
+                    style={{ borderRadius: 9999, ...(showNotifications ? { backdropFilter: 'none', WebkitBackdropFilter: 'none' } : {}) }}
                 >
                     <div className="flex items-center gap-3">
                         <button onClick={() => setMobileMenuOpen(true)}
@@ -446,17 +439,8 @@ export default function PortalLayout({
                             <Menu className="w-5 h-5" />
                         </button>
 
-                        {/* Search */}
-                        <div className="hidden md:flex items-center gap-2 field-fill rounded-full px-3 py-1.5 w-56 lg:w-72">
-                            <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                            <input
-                                type="text"
-                                placeholder="Search..."
-                                value={searchQuery}
-                                onChange={e => setSearchQuery(e.target.value)}
-                                className="bg-transparent text-sm text-gray-700 dark:text-gray-200 placeholder-gray-400 outline-none w-full"
-                            />
-                        </div>
+                        {/* Search - a circle button until it is used */}
+                        <TopSearch value={searchQuery} onChange={setSearchQuery} />
                     </div>
 
                     <div className="flex items-center gap-1.5">
@@ -467,16 +451,20 @@ export default function PortalLayout({
                         )}
                         {headerActions}
 
-                        {/* Theme Toggle — lives in header */}
-                        <ThemeToggle />
+                        {/* Theme lives in Settings, not the top bar */}
 
                         {/* Notifications */}
                         <div className="relative">
                             <button
                                 onClick={() => { setShowNotifications(v => !v); if (!showNotifications) setTimeout(markAllRead, 600); }}
+                                aria-label={unread > 0 ? `Notifications, ${unread} unread` : 'Notifications'}
                                 className="relative p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 rounded-full transition-colors"
                             >
-                                <Bell className="w-5 h-5" />
+                                {unread > 0 ? (
+                                    <BellRing className="w-5 h-5 text-accent-500 ceda-bell-ring" />
+                                ) : (
+                                    <Bell className="w-5 h-5" />
+                                )}
                                 {unread > 0 && (
                                     <span className="absolute top-1 right-1 w-4 h-4 bg-royal-500 text-white text-[9px] rounded-full flex items-center justify-center">
                                         {unread > 9 ? '9+' : unread}
@@ -491,30 +479,55 @@ export default function PortalLayout({
                                         animate={{ opacity: 1, y: 0, scale: 1 }}
                                         exit={{ opacity: 0, y: 8, scale: 0.95 }}
                                         transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
-                                        className="absolute top-full right-0 mt-2 w-80 glass-panel-strong rounded-2xl shadow-2xl overflow-hidden z-50"
+                                        className="absolute top-full right-0 mt-2 w-96 max-w-[calc(100vw-2rem)] rounded-2xl overflow-hidden z-50 border border-gray-200/70 dark:border-white/10 bg-white/75 dark:bg-[#0d0d0f]/75 backdrop-blur-3xl backdrop-saturate-150 shadow-[0_24px_60px_-24px_rgba(20,10,5,0.45)]"
                                     >
-                                        <div className="p-4 border-b border-gray-100 dark:border-white/5">
-                                            <h3 className="text-gray-900 dark:text-white text-sm">Notifications</h3>
+                                        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200/60 dark:border-white/10">
+                                            <h3 className="text-gray-900 dark:text-white text-sm font-medium">Notifications</h3>
+                                            {unread > 0 && (
+                                                <button
+                                                    onClick={() => markAllRead()}
+                                                    className="text-[11px] text-accent-600 dark:text-accent-400 hover:underline"
+                                                >
+                                                    Mark all read
+                                                </button>
+                                            )}
                                         </div>
-                                        <div className="max-h-72 overflow-y-auto scrollbar-hide">
+                                        <div className="max-h-80 overflow-y-auto scrollbar-hide">
                                             {notifications.length === 0 ? (
-                                                <div className="p-6 text-center text-gray-400 text-sm">No notifications yet — pipeline updates land here.</div>
+                                                <div className="p-8 text-center">
+                                                    <div className="w-10 h-10 mx-auto rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center">
+                                                        <Bell className="w-4 h-4 text-gray-400" />
+                                                    </div>
+                                                    <p className="text-sm text-gray-500 dark:text-white/45 mt-3">Nothing new</p>
+                                                    <p className="text-[11px] text-gray-400 dark:text-white/30 mt-1">
+                                                        Gate decisions, evaluations and replies land here.
+                                                    </p>
+                                                </div>
                                             ) : (
-                                                notifications.map(n => (
-                                                    <a
-                                                        key={n.id}
-                                                        href={n.link || '#'}
-                                                        onClick={() => setShowNotifications(false)}
-                                                        className={`p-3 hover:bg-gray-50 dark:hover:bg-white/5 flex gap-3 ${!n.read ? 'bg-accent-50/50 dark:bg-accent-500/5' : ''}`}
-                                                    >
-                                                        <span className={`w-1.5 rounded-full flex-shrink-0 ${n.type === 'gate' ? 'bg-amber-400' : n.type === 'evaluation' ? 'bg-accent-500' : 'bg-sky-400'}`} />
-                                                        <div className="flex-1 min-w-0">
-                                                            <p className="text-sm text-gray-900 dark:text-white truncate">{n.title}</p>
-                                                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{n.body}</p>
-                                                            <p className="text-[10px] text-gray-400 mt-1">{new Date(n.created_at).toLocaleString()}</p>
-                                                        </div>
-                                                    </a>
-                                                ))
+                                                notifications.map(n => {
+                                                    const tone = n.type === 'gate' ? 'bg-amber-400'
+                                                        : n.type === 'evaluation' ? 'bg-accent-500'
+                                                            : n.type === 'message' ? 'bg-sky-400'
+                                                                : 'bg-emerald-400';
+                                                    return (
+                                                        <a
+                                                            key={n.id}
+                                                            href={n.link || '#'}
+                                                            onClick={() => setShowNotifications(false)}
+                                                            className={`p-3.5 flex gap-3 transition-colors hover:bg-white/70 dark:hover:bg-white/5 ${!n.read ? 'bg-accent-500/[0.07] dark:bg-accent-500/10' : ''}`}
+                                                        >
+                                                            <span className={`w-1.5 self-stretch rounded-full flex-shrink-0 ${tone} ${n.read ? 'opacity-40' : ''}`} />
+                                                            <div className="flex-1 min-w-0">
+                                                                <p className={`text-sm leading-snug ${n.read ? 'text-gray-600 dark:text-white/60' : 'text-gray-900 dark:text-white font-medium'}`}>
+                                                                    {n.title}
+                                                                </p>
+                                                                {n.body && <p className="text-xs text-gray-500 dark:text-white/45 mt-0.5 leading-relaxed">{n.body}</p>}
+                                                                <p className="text-[10px] text-gray-400 dark:text-white/30 mt-1">{new Date(n.created_at).toLocaleString()}</p>
+                                                            </div>
+                                                            {!n.read && <span className="w-1.5 h-1.5 rounded-full bg-accent-500 mt-1.5 flex-shrink-0" />}
+                                                        </a>
+                                                    );
+                                                })
                                             )}
                                         </div>
                                     </motion.div>
@@ -639,7 +652,7 @@ export default function PortalLayout({
                                         </label>
                                         <div className="flex gap-2 pt-1">
                                             <button onClick={saveProfile} disabled={savingProfile} className="btn-accent !py-2 !px-4 !text-xs">
-                                                {savingProfile ? 'Saving...' : 'Save profile'}
+                                                {savingProfile ? <ButtonLoader size={14} /> : 'Save profile'}
                                             </button>
                                             <button onClick={() => { setEditing(false); setAvatarFile(null); setAvatarPreview(null); }} className="btn-secondary !py-2 !px-4 !text-xs">
                                                 Cancel

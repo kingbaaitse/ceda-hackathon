@@ -401,6 +401,31 @@
 }
 
 @layer components {
+  /* A button that is working turns grey and shows the inline loader.
+     No spinners, no ellipses - just the CEDA glass logo in a disabled button. */
+  .btn-primary:has([data-loading]),
+  .btn-accent:has([data-loading]),
+  .btn-secondary:has([data-loading]),
+  .btn-danger:has([data-loading]),
+  button:has(> [data-loading]) {
+    background-color: #e6e4df !important;
+    border-color: #e6e4df !important;
+    color: #8c857c !important;
+    cursor: progress !important;
+    pointer-events: none;
+    box-shadow: none !important;
+  }
+
+  .dark .btn-primary:has([data-loading]),
+  .dark .btn-accent:has([data-loading]),
+  .dark .btn-secondary:has([data-loading]),
+  .dark .btn-danger:has([data-loading]),
+  .dark button:has(> [data-loading]) {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: rgba(255, 255, 255, 0.4) !important;
+  }
+
   .field-fill,
   input:not([type="checkbox"]):not([type="radio"]):not([class*="rounded-none"])[class*="rounded-"],
   select[class*="rounded-"],
@@ -426,6 +451,22 @@
 }
 
 @layer utilities {
+  /* The notification bell keeps moving while there is something unread. */
+  @keyframes ceda-bell-ring {
+    0%, 100% { transform: rotate(0deg); }
+    15% { transform: rotate(11deg); }
+    30% { transform: rotate(-9deg); }
+    45% { transform: rotate(6deg); }
+    60% { transform: rotate(-3deg); }
+  }
+  .ceda-bell-ring {
+    animation: ceda-bell-ring 1.4s ease-in-out infinite;
+    transform-origin: top center;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ceda-bell-ring { animation: none; }
+  }
+
   /* Obsidian StatusBars uses Tailwind v4 syntax (bg-(--var)/75) which our
      Tailwind 3.4 does not compile, so the bars would render invisible. */
   .obsidian-status-bars [data-status='up'] {

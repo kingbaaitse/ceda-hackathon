@@ -19,6 +19,7 @@ export function InlineLoader({ className = '', size = 28, label = 'Loading' }) {
         <span
             role="status"
             aria-label={label}
+            data-loading="true"
             className={`inline-flex items-center justify-center shrink-0 ${className}`}
             style={{ width: size, height: size }}
         >

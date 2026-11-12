@@ -1,16 +1,9 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import {
-    Mail,
-    Lock,
-    ArrowRight,
-    ArrowLeft,
-    Eye,
-    EyeOff,
-} from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import Logo from '../components/Logo';
 import { ButtonLoader, InlineLoader } from '../components/Loader';
+import { ArrowLeft, ArrowRight, Eye, EyeOff, Lock, Mail } from '../components/AnimatedIcons';
 
 const Login = ({ onSignup, onLanding }) => {
     const { login, resetPassword } = useAuth();
