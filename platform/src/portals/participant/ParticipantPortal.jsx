@@ -23,7 +23,7 @@ import { useRubric } from '../../lib/rubric';
 import { SDGS, TEAM_ROLES } from '../../lib/sdgs';
 import { queueDraft, flushDrafts } from '../../lib/offline';
 import { ButtonLoader, InlineLoader } from '../../components/Loader';
-import { CheckCircle2, ChevronLeft, ChevronRight, FileEdit, History, LayoutDashboard, Lightbulb, MessageCircle, MessageSquareText, Plus, Send, Trash2, Users } from '../../components/AnimatedIcons';
+import { AlertCircle, Award, CheckCircle2, ChevronLeft, ChevronRight, Clock, FileEdit, History, LayoutDashboard, Lightbulb, MessageCircle, MessageSquareText, Plus, Send, Trash2, Users } from '../../components/AnimatedIcons';
 
 const NAV = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
@@ -162,15 +162,13 @@ function Overview({ submission, gateEvents, evaluations, onSubmitTab }) {
                             <div className="flex flex-col items-center flex-shrink-0">
                                 <motion.div
                                     initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: i * 0.05 }}
-                                    className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${i < idx ? 'bg-emerald-500 border-emerald-500' : i === idx ? 'border-accent-500 bg-accent-50 dark:bg-accent-500/10' : 'border-gray-200 dark:border-white/10'}`}
+                                    className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${i <= idx ? 'bg-emerald-500 border-emerald-500' : 'border-gray-200 dark:border-white/10'}`}
                                 >
-                                    {i < idx && <CheckCircle2 className="w-4 h-4 text-white" />}
-                                    {i === idx && <div className="w-2.5 h-2.5 rounded-full bg-accent-500" />}
+                                    {i <= idx && <CheckCircle2 className="w-4 h-4 text-white" />}
                                 </motion.div>
                                 <span className={`text-[10px] mt-1.5 text-center w-20 ${i <= idx ? 'text-gray-700 dark:text-gray-200' : 'text-gray-400'}`}>{STAGE_LABELS[s]}</span>
                             </div>
-                            {i < TRAIL.length - 1 && <div className={`h-0.5 w-10 flex-shrink-0 -mx-0.5 mb-5 ${i < idx ? 'bg-emerald-500' : 'bg-gray-200 dark:bg-white/10'}`} />}
-                        </React.Fragment>
+                            {i < TRAIL.length - 1 && <div className={`h-0.5 w-10 flex-shrink-0 -mx-0.5 mb-5 ${i < idx ? 'bg-emerald-500' : 'bg-gray-200 dark:bg-white/10'}`} />}                        </React.Fragment>
                     ))}
                 </div>
             </div>

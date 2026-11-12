@@ -3,6 +3,19 @@
 All notable changes to the CEDA Innovation Hub. The same content is rendered in the app at
 `/changelog`.
 
+## 1.0.3 - Gallery and trail fixes
+
+### Fixed
+- **The awards gallery hover preview floats over the page** instead of being clipped inside the
+  strip it belongs to.
+- **Participants and team members can be opened from the awards gallery** — click a name to see
+  the profile card behind a winning entry. Only presentation details are shown; contact
+  information stays private. Requires the phase 3F database step.
+- **The timeline markers on the changelog no longer show the rail through them** in dark mode.
+- **The milestone trail marks every stage an entry has reached** in green with a tick, including
+  the stage it is in now.
+- Fixed a crash that could blank a participant portal whose entry had reached the final stage.
+
 ## 1.0.2 - Round two polish
 
 ### Fixed

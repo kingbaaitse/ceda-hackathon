@@ -11,6 +11,7 @@ import CursorFollower from '../components/CursorFollower';
 import MarketingNav from '../components/marketing/MarketingNav';
 import MarketingFooter from '../components/marketing/MarketingFooter';
 import ModalSheet from '../components/ui/ModalSheet';
+import ProfileDialog from '../components/ProfileDialog';
 import AttachmentGrid from '../components/AttachmentGrid';
 import { HoverImg } from '@/components/block/hover-img';
 import { supabase } from '../lib/supabase';
@@ -31,7 +32,7 @@ export default function Gallery({ onBack }) {
     useEffect(() => {
         supabase
             .from('ceda_submissions')
-            .select('id, title, description, owner_name, stage_of_development, sdgs, team_members, attachments, entry_type, updated_at')
+            .select('id, title, description, owner_id, owner_name, stage_of_development, sdgs, team_members, attachments, entry_type, updated_at')
             .eq('stage', 'awarded')
             .order('updated_at', { ascending: false })
             .then(async ({ data, error }) => {
@@ -72,6 +73,20 @@ export default function Gallery({ onBack }) {
     );
 
     const sdgLabel = (v) => SDGS.find(s => s.value === v)?.label || v;
+
+    /* Public profiles behind the awarded entries (phase 3F view). */
+    const [profiles, setProfiles] = useState([]);
+    const [profileOpen, setProfileOpen] = useState(null);
+    useEffect(() => {
+        supabase.from('ceda_award_profiles').select('id, full_name, title, avatar_path, org_name, bio, location')
+            .then(({ data }) => { if (data) setProfiles(data); });
+    }, []);
+    const openProfile = (s, name) => {
+        const byName = (name || '').trim().toLowerCase();
+        const match = profiles.find(p => p.id === s.owner_id)
+            || (byName && profiles.find(p => (p.full_name || '').toLowerCase() === byName));
+        setProfileOpen(match || { full_name: name || s.owner_name || 'Anonymous innovator' });
+    };
 
     return (
         <div className="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#0a0a0a] dark:text-white transition-colors duration-300">
@@ -127,7 +142,7 @@ export default function Gallery({ onBack }) {
             {hoverProjects.length > 0 && (
                 <div className="max-w-6xl mx-auto px-6 pb-14">
                     <p className="text-[10px] uppercase tracking-[0.2em] text-gray-900/30 dark:text-gray-900 dark:text-white/30 mb-4">Hover to preview</p>
-                    <HoverImg projects={hoverProjects} isContained compact />
+                    <HoverImg projects={hoverProjects} compact />
                 </div>
             )}
 
@@ -152,13 +167,16 @@ export default function Gallery({ onBack }) {
                 {awarded && awarded.length > 0 && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                         {awarded.map((s, i) => (
-                            <motion.button
+                            <motion.div
                                 key={s.id}
                                 initial={{ opacity: 0, y: 16 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: i * 0.06 }}
                                 onClick={() => setOpen(s)}
-                                className="glass-panel rounded-3xl p-6 text-left hover:border-accent-500/40 transition-colors group"
+                                role="button"
+                                tabIndex={0}
+                                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setOpen(s); } }}
+                                className="glass-panel rounded-3xl p-6 text-left hover:border-accent-500/40 transition-colors group cursor-pointer"
                             >
                                 <div className="flex items-center justify-between">
                                     <span className="px-2.5 py-1 rounded-full text-[11px] bg-accent-500/15 text-accent-600 dark:text-accent-300">
@@ -169,10 +187,16 @@ export default function Gallery({ onBack }) {
                                 <h3 className="mt-4 text-lg tracking-tight line-clamp-2">{s.title}</h3>
                                 <p className="mt-2 text-sm text-gray-900/50 dark:text-gray-900 dark:text-white/50 line-clamp-3">{s.description}</p>
                                 <div className="mt-4 flex items-center justify-between text-xs text-gray-900/40 dark:text-gray-900 dark:text-white/40">
-                                    <span className="truncate">{s.owner_name || 'Anonymous innovator'}</span>
+                                    <button
+                                        type="button"
+                                        onClick={e => { e.stopPropagation(); openProfile(s); }}
+                                        className="truncate hover:text-accent-500 hover:underline underline-offset-2 transition-colors"
+                                    >
+                                        {s.owner_name || 'Anonymous innovator'}
+                                    </button>
                                     <span>{(s.sdgs || []).length} SDG{s.sdgs?.length === 1 ? '' : 's'}</span>
                                 </div>
-                            </motion.button>
+                            </motion.div>
                         ))}
                     </div>
                 )}
@@ -192,6 +216,15 @@ export default function Gallery({ onBack }) {
                     }
                 >
                     <div className="space-y-5">
+                        <button
+                            type="button"
+                            onClick={() => openProfile(open, null)}
+                            className="inline-flex items-center gap-2 text-sm text-gray-700 dark:text-gray-200 hover:text-accent-500 transition-colors"
+                        >
+                            <span className="w-1.5 h-1.5 rounded-full bg-accent-500" />
+                            {open.owner_name || 'Anonymous innovator'}
+                            <span className="text-xs text-gray-400">· view profile</span>
+                        </button>
                         <p className="text-sm text-gray-700 dark:text-gray-200 whitespace-pre-wrap">{open.description}</p>
                         {(open.sdgs || []).length > 0 && (
                             <div>
@@ -209,11 +242,23 @@ export default function Gallery({ onBack }) {
                             <div>
                                 <p className="text-xs text-gray-400 uppercase tracking-wide mb-2">Team</p>
                                 <div className="flex flex-wrap gap-2">
-                                    {open.team_members.map((m, i) => (
-                                        <span key={i} className="px-3 py-1.5 rounded-full text-xs bg-gray-100 dark:bg-black/[0.03] dark:bg-white/5 text-gray-700 dark:text-gray-200">
-                                            {m.name}{m.roles?.length ? ` — ${m.roles.join(' / ')}` : ''}
-                                        </span>
-                                    ))}
+                                    {open.team_members.map((m, i) => {
+                                        const clickable = !!m.name && profiles.some(p => (p.full_name || '').toLowerCase() === m.name.trim().toLowerCase());
+                                        return clickable ? (
+                                            <button
+                                                key={i}
+                                                type="button"
+                                                onClick={() => openProfile(open, m.name)}
+                                                className="px-3 py-1.5 rounded-full text-xs bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-gray-200 hover:text-accent-500 hover:underline underline-offset-2 transition-colors"
+                                            >
+                                                {m.name}{m.roles?.length ? ` — ${m.roles.join(' / ')}` : ''}
+                                            </button>
+                                        ) : (
+                                            <span key={i} className="px-3 py-1.5 rounded-full text-xs bg-gray-100 dark:bg-black/[0.03] dark:bg-white/5 text-gray-700 dark:text-gray-200">
+                                                {m.name}{m.roles?.length ? ` — ${m.roles.join(' / ')}` : ''}
+                                            </span>
+                                        );
+                                    })}
                                 </div>
                             </div>
                         )}
@@ -226,6 +271,8 @@ export default function Gallery({ onBack }) {
                     </div>
                 </ModalSheet>
             )}
+
+            <ProfileDialog profile={profileOpen} open={!!profileOpen} onClose={() => setProfileOpen(null)} />
 
             <MarketingFooter />
         </div>

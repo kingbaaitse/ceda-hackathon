@@ -18,6 +18,9 @@ Run in order, in the Supabase SQL editor (or `supabase db push`):
 | `supabase-ceda-phase3c-email-key.local.sql` | stores the Resend key in Vault or the private schema (git-ignored) |
 | `supabase-ceda-phase3d-email-fix.sql` | fixes the dynamic provider call (`SELECT`, not `PERFORM`) |
 | `supabase-ceda-phase4-sessions.sql` | Active sessions: list the signed-in devices, revoke one, revoke all others (backed by `auth.sessions`) |
+| `supabase-ceda-phase5-profile.sql` | Profile editor: bios, avatars, titles, team details |
+| `supabase-ceda-phase3e-status.sql` | Automatic service status strip (computed from live activity, shown on the landing page) |
+| `supabase-ceda-phase3f-public-profiles.sql` | Public profile cards behind the awards gallery (no contact data) |
 
 Every file is idempotent — re-running is safe.
 

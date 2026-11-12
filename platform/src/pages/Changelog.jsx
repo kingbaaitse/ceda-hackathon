@@ -20,6 +20,25 @@ import MarketingFooter from '../components/marketing/MarketingFooter';
 
 const RELEASES = [
     {
+        version: '1.0.3',
+        date: '2026-11-12',
+        title: 'Gallery and trail fixes',
+        summary: 'The awards gallery gets a floating hover preview and clickable profiles, the changelog timeline loses a stray line, and the milestone trail now marks every stage reached.',
+        groups: [
+            {
+                icon: Layers,
+                title: 'Interface',
+                items: [
+                    'The awards gallery hover preview now floats over the page instead of being clipped inside the strip it belongs to.',
+                    'Participants and team members can be opened from the awards gallery — click a name to see the profile card behind a winning entry. Only presentation details are shown; contact information stays private.',
+                    'The timeline markers on the changelog no longer show the rail through them in dark mode.',
+                    'The milestone trail marks every stage an entry has reached in green with a tick, including the stage it is in now.',
+                    'Fixed a crash that could blank a participant portal whose entry had reached the final stage.',
+                ],
+            },
+        ],
+    },
+    {
         version: '1.0.2',
         date: '2026-11-12',
         title: 'Round two polish',
@@ -213,7 +232,7 @@ export default function Changelog({ onBack }) {
                                     className="relative pl-14"
                                 >
                                     {/* node */}
-                                    <span className={`absolute left-0 top-1 w-10 h-10 rounded-full border-4 border-gray-50 dark:border-[#0a0a0a] flex items-center justify-center text-[10px] font-mono ${open ? 'bg-accent-500 text-white' : 'bg-white dark:bg-white/10 text-gray-500 dark:text-white/50'}`}>
+                                    <span className={`absolute left-0 top-1 w-10 h-10 rounded-full border-4 border-gray-50 dark:border-[#0a0a0a] flex items-center justify-center text-[10px] font-mono ${open ? 'bg-accent-500 text-white' : 'bg-white dark:bg-[#232323] text-gray-500 dark:text-white/50'}`}>
                                         {ri + 1}
                                     </span>
 
