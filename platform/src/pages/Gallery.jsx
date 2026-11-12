@@ -70,7 +70,7 @@ export default function Gallery({ onBack }) {
     const sdgLabel = (v) => SDGS.find(s => s.value === v)?.label || v;
 
     return (
-        <div className="min-h-screen bg-[#0a0a0a] text-white dark">
+        <div className="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#0a0a0a] dark:text-gray-900 dark:text-white">
             {/* Hero */}
             <div className="relative overflow-hidden">
                 <div
@@ -83,13 +83,13 @@ export default function Gallery({ onBack }) {
                 <div className="relative max-w-6xl mx-auto px-6 pt-10 pb-14">
                     <button
                         onClick={onBack}
-                        className="inline-flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"
+                        className="inline-flex items-center gap-2 text-sm text-gray-900/60 dark:text-gray-900 dark:text-white/60 hover:text-gray-900 dark:text-white transition-colors"
                     >
                         <ArrowLeft className="w-4 h-4" /> Back to sign in
                     </button>
                     <div className="mt-8 flex items-center gap-3">
                         <Logo className="w-9 h-9" />
-                        <span className="text-sm text-white/70 tracking-tight">CEDA Innovation Hub</span>
+                        <span className="text-sm text-gray-900/70 dark:text-gray-900 dark:text-white/70 tracking-tight">CEDA Innovation Hub</span>
                     </div>
                     <div className="mt-10 flex items-center gap-2 text-accent-400 text-sm">
                         <Trophy className="w-4 h-4" /> Awards Gallery
@@ -97,7 +97,7 @@ export default function Gallery({ onBack }) {
                     <h1 className="mt-3 text-4xl sm:text-5xl font-medium tracking-tight max-w-3xl">
                         Innovations awarded by CEDA
                     </h1>
-                    <p className="mt-4 text-white/60 max-w-2xl">
+                    <p className="mt-4 text-gray-900/60 dark:text-gray-900 dark:text-white/60 max-w-2xl">
                         Winning submissions that passed every stage gate — screening, evaluation,
                         selection — and earned CEDA's recognition.
                     </p>
@@ -109,13 +109,13 @@ export default function Gallery({ onBack }) {
                 <div className="max-w-6xl mx-auto px-6 pb-16">
                     <div className="flex items-end justify-between gap-4 mb-4">
                         <div>
-                            <h2 className="text-2xl tracking-tight text-white">The showcase</h2>
-                            <p className="text-white/50 text-sm mt-1">Drag through the awarded work.</p>
+                            <h2 className="text-2xl tracking-tight text-gray-900 dark:text-white">The showcase</h2>
+                            <p className="text-gray-900/50 dark:text-gray-900 dark:text-white/50 text-sm mt-1">Drag through the awarded work.</p>
                         </div>
                     </div>
                     <Suspense fallback={
                         <div className="h-[420px] rounded-3xl bg-[#0a0a0a] flex items-center justify-center">
-                            <Loader2 className="w-6 h-6 animate-spin text-white/30" />
+                            <Loader2 className="w-6 h-6 animate-spin text-gray-900/30 dark:text-gray-900 dark:text-white/30" />
                         </div>
                     }>
                         <ArtGallery images={galleryImages} items={galleryCaptions} className="h-[420px]" />
@@ -126,7 +126,7 @@ export default function Gallery({ onBack }) {
             {/* Hover preview rail (original Obsidian component) */}
             {hoverProjects.length > 0 && (
                 <div className="max-w-6xl mx-auto px-6 pb-14">
-                    <p className="text-[10px] uppercase tracking-[0.2em] text-white/30 mb-4">Hover to preview</p>
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-gray-900/30 dark:text-gray-900 dark:text-white/30 mb-4">Hover to preview</p>
                     <HoverImg projects={hoverProjects} isContained compact />
                 </div>
             )}
@@ -134,19 +134,19 @@ export default function Gallery({ onBack }) {
             {/* Grid */}
             <div className="max-w-6xl mx-auto px-6 pb-24">
                 {awarded === null && !fatal && (
-                    <div className="flex items-center justify-center py-20 text-white/40">
+                    <div className="flex items-center justify-center py-20 text-gray-900/40 dark:text-gray-900 dark:text-white/40">
                         <Loader2 className="w-6 h-6 animate-spin" />
                     </div>
                 )}
                 {fatal && (
-                    <div className="glass-panel rounded-3xl p-8 text-center text-white/50 text-sm">
+                    <div className="glass-panel rounded-3xl p-8 text-center text-gray-900/50 dark:text-gray-900 dark:text-white/50 text-sm">
                         {fatal}
                     </div>
                 )}
                 {awarded && awarded.length === 0 && (
                     <div className="glass-panel rounded-3xl p-12 text-center">
-                        <Sparkles className="w-8 h-8 text-white/20 mx-auto" />
-                        <p className="text-white/50 mt-4">No awarded submissions yet. The first winners will appear here.</p>
+                        <Sparkles className="w-8 h-8 text-gray-900/20 dark:text-gray-900 dark:text-white/20 mx-auto" />
+                        <p className="text-gray-900/50 dark:text-gray-900 dark:text-white/50 mt-4">No awarded submissions yet. The first winners will appear here.</p>
                     </div>
                 )}
                 {awarded && awarded.length > 0 && (
@@ -161,14 +161,14 @@ export default function Gallery({ onBack }) {
                                 className="glass-panel rounded-3xl p-6 text-left hover:border-accent-500/40 transition-colors group"
                             >
                                 <div className="flex items-center justify-between">
-                                    <span className="px-2.5 py-1 rounded-full text-[11px] bg-accent-500/15 text-accent-300">
+                                    <span className="px-2.5 py-1 rounded-full text-[11px] bg-accent-500/15 text-accent-600 dark:text-accent-300">
                                         {s.stage_of_development || 'Idea'}
                                     </span>
                                     <Trophy className="w-4 h-4 text-accent-400 group-hover:scale-110 transition-transform" />
                                 </div>
                                 <h3 className="mt-4 text-lg tracking-tight line-clamp-2">{s.title}</h3>
-                                <p className="mt-2 text-sm text-white/50 line-clamp-3">{s.description}</p>
-                                <div className="mt-4 flex items-center justify-between text-xs text-white/40">
+                                <p className="mt-2 text-sm text-gray-900/50 dark:text-gray-900 dark:text-white/50 line-clamp-3">{s.description}</p>
+                                <div className="mt-4 flex items-center justify-between text-xs text-gray-900/40 dark:text-gray-900 dark:text-white/40">
                                     <span className="truncate">{s.owner_name || 'Anonymous innovator'}</span>
                                     <span>{(s.sdgs || []).length} SDG{s.sdgs?.length === 1 ? '' : 's'}</span>
                                 </div>
@@ -210,7 +210,7 @@ export default function Gallery({ onBack }) {
                                 <p className="text-xs text-gray-400 uppercase tracking-wide mb-2">Team</p>
                                 <div className="flex flex-wrap gap-2">
                                     {open.team_members.map((m, i) => (
-                                        <span key={i} className="px-3 py-1.5 rounded-full text-xs bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-gray-200">
+                                        <span key={i} className="px-3 py-1.5 rounded-full text-xs bg-gray-100 dark:bg-black/[0.03] dark:bg-white/5 text-gray-700 dark:text-gray-200">
                                             {m.name}{m.roles?.length ? ` — ${m.roles.join(' / ')}` : ''}
                                         </span>
                                     ))}

@@ -38,12 +38,18 @@ All notable changes to the CEDA Innovation Hub. The same content is rendered in 
 - Semantic colour system (`src/lib/semantics.js`): grey = inactive, blue = with CEDA,
   orange = moving, amber = decision due, green = awarded, red = out. Applied to every chart,
   counter, badge and stage pill. Decorative gradients were removed from data views.
+- **Landing page rebuilt** in the ReactDrops reference composition: a light editorial page with
+  a live interactive preview (the glass prism) as the hero, pill CTAs, section eyebrows, a
+  three-step getting-started row, and a dark closing band. The prism moved here from the login
+  panel.
+- **Login panel now matches the signup panel exactly** ("One submission. Every gate.").
+- **Public pages follow the user's theme.** The landing page, awards gallery and changelog were
+  authored dark-only and carried a hardcoded `dark` class; they now use semantic tokens and
+  render light or dark with the rest of the app.
 - `Select` and `MultiSelect` render their menus in a portal, so they are no longer clipped by
   cards or scroll areas.
 - Primary buttons use the CEDA accent instead of black; a `btn-danger` variant was added for
   destructive actions.
-- The login brand panel and the landing page were rebuilt; the landing page was then trimmed to
-  an essential summary.
 - The Obsidian UI components are now the **originals**, pulled from their public registry
   (`tools/sync-obsidian.mjs`) instead of reimplementations; their assets are mirrored locally
   (`tools/mirror-obsidian-assets.mjs`) because their CDN blocks CORS.

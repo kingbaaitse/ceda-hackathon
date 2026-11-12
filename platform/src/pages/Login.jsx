@@ -1,18 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Lock, ArrowRight, Eye, EyeOff, Loader2, Lightbulb } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import Logo from '../components/Logo';
-import { FlipText } from '@/components/block/flip-text';
-import { DraggableMarquee } from '@/components/block/draggable-marquee';
-import { supabase } from '../lib/supabase';
-
-const VPrism = React.lazy(() => import('@/components/block/v-prism'));
-const DARK_PRESET = {
-    ambientLight: 0.015, pointLights: 0.05, spotIntensity: 1.0, rainbowGlow: 2.5,
-    bloom: 0.5, roughness: 0, ior: 1.5, thickness: 0.9,
-    background: '#000000', prismTint: '#ffffff',
-};
 
 const Login = ({ onSignup }) => {
     const { login, resetPassword } = useAuth();
@@ -24,17 +14,6 @@ const Login = ({ onSignup }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [resetSent, setResetSent] = useState(false);
-    const [showcase, setShowcase] = useState([]);
-
-    /* Awarded innovations scroll across the brand panel */
-    useEffect(() => {
-        supabase
-            .from('ceda_submissions')
-            .select('title')
-            .eq('stage', 'awarded')
-            .limit(12)
-            .then(({ data }) => setShowcase((data || []).map(s => ({ id: s.title, title: s.title }))));
-    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -67,90 +46,26 @@ const Login = ({ onSignup }) => {
 
     return (
         <div className="flex flex-col lg:flex-row min-h-screen transition-colors duration-300">
-            {/* Left: Brand Cover Panel */}
-            <div className="hidden lg:flex w-[46%] xl:w-1/2 relative overflow-hidden bg-[#160b09]">
-                {/* brand backdrop */}
-                <div
-                    className="absolute inset-0"
-                    style={{ background: 'radial-gradient(760px 420px at 12% 6%, rgba(242,101,34,0.30), transparent 68%), radial-gradient(620px 340px at 92% 96%, rgba(160,32,19,0.34), transparent 70%), linear-gradient(160deg, #2a0f0a 0%, #160b09 55%, #12080a 100%)' }}
+            {/* Left: Brand Cover Panel - identical to the signup panel */}
+            <div className="hidden lg:flex w-1/2 bg-royal-900 relative items-center justify-center overflow-hidden">
+                <motion.div
+                    initial={{ opacity: 0, scale: 1.1 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 1 }}
+                    className="absolute inset-0 bg-gradient-to-br from-royal-900 via-royal-800 to-accent-950"
                 />
-                {/* subtle dot grid */}
-                <div
-                    className="absolute inset-0 opacity-[0.07]"
-                    style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '22px 22px' }}
-                />
-                <div
-                    className="absolute -right-24 -top-16 w-[460px] h-[460px] pointer-events-none"
-                    style={{
-                        maskImage: 'radial-gradient(circle at 62% 38%, black 34%, transparent 70%)',
-                        WebkitMaskImage: 'radial-gradient(circle at 62% 38%, black 34%, transparent 70%)',
-                    }}
-                >
-                    <React.Suspense fallback={null}>
-                        <VPrism settings={DARK_PRESET} />
-                    </React.Suspense>
-                </div>
-
-                <div className="relative z-10 flex flex-col justify-between px-14 py-14 w-full max-w-2xl">
-                    <motion.div
-                        initial={{ opacity: 0, y: 18 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.15, duration: 0.6 }}
-                    >
-                        <div className="flex items-center gap-3">
-                            <Logo className="w-10 h-10" />
-                            <div>
-                                <p className="text-white text-lg tracking-tight leading-tight">CEDA Innovation Hub</p>
-                                <p className="text-white/45 text-[11px] mt-0.5">Citizen Entrepreneurial Development Agency</p>
-                            </div>
-                        </div>
-
-                        <h1 className="text-white text-[44px] xl:text-5xl leading-[1.08] tracking-tight mt-12">
-                            From idea to <FlipText className="font-serif-italic text-accent-300">award</FlipText>.
-                        </h1>
-
-                        <p className="text-white/65 text-lg mt-5 leading-relaxed max-w-lg">
-                            One platform for the whole CEDA innovation pipeline — submit your innovation,
-                            follow it through every stage gate, and get structured feedback at each one.
-                        </p>
-
-                        {/* the pipeline, colour-coded by stage */}
-                        <div className="mt-9 flex flex-wrap items-center gap-2">
-                            {['Draft', 'Screening', 'Evaluation', 'Selection', 'Award'].map((label, i, arr) => (
-                                <React.Fragment key={label}>
-                                    <span className={`px-3 py-1.5 rounded-full text-xs border ${
-                                        i === arr.length - 1
-                                            ? 'border-emerald-400/40 bg-emerald-400/10 text-emerald-300'
-                                            : 'border-white/12 bg-white/5 text-white/60'
-                                    }`}>
-                                        {label}
-                                    </span>
-                                    {i < arr.length - 1 && <span className="text-white/20 text-xs">→</span>}
-                                </React.Fragment>
-                            ))}
-                        </div>
-                    </motion.div>
-
-                    {showcase.length > 0 && (
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.5, duration: 0.6 }}
-                            className="mt-10"
-                        >
-                            <p className="text-[10px] uppercase tracking-[0.2em] text-white/30 mb-3">Recently awarded</p>
-                            <DraggableMarquee
-                                items={showcase.map(s => ({ id: s.id, src: '', alt: s.title, width: 320, height: 200, title: s.title }))}
-                                speed={0.4}
-                                repeatCount={2}
-                                renderItem={(item) => (
-                                    <span className="px-3 py-1.5 rounded-full text-xs bg-white/8 text-white/60 whitespace-nowrap">
-                                        {item.title}
-                                    </span>
-                                )}
-                            />
-                        </motion.div>
-                    )}
+                <div className="relative z-10 px-16 max-w-xl">
+                    <div className="flex items-center gap-3 mb-8">
+                        <Logo className="w-12 h-12" />
+                        <span className="text-white text-2xl tracking-tight">CEDA Innovation Hub</span>
+                    </div>
+                    <h1 className="text-white text-5xl leading-tight tracking-tight">
+                        One submission. <span className="font-serif-italic text-5xl text-accent-300">Every gate.</span>
+                    </h1>
+                    <p className="text-white/70 text-lg mt-6 leading-relaxed">
+                        Sign in to continue your innovation through screening, evaluation and
+                        award — with feedback at every stage.
+                    </p>
                 </div>
             </div>
 

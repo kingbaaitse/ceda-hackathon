@@ -31,8 +31,9 @@ const RELEASES = [
                 title: 'Partner & showcase',
                 items: [
                     'CEDA and Oratory League presented as the two sides of the project: CEDA owns the competition and the pipeline, Oratory League is the official partner and the developer behind the platform.',
-                    'The public page shows the awarded work as a draggable, infinitely tiled showcase, a parallax strip of the winners, and the competition window as a daily status strip.',
+                    'The landing page leads with a live interactive preview and carries the awarded work as a draggable, infinitely tiled showcase, a parallax strip of the winners, and the competition window as a daily status strip.',
                     'Every showcase component is the original Obsidian UI build, pulled from their public registry and kept in sync by a script.',
+                    'Public pages follow the reader’s theme — light or dark — instead of forcing dark.',
                 ],
             },
             {
@@ -108,14 +109,14 @@ const RELEASES = [
 
 export default function Changelog({ onBack }) {
     return (
-        <div className="min-h-screen bg-[#0a0a0a] text-white dark">
-            <header className="sticky top-0 z-40 border-b border-white/5 bg-[#0a0a0a]/85 backdrop-blur-xl">
+        <div className="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#0a0a0a] dark:text-gray-900 dark:text-white">
+            <header className="sticky top-0 z-40 border-b border-gray-200 dark:border-white/5 bg-gray-50/85 dark:bg-[#0a0a0a]/85 backdrop-blur-xl">
                 <div className="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <Logo className="w-8 h-8" />
                         <span className="text-sm tracking-tight">CEDA Innovation Hub</span>
                     </div>
-                    <button onClick={onBack} className="inline-flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors">
+                    <button onClick={onBack} className="inline-flex items-center gap-2 text-sm text-gray-900/60 dark:text-gray-900 dark:text-white/60 hover:text-gray-900 dark:text-white transition-colors">
                         <ArrowLeft className="w-4 h-4" /> Back
                     </button>
                 </div>
@@ -126,7 +127,7 @@ export default function Changelog({ onBack }) {
                     <GitCommitVertical className="w-3.5 h-3.5" /> Changelog
                 </div>
                 <h1 className="mt-5 text-4xl sm:text-5xl tracking-tight">What changed, and when</h1>
-                <p className="mt-4 text-white/55 max-w-2xl">
+                <p className="mt-4 text-gray-900/55 dark:text-gray-900 dark:text-white/55 max-w-2xl">
                     Every release of the CEDA Innovation Hub, newest first — what was added,
                     why it matters for the competition, and what it means for the entrant.
                 </p>
@@ -141,26 +142,26 @@ export default function Changelog({ onBack }) {
                             transition={{ duration: 0.4 }}
                         >
                             <div className="flex items-baseline gap-4">
-                                <span className="px-3 py-1 rounded-full text-xs bg-accent-500/15 text-accent-300 font-medium">
+                                <span className="px-3 py-1 rounded-full text-xs bg-accent-500/15 text-accent-600 dark:text-accent-300 font-medium">
                                     v{rel.version}
                                 </span>
-                                <span className="text-xs text-white/35">{rel.date}</span>
+                                <span className="text-xs text-gray-900/35 dark:text-gray-900 dark:text-white/35">{rel.date}</span>
                             </div>
                             <h2 className="mt-4 text-2xl tracking-tight">{rel.title}</h2>
-                            <p className="mt-2 text-white/55 max-w-2xl">{rel.summary}</p>
+                            <p className="mt-2 text-gray-900/55 dark:text-gray-900 dark:text-white/55 max-w-2xl">{rel.summary}</p>
 
                             <div className="mt-8 space-y-6">
                                 {rel.groups.map(g => (
-                                    <div key={g.title} className="rounded-3xl border border-white/10 p-6">
+                                    <div key={g.title} className="rounded-3xl border border-gray-200 dark:border-white/10 p-6">
                                         <div className="flex items-center gap-2.5">
                                             <div className="w-8 h-8 rounded-full bg-accent-500/12 flex items-center justify-center">
                                                 <g.icon className="w-4 h-4 text-accent-400" />
                                             </div>
-                                            <h3 className="text-white">{g.title}</h3>
+                                            <h3 className="text-gray-900 dark:text-white">{g.title}</h3>
                                         </div>
                                         <ul className="mt-4 space-y-2.5">
                                             {g.items.map((item, i) => (
-                                                <li key={i} className="flex gap-2.5 text-sm text-white/60">
+                                                <li key={i} className="flex gap-2.5 text-sm text-gray-900/60 dark:text-gray-900 dark:text-white/60">
                                                     <span className="mt-[7px] w-1 h-1 rounded-full bg-accent-500 flex-shrink-0" />
                                                     <span className="leading-relaxed">{item}</span>
                                                 </li>
@@ -173,9 +174,9 @@ export default function Changelog({ onBack }) {
                     ))}
                 </div>
 
-                <footer className="mt-20 pt-8 border-t border-white/5 flex items-center gap-3">
+                <footer className="mt-20 pt-8 border-t border-gray-200 dark:border-white/5 flex items-center gap-3">
                     <Logo className="w-6 h-6" />
-                    <p className="text-xs text-white/35">
+                    <p className="text-xs text-gray-900/35 dark:text-gray-900 dark:text-white/35">
                         CEDA Innovation Hub · Citizen Entrepreneurial Development Agency, Botswana
                     </p>
                 </footer>
