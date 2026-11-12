@@ -205,11 +205,11 @@ export default function Changelog({ onBack }) {
             />
 
             <main className="max-w-4xl mx-auto px-6 pt-32 pb-20">
-                <div className="flex items-center gap-2 text-accent-600 dark:text-accent-400 text-xs uppercase tracking-[0.18em]">
+                <div className="flex items-center justify-center gap-2 text-accent-600 dark:text-accent-400 text-xs uppercase tracking-[0.18em]">
                     <GitCommitVertical className="w-3.5 h-3.5" /> Changelog
                 </div>
-                <h1 className="mt-5 text-4xl sm:text-5xl font-semibold tracking-[-0.03em]">What changed, and when</h1>
-                <p className="mt-4 text-gray-600 dark:text-white/55 max-w-2xl">
+                <h1 className="mt-5 text-4xl sm:text-5xl font-semibold tracking-[-0.03em] text-center">What changed, and when</h1>
+                <p className="mt-4 text-gray-600 dark:text-white/55 max-w-2xl mx-auto text-center">
                     Every release of the CEDA Innovation Hub, newest first. Open a release to read
                     what it changed and why it matters.
                 </p>
