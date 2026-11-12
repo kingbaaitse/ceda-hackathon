@@ -1,24 +1,14 @@
 /**
- * FloatingNav — a pill-shaped navigation bar that floats over the page.
+ * MarketingNav — the floating pill navigation used by every public page.
  *
- * Behaviour:
- *  - always a rounded glass pill, centred
- *  - hides when scrolling down, returns the moment the reader scrolls up
- *  - tightens (less padding, smaller logo) once the page is scrolled
- *  - the active section is tracked and marked
+ * Hides on scroll down, returns on scroll up, tightens once the page moves,
+ * and marks the section the reader is in.
  */
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import Logo from './Logo';
+import Logo from '../Logo';
 
-const LINKS = [
-    { id: 'pipeline', label: 'Pipeline' },
-    { id: 'awards', label: 'Awards' },
-    { id: 'partner', label: 'Partner' },
-    { id: 'changelog', label: 'Changelog', href: '/changelog' },
-];
-
-export default function FloatingNav({ onSignIn, onRegister }) {
+export default function MarketingNav({ links = [], onSignIn, onRegister }) {
     const [scrolled, setScrolled] = useState(false);
     const [hidden, setHidden] = useState(false);
     const [active, setActive] = useState('');
@@ -28,12 +18,11 @@ export default function FloatingNav({ onSignIn, onRegister }) {
         const onScroll = () => {
             const y = window.scrollY;
             setScrolled(y > 24);
-            setHidden(y > last && y > 140 && !document.querySelector('dialog[open]'));
+            setHidden(y > last && y > 140);
             last = y;
 
-            // active section
             let current = '';
-            for (const l of LINKS) {
+            for (const l of links) {
                 const el = l.id && document.getElementById(l.id);
                 if (el && el.getBoundingClientRect().top <= window.innerHeight * 0.4) current = l.id;
             }
@@ -41,7 +30,7 @@ export default function FloatingNav({ onSignIn, onRegister }) {
         };
         window.addEventListener('scroll', onScroll, { passive: true });
         return () => window.removeEventListener('scroll', onScroll);
-    }, []);
+    }, [links]);
 
     return (
         <AnimatePresence>
@@ -70,7 +59,7 @@ export default function FloatingNav({ onSignIn, onRegister }) {
                         </a>
 
                         <div className="hidden md:flex items-center gap-0.5 mx-1">
-                            {LINKS.map(l => (
+                            {links.map(l => (
                                 <a
                                     key={l.id || l.href}
                                     href={l.href || `#${l.id}`}
@@ -78,7 +67,7 @@ export default function FloatingNav({ onSignIn, onRegister }) {
                                 >
                                     {active === l.id && (
                                         <motion.span
-                                            layoutId="floatnav-active"
+                                            layoutId="marketing-nav-active"
                                             className="absolute inset-0 rounded-full bg-gray-900/5 dark:bg-white/10"
                                             transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                                         />

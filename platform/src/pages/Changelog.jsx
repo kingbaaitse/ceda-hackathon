@@ -7,6 +7,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, GitCommitVertical, Sparkles, ShieldCheck, Layers, Bell, Gauge } from 'lucide-react';
 import Logo from '../components/Logo';
+import MarketingNav from '../components/marketing/MarketingNav';
+import MarketingFooter from '../components/marketing/MarketingFooter';
 
 const RELEASES = [
     {
@@ -110,17 +112,14 @@ const RELEASES = [
 export default function Changelog({ onBack }) {
     return (
         <div className="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#0a0a0a] dark:text-gray-900 dark:text-white">
-            <header className="sticky top-0 z-40 border-b border-gray-200 dark:border-white/5 bg-gray-50/85 dark:bg-[#0a0a0a]/85 backdrop-blur-xl">
-                <div className="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <Logo className="w-8 h-8" />
-                        <span className="text-sm tracking-tight">CEDA Innovation Hub</span>
-                    </div>
-                    <button onClick={onBack} className="inline-flex items-center gap-2 text-sm text-gray-900/60 dark:text-gray-900 dark:text-white/60 hover:text-gray-900 dark:text-white transition-colors">
-                        <ArrowLeft className="w-4 h-4" /> Back
-                    </button>
-                </div>
-            </header>
+            <MarketingNav
+                links={[
+                    { id: 'changelog', label: 'Changelog' },
+                    { id: 'awards', label: 'Awards', href: '/gallery' },
+                ]}
+                onSignIn={onBack}
+                onRegister={onBack}
+            />
 
             <main className="max-w-4xl mx-auto px-6 py-16">
                 <div className="flex items-center gap-2 text-accent-400 text-xs uppercase tracking-[0.18em]">
@@ -174,12 +173,7 @@ export default function Changelog({ onBack }) {
                     ))}
                 </div>
 
-                <footer className="mt-20 pt-8 border-t border-gray-200 dark:border-white/5 flex items-center gap-3">
-                    <Logo className="w-6 h-6" />
-                    <p className="text-xs text-gray-900/35 dark:text-gray-900 dark:text-white/35">
-                        CEDA Innovation Hub · Citizen Entrepreneurial Development Agency, Botswana
-                    </p>
-                </footer>
+                <MarketingFooter />
             </main>
         </div>
     );

@@ -14,7 +14,10 @@ import {
     ShieldCheck, MessageCircle, Scale, Layers, Zap,
 } from 'lucide-react';
 import Logo from '../components/Logo';
-import FloatingNav from '../components/FloatingNav';
+import MarketingNav from '../components/marketing/MarketingNav';
+import MarketingFooter from '../components/marketing/MarketingFooter';
+import PipelineSection from '../components/marketing/PipelineSection';
+import BentoFeatures from '../components/marketing/BentoFeatures';
 import CursorFollower from '../components/CursorFollower';
 import { FlipText } from '@/components/block/flip-text';
 import stepRegister from '../assets/img/illustrations/profile.svg';
@@ -68,43 +71,6 @@ const FEATURES = [
     { icon: ShieldCheck, title: 'Audit trail', body: 'Every gate, score and assignment is recorded with who did it and when.' },
 ];
 
-const FOOTER_SECTIONS = [
-    {
-        title: 'Platform',
-        items: [
-            { label: 'Submission wizard', href: '#pipeline' },
-            { label: 'Getting started', href: '#pipeline' },
-            { label: 'Awards gallery', href: '/gallery' },
-            { label: 'Changelog', href: '/changelog' },
-        ],
-    },
-    {
-        title: 'For entrants',
-        items: [
-            { label: 'Register', href: '/signup' },
-            { label: 'Sign in', href: '/login' },
-            { label: 'Stage gates', href: '#pipeline' },
-            { label: 'How scoring works', href: '#why' },
-        ],
-    },
-    {
-        title: 'For CEDA',
-        items: [
-            { label: 'Judge workspace', href: '/login' },
-            { label: 'Administrator console', href: '/login' },
-            { label: 'Partner', href: '#partner' },
-        ],
-    },
-    {
-        title: 'Legal',
-        items: [
-            { label: 'Privacy policy', href: '/login' },
-            { label: 'Terms of use', href: '/login' },
-            { label: 'Data protection', href: '/login' },
-            { label: 'Accessibility', href: '/login' },
-        ],
-    },
-];
 
 export default function Landing({ onSignIn, onRegister }) {
     const [awarded, setAwarded] = useState([]);
@@ -144,7 +110,17 @@ export default function Landing({ onSignIn, onRegister }) {
         <div className="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#0a0a0a] dark:text-white transition-colors duration-300">
             <CursorFollower />
             {/* ── Nav ── */}
-            <FloatingNav onSignIn={onSignIn} onRegister={onRegister} />
+            <MarketingNav
+                links={[
+                    { id: 'pipeline', label: 'Pipeline' },
+                    { id: 'features', label: 'In the box' },
+                    { id: 'awards', label: 'Awards' },
+                    { id: 'partner', label: 'Partner' },
+                    { id: 'changelog', label: 'Changelog', href: '/changelog' },
+                ]}
+                onSignIn={onSignIn}
+                onRegister={onRegister}
+            />
 
             {/* ── Hero: orbit ── */}
             <Suspense fallback={<div className="h-[560px]" />}>
@@ -173,40 +149,7 @@ export default function Landing({ onSignIn, onRegister }) {
                 />
             </Suspense>
 
-            {/* ── Pipeline ── */}
-            <section id="pipeline" className="border-t border-gray-200 dark:border-white/5">
-                <div className="max-w-6xl mx-auto px-6 py-20">
-                    <SectionHead
-                        eyebrow="The pipeline"
-                        title="Every page looks like yours different with our gates."
-                        body="No entry skips a stage, and no stage moves without written feedback for the entrant."
-                    />
-
-                    <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {PIPELINE.map((s, i) => {
-                            const tone = SEMANTIC[stageTone(s.key)];
-                            return (
-                                <motion.div
-                                    key={s.key}
-                                    initial={{ opacity: 0, y: 14 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true, margin: '-60px' }}
-                                    transition={{ delay: i * 0.05, duration: 0.4 }}
-                                    className="group relative rounded-3xl border border-gray-200 dark:border-white/10 p-6 overflow-hidden hover:border-gray-300 dark:hover:border-white/20 transition-colors"
-                                >
-                                    <span className={`absolute left-0 top-0 bottom-0 w-1 ${tone.bar}`} />
-                                    <div className="flex items-center gap-2 pl-2">
-                                        <span className={`w-2 h-2 rounded-full ${tone.dot}`} />
-                                        <p className="font-medium text-sm">{s.label}</p>
-                                        <span className="ml-auto text-[11px] text-gray-400 dark:text-white/30 font-mono">0{i + 1}</span>
-                                    </div>
-                                    <p className="text-sm text-gray-600 dark:text-white/50 mt-2 pl-2 leading-relaxed">{s.detail}</p>
-                                </motion.div>
-                            );
-                        })}
-                    </div>
-                </div>
-            </section>
+            <PipelineSection />
 
             {/* ── Getting started ── */}
             <section className="border-t border-gray-200 bg-white dark:border-white/5 dark:bg-white/[0.02]">
@@ -267,31 +210,7 @@ export default function Landing({ onSignIn, onRegister }) {
                 </div>
             </section>
 
-            {/* ── Features grid ── */}
-            <section className="border-t border-gray-200 bg-white dark:border-white/5 dark:bg-white/[0.02]">
-                <div className="max-w-6xl mx-auto px-6 py-20">
-                    <SectionHead
-                        eyebrow="In the box"
-                        title="Everything the pipeline needs, nothing it doesn't."
-                    />
-                    <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        {FEATURES.map((f, i) => (
-                            <motion.div
-                                key={f.title}
-                                initial={{ opacity: 0, y: 14 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true, margin: '-60px' }}
-                                transition={{ delay: i * 0.04, duration: 0.4 }}
-                                className="rounded-3xl border border-gray-200 dark:border-white/10 p-6 hover:border-accent-500/40 transition-colors"
-                            >
-                                <f.icon className="w-5 h-5 text-accent-500" />
-                                <h3 className="mt-4 font-medium">{f.title}</h3>
-                                <p className="text-sm text-gray-600 dark:text-white/50 mt-2 leading-relaxed">{f.body}</p>
-                            </motion.div>
-                        ))}
-                    </div>
-                </div>
-            </section>
+            <BentoFeatures />
 
             {/* ── Awards ── */}
             <section id="awards" className="border-t border-gray-200 dark:border-white/5">
@@ -317,9 +236,9 @@ export default function Landing({ onSignIn, onRegister }) {
                                     />
                                 </div>
                             )}
-                            <div className="mt-10 flex items-center gap-6">
+                            <div className="mt-10 flex items-center gap-6 pb-10">
                                 <span className="text-[10px] uppercase tracking-[0.2em] text-gray-400 dark:text-white/30 flex-shrink-0">Awarded</span>
-                                <div className="flex-1 min-w-0">
+                                <div className="flex-1 min-w-0 py-1.5">
                                     <DraggableMarquee
                                         items={awarded.map(a => ({
                                             id: a.id, src: '', alt: a.title, width: 320, height: 200, title: a.title,
@@ -422,62 +341,7 @@ export default function Landing({ onSignIn, onRegister }) {
                 </div>
             </section>
 
-            {/* ── Footer ── */}
-            <footer className="border-t border-gray-200 dark:border-white/5 bg-white dark:bg-white/[0.02]">
-                <div className="max-w-6xl mx-auto px-6 pt-16 pb-10">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-14">
-                        {FOOTER_SECTIONS.map(section => (
-                            <div key={section.title}>
-                                <h3 className="text-xs uppercase tracking-wider text-gray-400 dark:text-white/40 mb-4">
-                                    {section.title}
-                                </h3>
-                                <ul className="space-y-2.5">
-                                    {section.items.map(item => (
-                                        <li key={item.label}>
-                                            <a
-                                                href={item.href || '#'}
-                                                className="inline-block py-1 text-sm text-gray-600 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors"
-                                            >
-                                                {item.label}
-                                            </a>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className="flex flex-wrap items-center justify-between gap-6 pt-8 border-t border-gray-200 dark:border-white/10">
-                        <div className="flex items-center gap-3">
-                            <Logo className="w-8 h-8" />
-                            <div>
-                                <p className="text-sm font-medium">CEDA Innovation Hub</p>
-                                <p className="text-[11px] text-gray-500 dark:text-white/40">
-                                    Citizen Entrepreneurial Development Agency · Botswana
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-white/45">
-                            <span>Designed and developed by</span>
-                            <img
-                                src="/partners/oratory-league-logo.png"
-                                alt="Oratory League"
-                                className="h-8 w-auto max-w-[130px] object-contain object-left dark:brightness-125"
-                            />
-                        </div>
-                    </div>
-
-                    <p className="mt-6 text-[11px] leading-relaxed text-gray-400 dark:text-white/35 max-w-4xl">
-                        © {new Date().getFullYear()} Citizen Entrepreneurial Development Agency. All rights reserved.
-                        Submissions, evaluations and personal data are processed in line with Botswana's
-                        Data Protection Act and retained only for as long as the competition and any
-                        appeal require. Access to a submission is limited to its owner, CEDA
-                        administrators and the judges assigned to it; every access is recorded in the
-                        audit trail.
-                    </p>
-                </div>
-            </footer>
+            <MarketingFooter />
         </div>
     );
 }

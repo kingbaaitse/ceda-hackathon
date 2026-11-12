@@ -7,6 +7,8 @@ import React, { useEffect, useState, useMemo, lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Trophy, Sparkles, Loader2 } from 'lucide-react';
 import Logo from '../components/Logo';
+import MarketingNav from '../components/marketing/MarketingNav';
+import MarketingFooter from '../components/marketing/MarketingFooter';
 import ModalSheet from '../components/ui/ModalSheet';
 import AttachmentGrid from '../components/AttachmentGrid';
 import { HoverImg } from '@/components/block/hover-img';
@@ -81,12 +83,14 @@ export default function Gallery({ onBack }) {
                     }}
                 />
                 <div className="relative max-w-6xl mx-auto px-6 pt-10 pb-14">
-                    <button
-                        onClick={onBack}
-                        className="inline-flex items-center gap-2 text-sm text-gray-900/60 dark:text-gray-900 dark:text-white/60 hover:text-gray-900 dark:text-white transition-colors"
-                    >
-                        <ArrowLeft className="w-4 h-4" /> Back to sign in
-                    </button>
+                    <MarketingNav
+                links={[
+                    { id: 'awards', label: 'Awards' },
+                    { id: 'changelog', label: 'Changelog', href: '/changelog' },
+                ]}
+                onSignIn={onBack}
+                onRegister={onBack}
+            />
                     <div className="mt-8 flex items-center gap-3">
                         <Logo className="w-9 h-9" />
                         <span className="text-sm text-gray-900/70 dark:text-gray-900 dark:text-white/70 tracking-tight">CEDA Innovation Hub</span>
@@ -226,6 +230,8 @@ export default function Gallery({ onBack }) {
                     </div>
                 </ModalSheet>
             )}
+
+            <MarketingFooter />
         </div>
     );
 }
