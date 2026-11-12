@@ -35,6 +35,10 @@ All notable changes to the CEDA Innovation Hub. The same content is rendered in 
 - **Password strength meter** with a live character count and the rules still unmet.
 
 ### Changed
+- **Hero rebuilt as an orbit.** The headline now sits in the middle of the composition with the
+  live product preview holding the centre and supporting illustrations orbiting it, drifting with
+  scroll and pointer parallax. The artwork is recoloured into the CEDA palette so it reads as ours
+  rather than as stock (`tools/prepare-illustrations.mjs`).
 - Semantic colour system (`src/lib/semantics.js`): grey = inactive, blue = with CEDA,
   orange = moving, amber = decision due, green = awarded, red = out. Applied to every chart,
   counter, badge and stage pill. Decorative gradients were removed from data views.

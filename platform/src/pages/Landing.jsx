@@ -14,7 +14,10 @@ import {
     ShieldCheck, MessageCircle, Scale, Layers, Zap,
 } from 'lucide-react';
 import Logo from '../components/Logo';
-import { FlipText } from '@/components/block/flip-text';
+import Hero from '../components/Hero';
+import stepRegister from '../assets/img/illustrations/profile.svg';
+import stepSubmit from '../assets/img/illustrations/upload.svg';
+import stepFeedback from '../assets/img/illustrations/feedback.svg';
 import { DraggableMarquee } from '@/components/block/draggable-marquee';
 import { SplitShowcase } from '@/components/block/split-showcase';
 import { ParallaxSlider } from '@/components/block/parallax-slider';
@@ -43,9 +46,9 @@ const PIPELINE = [
 ];
 
 const STEPS = [
-    { n: '01', title: 'Register', body: 'Create an account as an individual or a team. Your progress is saved from the first keystroke.' },
-    { n: '02', title: 'Submit', body: 'Describe the innovation, add your team and attach your logo, photos and pitch deck.' },
-    { n: '03', title: 'Get feedback', body: 'Follow every stage in real time, read the written feedback, and answer questions in one thread.' },
+    { n: '01', title: 'Register', body: 'Create an account as an individual or a team. Your progress is saved from the first keystroke.', art: stepRegister },
+    { n: '02', title: 'Submit', body: 'Describe the innovation, add your team and attach your logo, photos and pitch deck.', art: stepSubmit },
+    { n: '03', title: 'Get feedback', body: 'Follow every stage in real time, read the written feedback, and answer questions in one thread.', art: stepFeedback },
 ];
 
 const REASONS = [
@@ -119,59 +122,30 @@ export default function Landing({ onSignIn, onRegister }) {
                 </div>
             </header>
 
-            {/* ── Hero ── */}
-            <section className="relative overflow-hidden">
-                <div
-                    className="absolute inset-0 opacity-70 dark:opacity-100"
-                    style={{ background: 'radial-gradient(700px 380px at 18% 0%, rgba(242,101,34,0.16), transparent 70%)' }}
-                />
-                <div className="relative max-w-6xl mx-auto px-6 pt-16 pb-10">
-                    <div className="flex items-center gap-2 text-accent-600 dark:text-accent-400 text-xs font-medium uppercase tracking-[0.16em]">
-                        <Sparkles className="w-3.5 h-3.5" /> Citizen Entrepreneurial Development Agency
-                    </div>
-
-                    <h1 className="mt-6 text-[44px] sm:text-6xl lg:text-7xl font-semibold leading-[1.02] tracking-[-0.035em] max-w-4xl">
-                        Components that make your{' '}
-                        <FlipText className="text-accent-600 dark:text-accent-400">innovation</FlipText> stand out.
-                    </h1>
-
-                    <p className="mt-7 text-gray-600 dark:text-white/60 text-lg sm:text-xl leading-relaxed max-w-2xl">
-                        Submit your innovation, follow it through every CEDA stage gate, and get
-                        structured feedback at each one — screening, evaluation, selection and award.
-                    </p>
-
-                    <div className="mt-9 flex flex-wrap items-center gap-3">
-                        <button onClick={onRegister} className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-gray-900 text-white hover:bg-gray-800 dark:bg-accent-500 dark:text-white dark:hover:bg-accent-600 transition-colors">
-                            Start your submission <ArrowRight className="w-4 h-4" />
-                        </button>
-                        <button onClick={onSignIn} className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-gray-300 text-gray-800 hover:border-gray-400 dark:border-white/15 dark:text-white/85 dark:hover:border-white/30 transition-colors">
-                            Sign in
-                        </button>
-                    </div>
-
-                    <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl">
+            {/* ── Hero: orbit ── */}
+            <Hero
+                eyebrow="Citizen Entrepreneurial Development Agency"
+                title="Components that make your"
+                accent="innovation"
+                body="Submit your innovation, follow it through every CEDA stage gate, and get structured feedback at each one — screening, evaluation, selection and award."
+                ctaPrimary="Start your submission"
+                ctaSecondary="Sign in"
+                onPrimary={onRegister}
+                onSecondary={onSignIn}
+                counters={
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl mx-auto">
                         <Counter label="Pipeline stages" value={PIPELINE.length} tone="info" />
                         <Counter label="Awarded" value={loading ? '—' : awarded.length} tone="success" />
                         <Counter label="SDGs covered" value={loading ? '—' : goals} tone="progress" />
                         <Counter label="Feedback per entry" value="4+" tone="warning" />
                     </div>
-                </div>
-
-                {/* Live preview — the prism */}
-                <div className="relative max-w-6xl mx-auto px-6 pb-16">
-                    <div className="rounded-[28px] border border-gray-200 overflow-hidden bg-[#0a0a0a] shadow-[0_30px_80px_-40px_rgba(20,10,5,0.55)] dark:border-white/10">
-                        <div className="flex items-center justify-between px-5 py-3 border-b border-white/10">
-                            <span className="text-[11px] font-mono uppercase tracking-[0.18em] text-white/40">Interactive preview</span>
-                            <span className="text-[11px] text-white/30">drag to aim the beam</span>
-                        </div>
-                        <div className="h-[380px] sm:h-[460px]">
-                            <Suspense fallback={<div className="h-full w-full flex items-center justify-center text-white/30 text-sm">Loading the preview…</div>}>
-                                <VPrism settings={DARK_PRESET} />
-                            </Suspense>
-                        </div>
-                    </div>
-                </div>
-            </section>
+                }
+                preview={
+                    <Suspense fallback={<div className="h-full w-full flex items-center justify-center text-white/30 text-sm">Loading the preview…</div>}>
+                        <VPrism settings={DARK_PRESET} />
+                    </Suspense>
+                }
+            />
 
             {/* ── Pipeline ── */}
             <section id="pipeline" className="border-t border-gray-200 dark:border-white/5">
@@ -226,7 +200,10 @@ export default function Landing({ onSignIn, onRegister }) {
                                 transition={{ delay: i * 0.06, duration: 0.4 }}
                                 className="rounded-3xl border border-gray-200 dark:border-white/10 p-7"
                             >
-                                <span className="font-mono text-xs text-accent-600 dark:text-accent-400">{s.n}</span>
+                                <div className="flex items-start justify-between gap-4">
+                                    <span className="font-mono text-xs text-accent-600 dark:text-accent-400">{s.n}</span>
+                                    <img src={s.art} alt="" aria-hidden="true" className="w-20 h-20 opacity-90 -mt-3 -mr-2" />
+                                </div>
                                 <h3 className="mt-3 text-lg font-medium">{s.title}</h3>
                                 <p className="text-sm text-gray-600 dark:text-white/50 mt-2 leading-relaxed">{s.body}</p>
                             </motion.div>
