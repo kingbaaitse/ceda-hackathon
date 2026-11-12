@@ -53,7 +53,7 @@ export default function MarketingFooter({ children }) {
                                 href="mailto:kingbaaitse@oratoryleague.xyz"
                                 className="hover:text-gray-900 dark:hover:text-white transition-colors"
                             >
-                                king.baaitse@oratoryleague.xyz
+                                kingbaaitse@oratoryleague.xyz
                             </a>
                             <span className="text-white/30">·</span>
                             <span>Designed and developed by</span>

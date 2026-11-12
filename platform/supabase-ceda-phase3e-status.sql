@@ -47,7 +47,7 @@ language sql stable security definer set search_path = public as $$
     select (created_at at time zone 'utc')::date as d, count(*)::int as n
     from public.ceda_email_log
     where status = 'failed'
-      and created_at at time zone 'utc'::date >= (current_date - (greatest(days, 1) - 1))
+      and (created_at at time zone 'utc')::date >= (current_date - (greatest(days, 1) - 1))
     group by 1
   ),
   acts as (
@@ -73,7 +73,7 @@ language sql stable security definer set search_path = public as $$
     end as status,
     case
       when coalesce(i.n, 0) > 0 then coalesce(i.titles, 'Recorded incident')
-      when coalesce(f.n, 0) > 0 then f.n || ' email deliver' || (f.n = 1 ? 'y' : 'ies') || ' failed'
+      when coalesce(f.n, 0) > 0 then f.n || ' email deliver' || case when f.n = 1 then 'y' else 'ies' end || ' failed'
       else null
     end as note,
     coalesce(f.n, 0) + coalesce(a.n, 0) as events

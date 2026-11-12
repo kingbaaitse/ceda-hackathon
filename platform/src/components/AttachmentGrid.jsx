@@ -4,6 +4,23 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { getAttachmentUrls, prettySize } from '../lib/storage';
 import { ExternalLink, FileText } from './AnimatedIcons';
+import { InlineLoader } from './Loader';
+
+/* Image tile that keeps the CEDA loader up until the bitmap is decoded. */
+function ImageTile({ src, name }) {
+    const [loaded, setLoaded] = useState(false);
+    return (
+        <div className="w-full h-full">
+            <img
+                src={src}
+                alt={name}
+                onLoad={() => setLoaded(true)}
+                className={`w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+            />
+            {!loaded && <div className="absolute inset-0 flex items-center justify-center"><InlineLoader size={24} /></div>}
+        </div>
+    );
+}
 
 export default function AttachmentGrid({ attachments = [] }) {
     const [urls, setUrls] = useState({});
@@ -37,8 +54,8 @@ export default function AttachmentGrid({ attachments = [] }) {
                             className="group relative rounded-2xl overflow-hidden border border-gray-100 dark:border-white/10 bg-gray-50 dark:bg-white/5 aspect-[4/3]"
                         >
                             {urls[a.path]
-                                ? <img src={urls[a.path]} alt={a.name} className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300" />
-                                : <div className="w-full h-full animate-pulse bg-gray-200/60 dark:bg-white/5" />}
+                                ? <ImageTile src={urls[a.path]} name={a.name} />
+                                : <div className="w-full h-full flex items-center justify-center"><InlineLoader size={24} /></div>}
                             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-2.5 pt-6 pb-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                 <p className="text-[11px] text-white truncate">{a.name}</p>
                             </div>

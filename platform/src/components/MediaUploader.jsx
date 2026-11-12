@@ -114,6 +114,16 @@ function ThumbPath({ path }) {
     const [src, setSrc] = useState(null);
     useEffect(() => { getAttachmentUrl(path).then(setSrc).catch(() => { }); }, [path]);
     return src
-        ? <img src={src} alt="" className="w-8 h-8 rounded-full object-cover" />
+        ? <ThumbImg src={src} />
         : <InlineLoader size={14} />;
+}
+
+function ThumbImg({ src }) {
+    const [loaded, setLoaded] = useState(false);
+    return (
+        <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center">
+            <img src={src} alt="" onLoad={() => setLoaded(true)} className={`w-8 h-8 rounded-full object-cover ${loaded ? 'opacity-100' : 'opacity-0'}`} />
+            {!loaded && <InlineLoader size={14} className="absolute" />}
+        </div>
+    );
 }

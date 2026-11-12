@@ -3,6 +3,24 @@
 All notable changes to the CEDA Innovation Hub. The same content is rendered in the app at
 `/changelog`.
 
+## 1.0.2 - Round two polish
+
+### Fixed
+- **Milestone trail**: the connecting lines now touch the outline of each circle instead of
+  stopping short or sliding underneath, and completed stages are tinted green with a tick.
+- **Profile pictures, submission images and media thumbnails show the CEDA loader while they
+  load**, so a slow image never looks like an empty page.
+- **Deep links to the marketing pages** (changelog, team, legal and the rest) now resolve on the
+  deployed site instead of returning 404.
+- **The contact email in the footer** is corrected.
+
+### Changed
+- **The phone picker is the production-grade international input**: every country in the world,
+  real rendered flags, a searchable list, and numbers saved in the standard international
+  format automatically.
+- **The team profile carries the real social accounts** — LinkedIn, Instagram and X — with the
+  same marks used across the wider brand.
+
 ## 1.0.1 - Phase 3 polish
 
 ### Added

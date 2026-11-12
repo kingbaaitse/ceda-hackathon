@@ -5,6 +5,7 @@
  * missing photo never leaves a broken square.
  */
 import React, { useState } from 'react';
+import { InlineLoader } from './Loader';
 
 const TINTS = [
     'bg-accent-500/15 text-accent-600 dark:text-accent-300',
@@ -33,6 +34,7 @@ function tintFor(name = '') {
 
 export default function Avatar({ src, name = '', size = 36, className = '', onClick, ring = false }) {
     const [failed, setFailed] = useState(false);
+    const [loaded, setLoaded] = useState(false);
     const showImage = src && !failed;
 
     const style = {
@@ -42,20 +44,24 @@ export default function Avatar({ src, name = '', size = 36, className = '', onCl
     };
 
     const content = showImage ? (
-        <img
-            src={src}
-            alt={name ? `${name}'s profile picture` : 'Profile picture'}
-            onError={() => setFailed(true)}
-            className="w-full h-full object-cover"
-            style={{ background: 'transparent' }}
-        />
+        <>
+            <img
+                src={src}
+                alt={name ? `${name}'s profile picture` : 'Profile picture'}
+                onError={() => setFailed(true)}
+                onLoad={() => setLoaded(true)}
+                className="w-full h-full object-cover"
+                style={{ background: 'transparent' }}
+            />
+            {!loaded && <InlineLoader size={Math.max(14, Math.min(24, size * 0.55))} className="absolute" />}
+        </>
     ) : (
         <span className={`w-full h-full flex items-center justify-center font-medium ${tintFor(name)}`} style={{ fontSize: Math.max(10, size * 0.38) }}>
             {initials(name)}
         </span>
     );
 
-    const classes = `rounded-full overflow-hidden flex items-center justify-center bg-gray-100 dark:bg-white/10 ${ring ? 'ring-2 ring-white dark:ring-[#0a0a0a]' : ''} ${className}`;
+    const classes = `relative rounded-full overflow-hidden flex items-center justify-center bg-gray-100 dark:bg-white/10 ${ring ? 'ring-2 ring-white dark:ring-[#0a0a0a]' : ''} ${className}`;
 
     if (onClick) {
         return (

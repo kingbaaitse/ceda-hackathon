@@ -14,6 +14,7 @@ import Avatar, { avatarUrl } from './Avatar';
 import ProfileDialog from './ProfileDialog';
 import { TopSearch, RefreshButton, playNotificationSound } from './TopBar';
 import { ButtonLoader } from './Loader';
+import PhoneInput from './ui/PhoneInput';
 import { parseUserAgent } from '../lib/device';
 import { supabase } from '../lib/supabase';
 import { Bell, BellRing, Check, ChevronLeft, ChevronRight, LogOut, Mail, Menu, Settings, User, WifiOff, X } from './AnimatedIcons';
@@ -616,11 +617,10 @@ export default function PortalLayout({
                                                 placeholder="Team name"
                                                 className="w-full rounded-full field-fill py-2.5 px-4 text-sm text-gray-900 dark:text-white"
                                             />
-                                            <input
+                                            <PhoneInput
                                                 value={draft?.phone || ''}
-                                                onChange={e => setDraft(d => ({ ...d, phone: e.target.value }))}
+                                                onChange={v => setDraft(d => ({ ...d, phone: v }))}
                                                 placeholder="Phone"
-                                                className="w-full rounded-full field-fill py-2.5 px-4 text-sm text-gray-900 dark:text-white"
                                             />
                                             <input
                                                 value={draft?.location || ''}

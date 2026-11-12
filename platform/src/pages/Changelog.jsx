@@ -20,6 +20,26 @@ import MarketingFooter from '../components/marketing/MarketingFooter';
 
 const RELEASES = [
     {
+        version: '1.0.2',
+        date: '2026-11-12',
+        title: 'Round two polish',
+        summary: 'A production-grade international phone picker, loaders inside every image and thumbnail, deep links that resolve on the deployed site, and a tidier milestone trail.',
+        groups: [
+            {
+                icon: Layers,
+                title: 'Interface',
+                items: [
+                    'The phone picker is now the production-grade international input: every country in the world, real rendered flags, a searchable list, and numbers saved in the standard international format automatically.',
+                    'Profile pictures, submission images and media thumbnails show the CEDA loader while they load, so a slow image never looks like an empty page.',
+                    'The milestone trail connects each circle by its outline instead of stopping short, and completed stages are tinted green with a tick.',
+                    'The team profile carries the real social accounts — LinkedIn, Instagram and X — with the same marks used across the wider brand.',
+                    'Deep links to the marketing pages, such as the changelog and the team page, now resolve on the deployed site instead of returning 404.',
+                    'The contact email in the footer is corrected.',
+                ],
+            },
+        ],
+    },
+    {
         version: '1.0.1',
         date: '2026-11-12',
         title: 'Phase 3 polish',

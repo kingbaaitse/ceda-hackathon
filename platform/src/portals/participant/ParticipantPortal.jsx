@@ -169,7 +169,7 @@ function Overview({ submission, gateEvents, evaluations, onSubmitTab }) {
                                 </motion.div>
                                 <span className={`text-[10px] mt-1.5 text-center w-20 ${i <= idx ? 'text-gray-700 dark:text-gray-200' : 'text-gray-400'}`}>{STAGE_LABELS[s]}</span>
                             </div>
-                            {i < TRAIL.length - 1 && <div className={`h-0.5 w-10 flex-shrink-0 mx-1 mb-5 ${i < idx ? 'bg-emerald-500' : 'bg-gray-200 dark:bg-white/10'}`} />}
+                            {i < TRAIL.length - 1 && <div className={`h-0.5 w-10 flex-shrink-0 -mx-0.5 mb-5 ${i < idx ? 'bg-emerald-500' : 'bg-gray-200 dark:bg-white/10'}`} />}
                         </React.Fragment>
                     ))}
                 </div>
