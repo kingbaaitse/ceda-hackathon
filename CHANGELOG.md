@@ -39,6 +39,18 @@ All notable changes to the CEDA Innovation Hub. The same content is rendered in 
   live product preview holding the centre and supporting illustrations orbiting it, drifting with
   scroll and pointer parallax. The artwork is recoloured into the CEDA palette so it reads as ours
   rather than as stock (`tools/prepare-illustrations.mjs`).
+- **Floating pill navigation** that hides on scroll down, returns on scroll up, tightens once the
+  page moves and marks the section you are reading.
+- **Cursor follower** — a soft CEDA glow that trails the pointer and swells over anything
+  interactive. Touch devices and reduced-motion users never see it.
+- **Particle ribbon** (ported from the kingbaaitse hero-3d) flowing behind the hero composition,
+  leaning with the pointer.
+- Sections are centred, the small uppercase orange labels are gone, and the closing band and
+  footer carry the legal text, the CEDA mark and the "designed and developed by Oratory League"
+  credit.
+- Login and signup both offer a "Back to the hub" link.
+- Empty states across the participant, judge and administrator portals now use the illustration set
+  instead of a bare line of text.
 - Semantic colour system (`src/lib/semantics.js`): grey = inactive, blue = with CEDA,
   orange = moving, amber = decision due, green = awarded, red = out. Applied to every chart,
   counter, badge and stage pill. Decorative gradients were removed from data views.

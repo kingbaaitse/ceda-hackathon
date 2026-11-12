@@ -48,7 +48,7 @@ function Shell() {
   if (!user) {
     if (page === 'gallery') return <Gallery onBack={() => navigate('landing')} />;
     if (page === 'changelog') return <Changelog onBack={() => navigate('landing')} />;
-    if (page === 'signup') return <Signup onLogin={() => navigate('login')} />;
+    if (page === 'signup') return <Signup onLogin={() => navigate('login')} onLanding={() => navigate('landing')} />;
     if (page === 'landing') {
       return <Landing onSignIn={() => navigate('login')} onRegister={() => navigate('signup')} />;
     }

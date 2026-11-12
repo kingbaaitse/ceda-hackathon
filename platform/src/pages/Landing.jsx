@@ -14,7 +14,9 @@ import {
     ShieldCheck, MessageCircle, Scale, Layers, Zap,
 } from 'lucide-react';
 import Logo from '../components/Logo';
-import Hero from '../components/Hero';
+import FloatingNav from '../components/FloatingNav';
+import CursorFollower from '../components/CursorFollower';
+import { FlipText } from '@/components/block/flip-text';
 import stepRegister from '../assets/img/illustrations/profile.svg';
 import stepSubmit from '../assets/img/illustrations/upload.svg';
 import stepFeedback from '../assets/img/illustrations/feedback.svg';
@@ -29,6 +31,8 @@ import { getAttachmentUrls } from '../lib/storage';
 import cedaLogo from '../assets/img/ceda-full-logo-icon.png';
 
 const VPrism = lazy(() => import('@/components/block/v-prism').then(m => ({ default: m.VPrism })));
+/* the hero carries three.js + r3f, so it loads only on this page */
+const Hero = lazy(() => import('../components/Hero'));
 
 const DARK_PRESET = {
     ambientLight: 0.015, pointLights: 0.05, spotIntensity: 1.0, rainbowGlow: 2.5,
@@ -62,6 +66,44 @@ const FEATURES = [
     { icon: MessageCircle, title: 'One conversation', body: 'Ask CEDA anything about your entry, with visibility you control for internal notes.' },
     { icon: Sparkles, title: 'Version history', body: 'Every resubmission keeps a snapshot, so both sides can see what changed between rounds.' },
     { icon: ShieldCheck, title: 'Audit trail', body: 'Every gate, score and assignment is recorded with who did it and when.' },
+];
+
+const FOOTER_SECTIONS = [
+    {
+        title: 'Platform',
+        items: [
+            { label: 'Submission wizard', href: '#pipeline' },
+            { label: 'Getting started', href: '#pipeline' },
+            { label: 'Awards gallery', href: '/gallery' },
+            { label: 'Changelog', href: '/changelog' },
+        ],
+    },
+    {
+        title: 'For entrants',
+        items: [
+            { label: 'Register', href: '/signup' },
+            { label: 'Sign in', href: '/login' },
+            { label: 'Stage gates', href: '#pipeline' },
+            { label: 'How scoring works', href: '#why' },
+        ],
+    },
+    {
+        title: 'For CEDA',
+        items: [
+            { label: 'Judge workspace', href: '/login' },
+            { label: 'Administrator console', href: '/login' },
+            { label: 'Partner', href: '#partner' },
+        ],
+    },
+    {
+        title: 'Legal',
+        items: [
+            { label: 'Privacy policy', href: '/login' },
+            { label: 'Terms of use', href: '/login' },
+            { label: 'Data protection', href: '/login' },
+            { label: 'Accessibility', href: '/login' },
+        ],
+    },
 ];
 
 export default function Landing({ onSignIn, onRegister }) {
@@ -100,52 +142,36 @@ export default function Landing({ onSignIn, onRegister }) {
 
     return (
         <div className="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#0a0a0a] dark:text-white transition-colors duration-300">
+            <CursorFollower />
             {/* ── Nav ── */}
-            <header className="sticky top-0 z-40 border-b border-gray-200/70 bg-gray-50/80 backdrop-blur-xl dark:border-white/5 dark:bg-[#0a0a0a]/80">
-                <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <Logo className="w-8 h-8" />
-                        <span className="text-sm font-medium tracking-tight">CEDA Innovation Hub</span>
-                    </div>
-                    <nav className="flex items-center gap-1">
-                        <a href="#pipeline" className="hidden sm:block px-3 py-2 text-sm text-gray-600 hover:text-gray-900 dark:text-white/60 dark:hover:text-white transition-colors">Pipeline</a>
-                        <a href="#awards" className="hidden sm:block px-3 py-2 text-sm text-gray-600 hover:text-gray-900 dark:text-white/60 dark:hover:text-white transition-colors">Awards</a>
-                        <a href="#partner" className="hidden sm:block px-3 py-2 text-sm text-gray-600 hover:text-gray-900 dark:text-white/60 dark:hover:text-white transition-colors">Partner</a>
-                        <a href="/changelog" className="hidden sm:block px-3 py-2 text-sm text-gray-600 hover:text-gray-900 dark:text-white/60 dark:hover:text-white transition-colors">Changelog</a>
-                        <button onClick={onSignIn} className="ml-1 px-4 py-2 rounded-full text-sm text-gray-700 hover:bg-black/5 dark:text-white/80 dark:hover:bg-white/10 transition-colors">
-                            Sign in
-                        </button>
-                        <button onClick={onRegister} className="px-4 py-2 rounded-full text-sm bg-gray-900 text-white hover:bg-gray-800 dark:bg-accent-500 dark:text-white dark:hover:bg-accent-600 transition-colors">
-                            Register
-                        </button>
-                    </nav>
-                </div>
-            </header>
+            <FloatingNav onSignIn={onSignIn} onRegister={onRegister} />
 
             {/* ── Hero: orbit ── */}
-            <Hero
-                eyebrow="Citizen Entrepreneurial Development Agency"
-                title="Components that make your"
-                accent="innovation"
-                body="Submit your innovation, follow it through every CEDA stage gate, and get structured feedback at each one — screening, evaluation, selection and award."
-                ctaPrimary="Start your submission"
-                ctaSecondary="Sign in"
-                onPrimary={onRegister}
-                onSecondary={onSignIn}
-                counters={
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl mx-auto">
-                        <Counter label="Pipeline stages" value={PIPELINE.length} tone="info" />
-                        <Counter label="Awarded" value={loading ? '—' : awarded.length} tone="success" />
-                        <Counter label="SDGs covered" value={loading ? '—' : goals} tone="progress" />
-                        <Counter label="Feedback per entry" value="4+" tone="warning" />
-                    </div>
-                }
-                preview={
-                    <Suspense fallback={<div className="h-full w-full flex items-center justify-center text-white/30 text-sm">Loading the preview…</div>}>
-                        <VPrism settings={DARK_PRESET} />
-                    </Suspense>
-                }
-            />
+            <Suspense fallback={<div className="h-[560px]" />}>
+                <Hero
+                    eyebrow="Citizen Entrepreneurial Development Agency · Botswana"
+                    title="From idea to"
+                    accent={<FlipText className="text-accent-600 dark:text-accent-400">award</FlipText>}
+                    body="Submit your innovation, follow it through every CEDA stage gate, and get structured feedback at each one — screening, evaluation, selection and award."
+                    ctaPrimary="Start your submission"
+                    ctaSecondary="Sign in"
+                    onPrimary={onRegister}
+                    onSecondary={onSignIn}
+                    counters={
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl mx-auto">
+                            <Counter label="Pipeline stages" value={PIPELINE.length} tone="info" />
+                            <Counter label="Awarded" value={loading ? '—' : awarded.length} tone="success" />
+                            <Counter label="SDGs covered" value={loading ? '—' : goals} tone="progress" />
+                            <Counter label="Feedback per entry" value="4+" tone="warning" />
+                        </div>
+                    }
+                    preview={
+                        <Suspense fallback={<div className="h-full w-full flex items-center justify-center text-white/30 text-sm">Loading the preview…</div>}>
+                            <VPrism settings={DARK_PRESET} />
+                        </Suspense>
+                    }
+                />
+            </Suspense>
 
             {/* ── Pipeline ── */}
             <section id="pipeline" className="border-t border-gray-200 dark:border-white/5">
@@ -269,14 +295,11 @@ export default function Landing({ onSignIn, onRegister }) {
 
             {/* ── Awards ── */}
             <section id="awards" className="border-t border-gray-200 dark:border-white/5">
-                <div className="max-w-6xl mx-auto px-6 py-20">
-                    <div className="flex items-center gap-2 text-accent-600 dark:text-accent-400 text-xs font-medium uppercase tracking-[0.16em]">
-                        <Trophy className="w-3.5 h-3.5" /> Awards gallery
-                    </div>
-                    <h2 className="mt-5 text-4xl sm:text-5xl font-semibold tracking-[-0.03em] max-w-3xl">
+                <div className="max-w-6xl mx-auto px-6 py-20 text-center">
+                    <h2 className="text-4xl sm:text-5xl font-semibold tracking-[-0.03em] mx-auto max-w-3xl">
                         The work that passed every gate.
                     </h2>
-                    <p className="mt-4 text-gray-600 dark:text-white/55 text-lg max-w-2xl">
+                    <p className="mt-4 text-gray-600 dark:text-white/55 text-lg mx-auto max-w-2xl">
                         Awarded entries are published openly. Everything still in the pipeline stays private.
                     </p>
 
@@ -320,14 +343,11 @@ export default function Landing({ onSignIn, onRegister }) {
 
             {/* ── Partner ── */}
             <section id="partner" className="border-t border-gray-200 bg-white dark:border-white/5 dark:bg-white/[0.02]">
-                <div className="max-w-6xl mx-auto px-6 py-20">
-                    <div className="flex items-center gap-2 text-accent-600 dark:text-accent-400 text-xs font-medium uppercase tracking-[0.16em]">
-                        <Handshake className="w-3.5 h-3.5" /> Who builds this
-                    </div>
-                    <h2 className="mt-5 text-4xl sm:text-5xl font-semibold tracking-[-0.03em] max-w-3xl">
+                <div className="max-w-6xl mx-auto px-6 py-20 text-center">
+                    <h2 className="text-4xl sm:text-5xl font-semibold tracking-[-0.03em] mx-auto max-w-3xl">
                         CEDA and Oratory League.
                     </h2>
-                    <p className="mt-4 text-gray-600 dark:text-white/55 text-lg max-w-2xl">
+                    <p className="mt-4 text-gray-600 dark:text-white/55 text-lg mx-auto max-w-2xl">
                         CEDA owns the competition and the pipeline. Oratory League is the official
                         partner and the developer behind the platform.
                     </p>
@@ -340,14 +360,14 @@ export default function Landing({ onSignIn, onRegister }) {
                                     title: 'CEDA',
                                     tag: 'The competition',
                                     description: 'Runs the innovation competition end to end: eligibility, screening, the judging panel and the award.',
-                                    icon: <img src={cedaLogo} alt="CEDA" className="h-10 w-10 object-contain" />,
+                                    icon: <img src={cedaLogo} alt="CEDA" className="h-24 w-24 object-contain" />,
                                 },
                                 {
                                     id: 'oratory-league',
                                     title: 'Oratory League',
                                     tag: 'Official partner & developer',
                                     description: 'Designs and engineers the Innovation Hub: the submission wizard, the judging workflow, the security model and the analytics.',
-                                    icon: <img src="/partners/oratory-league-logo.png" alt="Oratory League" className="h-9 w-auto max-w-[150px] object-contain object-left" />,
+                                    icon: <img src="/partners/oratory-league-logo.png" alt="Oratory League" className="h-20 w-auto max-w-[320px] object-contain object-left" />,
                                 },
                             ]}
                             className="text-left"
@@ -403,22 +423,59 @@ export default function Landing({ onSignIn, onRegister }) {
             </section>
 
             {/* ── Footer ── */}
-            <footer className="border-t border-gray-200 dark:border-white/5">
-                <div className="max-w-6xl mx-auto px-6 py-10 flex flex-wrap items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                        <Logo className="w-7 h-7" />
-                        <div>
-                            <p className="text-sm font-medium">CEDA Innovation Hub</p>
-                            <p className="text-[11px] text-gray-500 dark:text-white/40">
-                                Citizen Entrepreneurial Development Agency · Botswana
-                            </p>
+            <footer className="border-t border-gray-200 dark:border-white/5 bg-white dark:bg-white/[0.02]">
+                <div className="max-w-6xl mx-auto px-6 pt-16 pb-10">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-14">
+                        {FOOTER_SECTIONS.map(section => (
+                            <div key={section.title}>
+                                <h3 className="text-xs uppercase tracking-wider text-gray-400 dark:text-white/40 mb-4">
+                                    {section.title}
+                                </h3>
+                                <ul className="space-y-2.5">
+                                    {section.items.map(item => (
+                                        <li key={item.label}>
+                                            <a
+                                                href={item.href || '#'}
+                                                className="inline-block py-1 text-sm text-gray-600 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors"
+                                            >
+                                                {item.label}
+                                            </a>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="flex flex-wrap items-center justify-between gap-6 pt-8 border-t border-gray-200 dark:border-white/10">
+                        <div className="flex items-center gap-3">
+                            <Logo className="w-8 h-8" />
+                            <div>
+                                <p className="text-sm font-medium">CEDA Innovation Hub</p>
+                                <p className="text-[11px] text-gray-500 dark:text-white/40">
+                                    Citizen Entrepreneurial Development Agency · Botswana
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-white/45">
+                            <span>Designed and developed by</span>
+                            <img
+                                src="/partners/oratory-league-logo.png"
+                                alt="Oratory League"
+                                className="h-8 w-auto max-w-[130px] object-contain object-left dark:brightness-125"
+                            />
                         </div>
                     </div>
-                    <div className="flex items-center gap-6 text-[11px] text-gray-500 dark:text-white/35">
-                        <a href="/changelog" className="hover:text-gray-900 dark:hover:text-white/70 transition-colors">Changelog</a>
-                        <a href="/gallery" className="hover:text-gray-900 dark:hover:text-white/70 transition-colors">Awards gallery</a>
-                        <span>Data Protection Act compliant</span>
-                    </div>
+
+                    <p className="mt-6 text-[11px] leading-relaxed text-gray-400 dark:text-white/35 max-w-4xl">
+                        © {new Date().getFullYear()} Citizen Entrepreneurial Development Agency. All rights reserved.
+                        Submissions, evaluations and personal data are processed in line with Botswana's
+                        Data Protection Act and retained only for as long as the competition and any
+                        appeal require. Access to a submission is limited to its owner, CEDA
+                        administrators and the judges assigned to it; every access is recorded in the
+                        audit trail.
+                    </p>
                 </div>
             </footer>
         </div>
@@ -426,14 +483,14 @@ export default function Landing({ onSignIn, onRegister }) {
 }
 
 /* ── small pieces ─────────────────────────────────────────────── */
-function SectionHead({ eyebrow, title, body }) {
+function SectionHead({ eyebrow, title, body, center = true }) {
     return (
-        <div>
-            <div className="flex items-center gap-2 text-accent-600 dark:text-accent-400 text-xs font-medium uppercase tracking-[0.16em]">
-                <Sparkles className="w-3.5 h-3.5" /> {eyebrow}
-            </div>
-            <h2 className="mt-5 text-4xl sm:text-5xl font-semibold tracking-[-0.03em] max-w-3xl">{title}</h2>
-            {body && <p className="mt-4 text-gray-600 dark:text-white/55 text-lg max-w-2xl">{body}</p>}
+        <div className={center ? 'text-center mx-auto max-w-3xl' : 'max-w-3xl'}>
+            {eyebrow && (
+                <p className="text-sm text-gray-400 dark:text-white/40">{eyebrow}</p>
+            )}
+            <h2 className={`${eyebrow ? 'mt-3 ' : ''}text-4xl sm:text-5xl font-semibold tracking-[-0.03em]`}>{title}</h2>
+            {body && <p className="mt-4 text-gray-600 dark:text-white/55 text-lg">{body}</p>}
         </div>
     );
 }

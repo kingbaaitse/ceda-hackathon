@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Lock, ArrowRight, Eye, EyeOff, Loader2, Lightbulb } from 'lucide-react';
+import { Mail, Lock, ArrowRight, ArrowLeft, Eye, EyeOff, Loader2, Lightbulb } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import Logo from '../components/Logo';
 
-const Login = ({ onSignup }) => {
+const Login = ({ onSignup, onLanding }) => {
     const { login, resetPassword } = useAuth();
 
     const [mode, setMode] = useState('login'); // 'login' | 'forgot'
@@ -77,6 +77,14 @@ const Login = ({ onSignup }) => {
                     transition={{ duration: 0.4 }}
                     className="w-full max-w-md"
                 >
+                    <button
+                        type="button"
+                        onClick={onLanding}
+                        className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 dark:text-white/45 dark:hover:text-white transition-colors mb-6"
+                    >
+                        <ArrowLeft className="w-4 h-4" /> Back to the hub
+                    </button>
+
                     <div className="flex items-center gap-3 mb-8 lg:hidden">
                         <Logo className="w-8 h-8" />
                         <span className="text-gray-900 dark:text-white text-lg">CEDA Innovation Hub</span>

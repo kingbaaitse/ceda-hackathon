@@ -18,6 +18,8 @@ import { useToast } from '../../context/ToastContext';
 import { supabase } from '../../lib/supabase';
 import { STAGE_LABELS, STAGE_COLORS } from '../../lib/pipeline';
 import { useRubric, weightedTotal } from '../../lib/rubric';
+import EmptyState from '../../components/EmptyState';
+import emptyArt from '../../assets/img/illustrations/organising.svg';
 
 const NAV = [
     { id: 'assigned', label: 'Assigned Submissions', icon: ClipboardList },
@@ -91,9 +93,12 @@ export default function JudgePortal() {
             ) : fatal ? (
                 <div className="card p-6 text-royal-600 text-sm">{fatal}</div>
             ) : rows.length === 0 ? (
-                <div className="card p-10 max-w-xl text-center">
-                    <ClipboardList className="w-8 h-8 text-gray-300 dark:text-white/20 mx-auto" />
-                    <p className="text-gray-400 mt-3">No submissions assigned to you yet. CEDA administration will assign submissions for evaluation.</p>
+                <div className="card max-w-2xl mx-auto">
+                    <EmptyState
+                        art={emptyArt}
+                        title="Nothing assigned to you yet"
+                        body="CEDA administration assigns submissions for evaluation. You will see them here, and you will be notified."
+                    />
                 </div>
             ) : (
                 <div className="max-w-5xl space-y-4">

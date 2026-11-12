@@ -1,0 +1,110 @@
+/**
+ * FloatingNav — a pill-shaped navigation bar that floats over the page.
+ *
+ * Behaviour:
+ *  - always a rounded glass pill, centred
+ *  - hides when scrolling down, returns the moment the reader scrolls up
+ *  - tightens (less padding, smaller logo) once the page is scrolled
+ *  - the active section is tracked and marked
+ */
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import Logo from './Logo';
+
+const LINKS = [
+    { id: 'pipeline', label: 'Pipeline' },
+    { id: 'awards', label: 'Awards' },
+    { id: 'partner', label: 'Partner' },
+    { id: 'changelog', label: 'Changelog', href: '/changelog' },
+];
+
+export default function FloatingNav({ onSignIn, onRegister }) {
+    const [scrolled, setScrolled] = useState(false);
+    const [hidden, setHidden] = useState(false);
+    const [active, setActive] = useState('');
+
+    useEffect(() => {
+        let last = window.scrollY;
+        const onScroll = () => {
+            const y = window.scrollY;
+            setScrolled(y > 24);
+            setHidden(y > last && y > 140 && !document.querySelector('dialog[open]'));
+            last = y;
+
+            // active section
+            let current = '';
+            for (const l of LINKS) {
+                const el = l.id && document.getElementById(l.id);
+                if (el && el.getBoundingClientRect().top <= window.innerHeight * 0.4) current = l.id;
+            }
+            setActive(current);
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        return () => window.removeEventListener('scroll', onScroll);
+    }, []);
+
+    return (
+        <AnimatePresence>
+            {!hidden && (
+                <motion.header
+                    initial={{ y: -80, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: -80, opacity: 0 }}
+                    transition={{ type: 'spring', stiffness: 260, damping: 30 }}
+                    className="fixed top-3 left-0 right-0 z-50 flex justify-center px-4"
+                >
+                    <nav
+                        className={`flex items-center gap-1 rounded-full border border-gray-200/80 bg-white/80 backdrop-blur-xl shadow-[0_12px_40px_-20px_rgba(30,15,5,0.35)] dark:border-white/10 dark:bg-[#0f0f0f]/80 dark:shadow-[0_12px_40px_-20px_rgba(0,0,0,0.8)] transition-all duration-300 ${scrolled ? 'py-1.5 pl-3 pr-1.5' : 'py-2.5 pl-5 pr-2.5'}`}
+                    >
+                        <a href="/" className="flex items-center gap-2 mr-1">
+                            <motion.span
+                                animate={{ width: scrolled ? 24 : 30, height: scrolled ? 24 : 30 }}
+                                transition={{ type: 'spring', stiffness: 300, damping: 28 }}
+                                className="block"
+                            >
+                                <Logo className="w-full h-full" />
+                            </motion.span>
+                            <span className={`text-sm font-medium tracking-tight whitespace-nowrap overflow-hidden transition-all duration-300 ${scrolled ? 'max-w-0 opacity-0' : 'max-w-[180px] opacity-100'}`}>
+                                CEDA Innovation Hub
+                            </span>
+                        </a>
+
+                        <div className="hidden md:flex items-center gap-0.5 mx-1">
+                            {LINKS.map(l => (
+                                <a
+                                    key={l.id || l.href}
+                                    href={l.href || `#${l.id}`}
+                                    className={`relative px-3.5 py-1.5 rounded-full text-sm transition-colors ${active === l.id ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-white/55 hover:text-gray-900 dark:hover:text-white'}`}
+                                >
+                                    {active === l.id && (
+                                        <motion.span
+                                            layoutId="floatnav-active"
+                                            className="absolute inset-0 rounded-full bg-gray-900/5 dark:bg-white/10"
+                                            transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                                        />
+                                    )}
+                                    <span className="relative">{l.label}</span>
+                                </a>
+                            ))}
+                        </div>
+
+                        <div className="flex items-center gap-1.5 ml-1">
+                            <button
+                                onClick={onSignIn}
+                                className="px-3.5 py-1.5 rounded-full text-sm text-gray-600 dark:text-white/70 hover:text-gray-900 dark:hover:text-white hover:bg-gray-900/5 dark:hover:bg-white/10 transition-colors"
+                            >
+                                Sign in
+                            </button>
+                            <button
+                                onClick={onRegister}
+                                className="px-4 py-1.5 rounded-full text-sm bg-accent-500 text-white hover:bg-accent-600 transition-colors shadow-[0_6px_18px_-8px_rgba(242,101,34,0.9)]"
+                            >
+                                Register
+                            </button>
+                        </div>
+                    </nav>
+                </motion.header>
+            )}
+        </AnimatePresence>
+    );
+}

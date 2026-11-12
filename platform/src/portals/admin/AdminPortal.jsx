@@ -18,6 +18,8 @@ import Select from '../../components/ui/Select';
 import Slider from '../../components/ui/Slider';
 import MessageThread from '../../components/MessageThread';
 import MetricBars from '../../components/MetricBars';
+import EmptyState from '../../components/EmptyState';
+import emptyArt from '../../assets/img/illustrations/flow.svg';
 import { SEMANTIC, stageTone, scoreTone, criterionTone, ratioTone, severityTone } from '../../lib/semantics';
 import { SkeletonCard } from '../../components/ui/Skeleton';
 import { useAuth } from '../../context/AuthContext';
@@ -196,9 +198,12 @@ function Pipeline({ submissions, allCount, search, evaluations, assignments, pro
 
     if (allCount === 0) {
         return (
-            <div className="card p-10 max-w-xl text-center">
-                <GitBranch className="w-8 h-8 text-gray-300 dark:text-white/20 mx-auto" />
-                <p className="text-gray-400 mt-3">No submissions in the pipeline yet.</p>
+            <div className="card max-w-2xl mx-auto">
+                <EmptyState
+                    art={emptyArt}
+                    title="The pipeline is empty"
+                    body="When entrants submit, they appear here with their stage, their attachments and the feedback waiting to be written."
+                />
             </div>
         );
     }

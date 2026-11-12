@@ -17,6 +17,8 @@ import MessageThread from '../../components/MessageThread';
 import Select from '../../components/ui/Select';
 import MultiSelect from '../../components/ui/MultiSelect';
 import { SkeletonCard } from '../../components/ui/Skeleton';
+import EmptyState from '../../components/EmptyState';
+import emptyArt from '../../assets/img/illustrations/idea-process.svg';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { supabase } from '../../lib/supabase';
@@ -184,9 +186,16 @@ function Overview({ submission, gateEvents, evaluations, onSubmitTab }) {
             </div>
 
             {!submission && (
-                <motion.button whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} onClick={onSubmitTab} className="btn-accent w-full sm:w-auto">
-                    <Lightbulb className="w-4 h-4" /> Start your submission
-                </motion.button>
+                <EmptyState
+                    art={emptyArt}
+                    title="Your entry starts here"
+                    body="Create a submission and we will guide you through the idea, your team, your media and a final review before anything is sent."
+                    action={
+                        <motion.button whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} onClick={onSubmitTab} className="btn-accent">
+                            <Lightbulb className="w-4 h-4" /> Start your submission
+                        </motion.button>
+                    }
+                />
             )}
         </div>
     );
