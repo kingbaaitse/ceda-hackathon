@@ -77,6 +77,14 @@ export function cn(...inputs: ClassValue[]) {
 `, 'utf8');
         console.log('✓ lib/utils.ts');
     }
+
+    // The prism loads its model and textures from the Obsidian CDN, which
+    // sends no CORS headers - mirror them locally and repoint the component.
+    const { spawnSync } = await import('node:child_process');
+    const mirror = spawnSync(process.execPath, [path.resolve('tools/mirror-obsidian-assets.mjs')], {
+        stdio: 'inherit',
+    });
+    if (mirror.status !== 0) console.error('✗ asset mirror failed');
 };
 
 run();
