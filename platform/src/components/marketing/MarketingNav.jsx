@@ -80,13 +80,13 @@ export default function MarketingNav({ links = [], onSignIn, onRegister }) {
                         <div className="flex items-center gap-1.5 ml-1">
                             <button
                                 onClick={onSignIn}
-                                className="px-3.5 py-1.5 rounded-full text-sm text-gray-600 dark:text-white/70 hover:text-gray-900 dark:hover:text-white hover:bg-gray-900/5 dark:hover:bg-white/10 transition-colors"
+                                className="px-3 py-1.5 rounded-full text-sm whitespace-nowrap text-gray-600 dark:text-white/70 hover:text-gray-900 dark:hover:text-white hover:bg-gray-900/5 dark:hover:bg-white/10 transition-colors"
                             >
                                 Sign in
                             </button>
                             <button
                                 onClick={onRegister}
-                                className="px-4 py-1.5 rounded-full text-sm bg-accent-500 text-white hover:bg-accent-600 transition-colors shadow-[0_6px_18px_-8px_rgba(242,101,34,0.9)]"
+                                className="px-3.5 py-1.5 rounded-full text-sm whitespace-nowrap bg-accent-500 text-white hover:bg-accent-600 transition-colors shadow-[0_6px_18px_-8px_rgba(242,101,34,0.9)]"
                             >
                                 Register
                             </button>

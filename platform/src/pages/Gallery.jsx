@@ -7,6 +7,7 @@ import React, { useEffect, useState, useMemo, lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Trophy, Sparkles, Loader2 } from 'lucide-react';
 import Logo from '../components/Logo';
+import CursorFollower from '../components/CursorFollower';
 import MarketingNav from '../components/marketing/MarketingNav';
 import MarketingFooter from '../components/marketing/MarketingFooter';
 import ModalSheet from '../components/ui/ModalSheet';
@@ -72,36 +73,33 @@ export default function Gallery({ onBack }) {
     const sdgLabel = (v) => SDGS.find(s => s.value === v)?.label || v;
 
     return (
-        <div className="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#0a0a0a] dark:text-gray-900 dark:text-white">
+        <div className="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#0a0a0a] dark:text-white transition-colors duration-300">
+            <CursorFollower />
             {/* Hero */}
             <div className="relative overflow-hidden">
                 <div
-                    className="absolute inset-0 opacity-40"
+                    className="absolute inset-0 opacity-80 dark:opacity-100"
                     style={{
                         background:
-                            'radial-gradient(600px 300px at 20% 0%, rgba(242,101,34,0.35), transparent), radial-gradient(500px 260px at 85% 20%, rgba(250,166,26,0.25), transparent)',
+                            'radial-gradient(700px 380px at 20% 0%, rgba(242,101,34,0.18), transparent 70%), radial-gradient(560px 300px at 85% 18%, rgba(250,166,26,0.14), transparent 70%)',
                     }}
                 />
-                <div className="relative max-w-6xl mx-auto px-6 pt-10 pb-14">
-                    <MarketingNav
-                links={[
-                    { id: 'awards', label: 'Awards' },
-                    { id: 'changelog', label: 'Changelog', href: '/changelog' },
-                ]}
-                onSignIn={onBack}
-                onRegister={onBack}
-            />
-                    <div className="mt-8 flex items-center gap-3">
-                        <Logo className="w-9 h-9" />
-                        <span className="text-sm text-gray-900/70 dark:text-gray-900 dark:text-white/70 tracking-tight">CEDA Innovation Hub</span>
-                    </div>
-                    <div className="mt-10 flex items-center gap-2 text-accent-400 text-sm">
-                        <Trophy className="w-4 h-4" /> Awards Gallery
-                    </div>
-                    <h1 className="mt-3 text-4xl sm:text-5xl font-medium tracking-tight max-w-3xl">
+                <MarketingNav
+                    links={[
+                        { id: 'awards', label: 'Awards' },
+                        { id: 'team', label: 'Team', href: '/team' },
+                        { id: 'changelog', label: 'Changelog', href: '/changelog' },
+                    ]}
+                    onSignIn={onBack}
+                    onRegister={onBack}
+                />
+
+                <div className="relative max-w-6xl mx-auto px-6 pt-32 pb-12 text-center">
+                    <p className="text-sm text-gray-500 dark:text-white/45">CEDA Innovation Hub</p>
+                    <h1 className="mt-5 text-4xl sm:text-6xl font-semibold tracking-[-0.035em] mx-auto max-w-3xl">
                         Innovations awarded by CEDA
                     </h1>
-                    <p className="mt-4 text-gray-900/60 dark:text-gray-900 dark:text-white/60 max-w-2xl">
+                    <p className="mt-5 text-gray-600 dark:text-white/55 text-lg sm:text-xl leading-relaxed mx-auto max-w-2xl">
                         Winning submissions that passed every stage gate — screening, evaluation,
                         selection — and earned CEDA's recognition.
                     </p>
@@ -111,19 +109,16 @@ export default function Gallery({ onBack }) {
             {/* Showcase — draggable lensed grid of awarded innovations */}
             {tiles.length > 0 && (
                 <div className="max-w-6xl mx-auto px-6 pb-16">
-                    <div className="flex items-end justify-between gap-4 mb-4">
-                        <div>
-                            <h2 className="text-2xl tracking-tight text-gray-900 dark:text-white">The showcase</h2>
-                            <p className="text-gray-900/50 dark:text-gray-900 dark:text-white/50 text-sm mt-1">Drag through the awarded work.</p>
-                        </div>
-                    </div>
                     <Suspense fallback={
-                        <div className="h-[420px] rounded-3xl bg-[#0a0a0a] flex items-center justify-center">
-                            <Loader2 className="w-6 h-6 animate-spin text-gray-900/30 dark:text-gray-900 dark:text-white/30" />
+                        <div className="h-[420px] rounded-[28px] bg-[#0a0a0a] flex items-center justify-center">
+                            <Loader2 className="w-6 h-6 animate-spin text-white/30" />
                         </div>
                     }>
-                        <ArtGallery images={galleryImages} items={galleryCaptions} className="h-[420px]" />
+                        <ArtGallery images={galleryImages} items={galleryCaptions} className="h-[420px] rounded-[28px] border border-gray-200 dark:border-white/10" />
                     </Suspense>
+                    <p className="text-center text-xs text-gray-400 dark:text-white/35 mt-4">
+                        Drag through the awarded work — each tile is a submission that cleared every gate.
+                    </p>
                 </div>
             )}
 

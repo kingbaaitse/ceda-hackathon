@@ -116,6 +116,7 @@ export default function Landing({ onSignIn, onRegister }) {
                     { id: 'features', label: 'In the box' },
                     { id: 'awards', label: 'Awards' },
                     { id: 'partner', label: 'Partner' },
+                    { id: 'team', label: 'Team', href: '/team' },
                     { id: 'changelog', label: 'Changelog', href: '/changelog' },
                 ]}
                 onSignIn={onSignIn}
@@ -238,15 +239,16 @@ export default function Landing({ onSignIn, onRegister }) {
                             )}
                             <div className="mt-10 flex items-center gap-6 pb-10">
                                 <span className="text-[10px] uppercase tracking-[0.2em] text-gray-400 dark:text-white/30 flex-shrink-0">Awarded</span>
-                                <div className="flex-1 min-w-0 py-1.5">
+                                <div className="flex-1 min-w-0">
                                     <DraggableMarquee
                                         items={awarded.map(a => ({
                                             id: a.id, src: '', alt: a.title, width: 320, height: 200, title: a.title,
                                         }))}
                                         speed={0.5}
                                         repeatCount={2}
+                                        className="py-2"
                                         renderItem={(item) => (
-                                            <span className="px-3 py-1.5 rounded-full text-xs bg-black/[0.05] dark:bg-white/5 text-gray-700 dark:text-white/60 whitespace-nowrap">
+                                            <span className="px-3.5 py-2 rounded-full text-xs bg-black/[0.05] dark:bg-white/5 text-gray-700 dark:text-white/60 whitespace-nowrap leading-5">
                                                 {item.title}
                                             </span>
                                         )}

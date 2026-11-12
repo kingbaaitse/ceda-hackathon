@@ -880,7 +880,7 @@ function Dashboard({ submissions, profiles, evaluations, gateEvents, emailLog, m
                             <button
                                 key={item.id}
                                 onClick={() => onNavigate?.(item.tab, item.submission)}
-                                className="w-full flex items-center gap-3 text-left px-4 py-3 rounded-2xl border border-gray-100 dark:border-white/10 hover:border-accent-500/40 hover:bg-accent-500/5 transition-colors"
+                                className="w-full flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 text-left px-4 py-3 rounded-2xl border border-gray-100 dark:border-white/10 hover:border-accent-500/40 hover:bg-accent-500/5 transition-colors"
                             >
                                 <span className={`w-2 h-2 rounded-full flex-shrink-0 ${SEMANTIC[severityTone(item.severity)].dot}`} />
                                 <div className="min-w-0 flex-1">
@@ -888,7 +888,7 @@ function Dashboard({ submissions, profiles, evaluations, gateEvents, emailLog, m
                                     <p className="text-xs text-gray-400 truncate">{item.detail}</p>
                                 </div>
                                 <span className="text-xs text-accent-600 dark:text-accent-400 flex-shrink-0">{item.action}</span>
-                                <ChevronRight className="w-4 h-4 text-gray-300 flex-shrink-0" />
+                                <ChevronRight className="w-4 h-4 text-gray-300 hidden sm:block flex-shrink-0" />
                             </button>
                         ))}
                     </div>
@@ -901,7 +901,7 @@ function Dashboard({ submissions, profiles, evaluations, gateEvents, emailLog, m
                 <Kpi label="Submissions" value={submissions.length} sub={`${Math.round((teams / total) * 100)}% team`} tone="info" />
                 <Kpi label="In flight" value={inFlight} sub="awaiting a gate" tone={inFlight > 0 ? 'warning' : 'neutral'} />
                 <Kpi label="Avg score" value={avg != null ? `${avg}/100` : '—'} sub={`${evaluated.length} evaluated`} tone={scoreTone(avg)} />
-                <Kpi label="Awarded" value={byStage.awarded} sub="public in gallery" tone={byStage.awarded ? 'success' : 'neutral'} />
+                <Kpi label="Awarded" value={byStage.awarded} sub="public in gallery" tone={byStage.awarded ? 'success' : 'neutral'} className="col-span-2 sm:col-span-1" />
             </div>
 
             {/* ── Insights ── */}
@@ -1029,10 +1029,10 @@ function Dashboard({ submissions, profiles, evaluations, gateEvents, emailLog, m
 
 const cap = (s) => String(s || '').replace(/^./, c => c.toUpperCase());
 
-const Kpi = ({ label, value, sub, tone = 'info' }) => {
+const Kpi = ({ label, value, sub, tone = 'info', className = '' }) => {
     const t = SEMANTIC[tone] || SEMANTIC.info;
     return (
-        <div className="card p-4">
+        <div className={`card p-4 ${className}`}>
             <div className="flex items-center gap-1.5">
                 <span className={`w-1.5 h-1.5 rounded-full ${t.dot}`} />
                 <p className="text-[11px] text-gray-400 uppercase tracking-wide">{label}</p>

@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Gallery from './pages/Gallery';
 import Landing from './pages/Landing';
+import Team from './pages/Team';
 import Changelog from './pages/Changelog';
 import ParticipantPortal from './portals/participant/ParticipantPortal';
 import JudgePortal from './portals/judge/JudgePortal';
@@ -18,6 +19,7 @@ function getPageFromUrl() {
   if (path === 'signup') return 'signup';
   if (path === 'gallery') return 'gallery';
   if (path === 'changelog') return 'changelog';
+  if (path === 'team') return 'team';
   if (['login', 'admin', 'judge', 'participant'].includes(path)) return 'login';
   return 'landing';
 }
@@ -45,9 +47,12 @@ function Shell() {
     );
   }
 
+  // Public marketing pages stay reachable whether or not you are signed in.
+  if (page === 'gallery') return <Gallery onBack={() => navigate('landing')} />;
+  if (page === 'changelog') return <Changelog onBack={() => navigate('landing')} />;
+  if (page === 'team') return <Team onSignIn={() => navigate('login')} onRegister={() => navigate('signup')} />;
+
   if (!user) {
-    if (page === 'gallery') return <Gallery onBack={() => navigate('landing')} />;
-    if (page === 'changelog') return <Changelog onBack={() => navigate('landing')} />;
     if (page === 'signup') return <Signup onLogin={() => navigate('login')} onLanding={() => navigate('landing')} />;
     if (page === 'landing') {
       return <Landing onSignIn={() => navigate('login')} onRegister={() => navigate('signup')} />;

@@ -7,7 +7,7 @@
  */
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Layers, MessageCircle, Sparkles, ShieldCheck, FileText, ArrowUpRight } from 'lucide-react';
+import { Layers, MessageCircle, History, ShieldCheck, FileText, ArrowUpRight } from 'lucide-react';
 
 const Item = ({ className = '', delay = 0, children }) => (
     <motion.div
@@ -43,7 +43,7 @@ export default function BentoFeatures() {
                     {/* ── large: version history ── */}
                     <Item className="lg:col-span-7 lg:row-span-2" delay={0}>
                         <div className="flex items-center gap-2">
-                            <Sparkles className="w-4 h-4 text-accent-500" />
+                            <History className="w-4 h-4 text-accent-500" />
                             <Label>Version history</Label>
                         </div>
                         <h3 className="mt-4 text-xl font-medium text-gray-900 dark:text-white">

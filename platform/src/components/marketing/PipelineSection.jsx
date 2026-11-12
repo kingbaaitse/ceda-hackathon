@@ -19,44 +19,38 @@ const STAGES = [
     {
         key: 'draft', label: 'Draft', n: '01', tone: 'neutral',
         art: draftArt,
-        when: 'While you write',
-        copy: 'A four-step wizard with autosave. Close the tab, lose signal, come back — your words are still there.',
-        gets: 'An autosaved draft you can finish later.',
+        copy: 'A four-step wizard that saves as you type.',
+        gets: 'An autosaved draft.',
     },
     {
         key: 'compliance', label: 'Compliance', n: '02', tone: 'info',
         art: complianceArt,
-        when: 'Within a day of submitting',
-        copy: 'CEDA verifies eligibility and completeness before anything enters the pipeline.',
-        gets: 'A confirmation that the entry is eligible.',
+        copy: 'Eligibility and completeness, verified by CEDA.',
+        gets: 'A confirmation you are eligible.',
     },
     {
         key: 'screening', label: 'Screening', n: '03', tone: 'progress',
         art: screeningArt,
-        when: 'First gate',
-        copy: 'A first-pass reviewer reads the entry against the published criteria.',
-        gets: 'Written screening feedback, in your portal.',
+        copy: 'A first-pass reviewer reads your entry.',
+        gets: 'Written screening feedback.',
     },
     {
         key: 'evaluation', label: 'Evaluation', n: '04', tone: 'progress',
         art: evaluationArt,
-        when: 'The judging panel',
-        copy: 'Assigned judges score the weighted rubric. You never see who scored you.',
-        gets: 'A score and per-criterion comments.',
+        copy: 'Assigned judges score the weighted rubric.',
+        gets: 'A score and comments.',
     },
     {
         key: 'selection', label: 'Selection', n: '05', tone: 'warning',
         art: selectionArt,
-        when: 'The committee',
-        copy: 'The committee reads the anonymised evaluations and shortlists.',
-        gets: 'A decision, with the reasoning behind it.',
+        copy: 'The committee reads the evaluations.',
+        gets: 'A decision with reasoning.',
     },
     {
         key: 'award', label: 'Award', n: '06', tone: 'success',
         art: awardArt,
-        when: 'The award',
-        copy: 'Approved entries are funded, published in the awards gallery and kept there for everyone to see.',
-        gets: 'An award, and a public profile for the work.',
+        copy: 'Approved entries are funded and published.',
+        gets: 'An award, and a public profile.',
     },
 ];
 
@@ -119,13 +113,12 @@ export default function PipelineSection() {
                                         </span>
                                     </div>
 
-                                    <p className="mt-6 text-sm font-medium text-gray-900 dark:text-white">{s.label}</p>
-                                    <p className={`mt-1 text-[11px] uppercase tracking-[0.12em] ${t.text}`}>{s.when}</p>
-                                    <p className="mt-3 text-sm text-gray-600 dark:text-white/55 leading-relaxed">{s.copy}</p>
+                                    <p className="mt-5 text-sm font-medium text-gray-900 dark:text-white">{s.label}</p>
+                                    <p className="mt-2 text-sm text-gray-600 dark:text-white/55 leading-relaxed">{s.copy}</p>
 
-                                    <div className={`mt-4 rounded-2xl border ${t.ring} bg-white/60 dark:bg-white/[0.03] p-3 text-left mt-auto`}>
-                                        <p className="text-[10px] uppercase tracking-[0.12em] text-gray-400 dark:text-white/35">You receive</p>
-                                        <p className="mt-1 text-xs text-gray-700 dark:text-gray-200 leading-relaxed">{s.gets}</p>
+                                    <div className={`mt-4 inline-flex items-center gap-2 rounded-full border ${t.ring} bg-white/60 dark:bg-white/[0.03] px-3 py-1.5`}>
+                                        <span className={`w-1.5 h-1.5 rounded-full ${t.bar}`} />
+                                        <span className="text-[11px] text-gray-600 dark:text-gray-300">{s.gets}</span>
                                     </div>
                                 </motion.div>
                             );
