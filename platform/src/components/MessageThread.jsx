@@ -9,9 +9,15 @@
  */
 import React, { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Lock, Users, Loader2, MessageCircle } from 'lucide-react';
+import {
+    Send,
+    Lock,
+    Users,
+    MessageCircle,
+} from 'lucide-react';
 import Select from './ui/Select';
 import { supabase } from '../lib/supabase';
+import { ButtonLoader, InlineLoader } from './Loader';
 
 const VISIBILITY_OPTIONS = [
     { value: 'participant', label: 'Participant + judges', hint: 'Visible to everyone on this submission' },
@@ -66,7 +72,7 @@ export default function MessageThread({ submissionId, role = 'participant', onPo
     };
 
     if (loading) {
-        return <div className="flex items-center justify-center py-8 text-gray-400"><Loader2 className="w-5 h-5 animate-spin" /></div>;
+        return <div className="flex items-center justify-center py-8 text-gray-400"><InlineLoader size={24} /></div>;
     }
 
     return (
@@ -137,7 +143,7 @@ export default function MessageThread({ submissionId, role = 'participant', onPo
                     disabled={sending || !body.trim()}
                     className="btn-accent !py-2.5 !px-4 !text-sm disabled:opacity-40 flex-shrink-0"
                 >
-                    {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                    {sending ? <ButtonLoader /> : <Send className="w-4 h-4" />}
                 </button>
             </div>
             {error && <p className="text-royal-600 dark:text-royal-400 text-xs">{error}</p>}

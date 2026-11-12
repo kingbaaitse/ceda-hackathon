@@ -6,7 +6,11 @@
 import React, { useState, useRef, useEffect, useLayoutEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Check, X } from 'lucide-react';
+import {
+    ChevronDown,
+    Check,
+    X,
+} from 'lucide-react';
 
 export default function MultiSelect({
     value = [],

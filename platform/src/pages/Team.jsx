@@ -8,8 +8,15 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    X, Mail, MapPin, Phone, Code, Linkedin, Instagram, Facebook,
-    Sparkles, ArrowRight,
+    X,
+    Mail,
+    MapPin,
+    Phone,
+    Code,
+    Linkedin,
+    Instagram,
+    Facebook,
+    ArrowRight,
 } from 'lucide-react';
 import MarketingNav from '../components/marketing/MarketingNav';
 import MarketingFooter from '../components/marketing/MarketingFooter';
@@ -23,7 +30,7 @@ const TEAM = [
         role: 'Board Chair & Founder, Oratory League',
         image: leatileImg,
         location: 'Gaborone, Botswana',
-        email: 'king.baaitse@hmcp.online',
+        email: 'kingbaaitse@oratoryleague.xyz',
         phone: '+267 71 419 498',
         shortBio: 'Builds the technology and the product — and chairs the company delivering it.',
         fullBio: 'Leatile King Baaitse is Board Chair and Founder of Oratory League, the official partner and developer of the CEDA Innovation Hub. He designed and engineered the platform end to end: the guided submission wizard, the stage-gate workflow, the judge workspace, the row-level security model and the analytics that sit behind them.',
@@ -46,9 +53,9 @@ const TEAM = [
 ];
 
 const SOCIALS = {
-    linkedin: { icon: Linkedin, label: 'LinkedIn' },
-    instagram: { icon: Instagram, label: 'Instagram' },
-    facebook: { icon: Facebook, label: 'Facebook' },
+    linkedin: { icon: Linkedin, label: 'LinkedIn', ring: 'hover:bg-[#0A66C2]/15 hover:border-[#0A66C2]/50', text: 'text-[#0A66C2] dark:text-[#0A66C2]' },
+    instagram: { icon: Instagram, label: 'Instagram', ring: 'hover:bg-[#E1306C]/15 hover:border-[#E1306C]/50', text: 'text-[#E1306C] dark:text-[#E1306C]' },
+    facebook: { icon: Facebook, label: 'Facebook', ring: 'hover:bg-[#1877F2]/15 hover:border-[#1877F2]/50', text: 'text-[#1877F2] dark:text-[#1877F2]' },
 };
 
 function SocialLink({ type, url }) {
@@ -60,9 +67,10 @@ function SocialLink({ type, url }) {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={s.label}
-            className="w-9 h-9 rounded-full border border-gray-200 dark:border-white/12 flex items-center justify-center text-gray-500 dark:text-white/60 hover:text-accent-500 hover:border-accent-500/40 transition-colors"
+            title={s.label}
+            className={`w-9 h-9 rounded-full border border-gray-200 dark:border-white/12 flex items-center justify-center transition-colors ${s.ring} ${s.text}`}
         >
-            <s.icon className="w-4 h-4" />
+            <s.icon className="w-4 h-4" fill="currentColor" />
         </a>
     );
 }
@@ -152,7 +160,7 @@ export default function Team({ onSignIn, onRegister }) {
                         className="relative rounded-[28px] border border-dashed border-gray-300 dark:border-white/15 bg-white/40 dark:bg-white/[0.015] p-8 flex flex-col justify-center"
                     >
                         <div className="w-11 h-11 rounded-full bg-accent-500/12 flex items-center justify-center">
-                            <Sparkles className="w-5 h-5 text-accent-500" />
+                            
                         </div>
                         <h3 className="mt-5 text-lg font-medium">Growing the team</h3>
                         <p className="mt-2 text-sm text-gray-600 dark:text-white/50 max-w-sm">
@@ -161,7 +169,7 @@ export default function Team({ onSignIn, onRegister }) {
                             innovators — better than we do.
                         </p>
                         <p className="mt-4 text-xs text-gray-400 dark:text-white/35">
-                            Enquiries → king.baaitse@hmcp.online
+                            Enquiries → kingbaaitse@oratoryleague.xyz
                         </p>
                     </motion.div>
                 </div>

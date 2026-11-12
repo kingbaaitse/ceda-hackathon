@@ -7,7 +7,12 @@
  */
 import React, { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Eye, EyeOff, Check, X } from 'lucide-react';
+import {
+    Eye,
+    EyeOff,
+    Check,
+    X,
+} from 'lucide-react';
 
 const RULES = [
     { id: 'len', label: 'At least 10 characters', test: v => v.length >= 10 },

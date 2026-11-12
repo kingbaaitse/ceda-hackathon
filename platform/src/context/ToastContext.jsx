@@ -1,7 +1,12 @@
 /* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useCallback, useContext, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, AlertCircle, Info, X } from 'lucide-react';
+import {
+    CheckCircle2,
+    AlertCircle,
+    Info,
+    X,
+} from 'lucide-react';
 
 const ToastContext = createContext(null);
 

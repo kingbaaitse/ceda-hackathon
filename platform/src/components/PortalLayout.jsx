@@ -7,8 +7,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    Menu, X, Bell, LogOut, Settings, ChevronRight,
-    Search, ChevronLeft, Mail, WifiOff, User, Check
+    Menu,
+    X,
+    Bell,
+    LogOut,
+    Settings,
+    ChevronRight,
+    Search,
+    ChevronLeft,
+    Mail,
+    WifiOff,
+    User,
+    Check,
 } from 'lucide-react';
 import Logo from './Logo';
 import ThemeToggle from './ThemeToggle';

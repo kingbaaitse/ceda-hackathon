@@ -5,7 +5,14 @@
  */
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, GitCommitVertical, Sparkles, ShieldCheck, Layers, Bell, Gauge } from 'lucide-react';
+import {
+    GitCommitVertical,
+    History,
+    ShieldCheck,
+    Layers,
+    Bell,
+    Gauge,
+} from 'lucide-react';
 import Logo from '../components/Logo';
 import MarketingNav from '../components/marketing/MarketingNav';
 import MarketingFooter from '../components/marketing/MarketingFooter';
@@ -29,7 +36,7 @@ const RELEASES = [
                 ],
             },
             {
-                icon: Sparkles,
+                icon: History,
                 title: 'Partner & showcase',
                 items: [
                     'CEDA and Oratory League presented as the two sides of the project: CEDA owns the competition and the pipeline, Oratory League is the official partner and the developer behind the platform.',
@@ -95,7 +102,7 @@ const RELEASES = [
         summary: 'Authentication, the four role portals, the stage-gated workflow, evaluations and reporting.',
         groups: [
             {
-                icon: Sparkles,
+                icon: History,
                 title: 'Foundation',
                 items: [
                     'Authentication with participant, judge and administrator roles, each with its own portal.',

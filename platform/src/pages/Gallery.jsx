@@ -5,7 +5,7 @@
  * ═══════════════════════════════════════════════════════════════ */
 import React, { useEffect, useState, useMemo, lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Trophy, Sparkles, Loader2 } from 'lucide-react';
+import { Trophy } from 'lucide-react';
 import Logo from '../components/Logo';
 import CursorFollower from '../components/CursorFollower';
 import MarketingNav from '../components/marketing/MarketingNav';
@@ -16,6 +16,7 @@ import { HoverImg } from '@/components/block/hover-img';
 import { supabase } from '../lib/supabase';
 import { getAttachmentUrls } from '../lib/storage';
 import { SDGS } from '../lib/sdgs';
+import { ButtonLoader, InlineLoader } from '../components/Loader';
 
 /* three.js is heavy - load the showcase only when it is on screen.
    The original component has a named export only, so map it to default. */
@@ -111,7 +112,7 @@ export default function Gallery({ onBack }) {
                 <div className="max-w-6xl mx-auto px-6 pb-16">
                     <Suspense fallback={
                         <div className="h-[420px] rounded-[28px] bg-[#0a0a0a] flex items-center justify-center">
-                            <Loader2 className="w-6 h-6 animate-spin text-white/30" />
+                            <InlineLoader size={28} />
                         </div>
                     }>
                         <ArtGallery images={galleryImages} items={galleryCaptions} className="h-[420px] rounded-[28px] border border-gray-200 dark:border-white/10" />
@@ -134,7 +135,7 @@ export default function Gallery({ onBack }) {
             <div className="max-w-6xl mx-auto px-6 pb-24">
                 {awarded === null && !fatal && (
                     <div className="flex items-center justify-center py-20 text-gray-900/40 dark:text-gray-900 dark:text-white/40">
-                        <Loader2 className="w-6 h-6 animate-spin" />
+                        <InlineLoader size={28} />
                     </div>
                 )}
                 {fatal && (
@@ -144,7 +145,7 @@ export default function Gallery({ onBack }) {
                 )}
                 {awarded && awarded.length === 0 && (
                     <div className="glass-panel rounded-3xl p-12 text-center">
-                        <Sparkles className="w-8 h-8 text-gray-900/20 dark:text-gray-900 dark:text-white/20 mx-auto" />
+                        
                         <p className="text-gray-900/50 dark:text-gray-900 dark:text-white/50 mt-4">No awarded submissions yet. The first winners will appear here.</p>
                     </div>
                 )}

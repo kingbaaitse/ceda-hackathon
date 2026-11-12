@@ -7,7 +7,13 @@
  */
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Layers, MessageCircle, History, ShieldCheck, FileText, ArrowUpRight } from 'lucide-react';
+import {
+    Layers,
+    MessageCircle,
+    History,
+    ShieldCheck,
+    FileText,
+} from 'lucide-react';
 
 const Item = ({ className = '', delay = 0, children }) => (
     <motion.div

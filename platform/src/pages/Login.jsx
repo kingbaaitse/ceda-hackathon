@@ -1,8 +1,16 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Lock, ArrowRight, ArrowLeft, Eye, EyeOff, Loader2, Lightbulb } from 'lucide-react';
+import {
+    Mail,
+    Lock,
+    ArrowRight,
+    ArrowLeft,
+    Eye,
+    EyeOff,
+} from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import Logo from '../components/Logo';
+import { ButtonLoader, InlineLoader } from '../components/Loader';
 
 const Login = ({ onSignup, onLanding }) => {
     const { login, resetPassword } = useAuth();
@@ -136,7 +144,7 @@ const Login = ({ onSignup, onLanding }) => {
                                     disabled={loading}
                                     className="btn-accent w-full disabled:opacity-60"
                                 >
-                                    {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
+                                    {loading ? <ButtonLoader /> : <ArrowRight className="w-4 h-4" />}
                                     Sign In
                                 </button>
 
@@ -187,7 +195,7 @@ const Login = ({ onSignup, onLanding }) => {
                                     </div>
                                     {error && <p className="text-royal-600 dark:text-royal-400 text-sm px-2">{error}</p>}
                                     <button type="submit" disabled={loading} className="btn-accent w-full disabled:opacity-60">
-                                        {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
+                                        {loading ? <ButtonLoader /> : <ArrowRight className="w-4 h-4" />}
                                         Send Reset Link
                                     </button>
                                     <button

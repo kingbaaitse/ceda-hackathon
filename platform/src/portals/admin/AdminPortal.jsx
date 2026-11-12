@@ -7,10 +7,22 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import {
-    GitBranch, Users as UsersIcon, BarChart3, Loader2, RefreshCw,
-    UserPlus, Send, ChevronDown, SlidersHorizontal, Download, FileText,
-    MessageCircle, ScrollText, Sparkles, Mail, LayoutDashboard, Lightbulb, TrendingUp,
-    TriangleAlert, ChevronRight
+    GitBranch,
+    Users as UsersIcon,
+    RefreshCw,
+    UserPlus,
+    Send,
+    ChevronDown,
+    SlidersHorizontal,
+    Download,
+    MessageCircle,
+    ScrollText,
+    Mail,
+    LayoutDashboard,
+    Lightbulb,
+    TrendingUp,
+    TriangleAlert,
+    ChevronRight,
 } from 'lucide-react';
 import PortalLayout from '../../components/PortalLayout';
 import ModalSheet from '../../components/ui/ModalSheet';
@@ -27,6 +39,7 @@ import { useToast } from '../../context/ToastContext';
 import { supabase } from '../../lib/supabase';
 import { STAGES, STAGE_LABELS, STAGE_COLORS, GATE_ACTIONS } from '../../lib/pipeline';
 import { useRubric, normalizeWeights } from '../../lib/rubric';
+import { ButtonLoader, InlineLoader } from '../../components/Loader';
 
 const NAV = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -345,7 +358,7 @@ function GateModal({ data, onClose, onDone }) {
                         onClick={handleExecute}
                         disabled={sending || !decision}
                     >
-                        {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                        {sending ? <ButtonLoader /> : null}
                         Apply
                     </button>
                 </div>
@@ -429,7 +442,7 @@ function AssignModal({ submission, profiles, assignments, onClose, onDone }) {
                 <div className="flex justify-end gap-2">
                     <button className="btn-secondary !py-2.5 !px-5 !text-sm" onClick={onClose}>Cancel</button>
                     <button className="btn-accent !py-2.5 !px-5 !text-sm" onClick={handleAssign} disabled={saving}>
-                        {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : null} Assign
+                        {saving ? <ButtonLoader /> : null} Assign
                     </button>
                 </div>
             }
@@ -730,7 +743,7 @@ function RubricEditor() {
                         Sum: {Math.round(sum * 100)}% {Math.abs(sum - 1) >= 0.01 && '(normalized to 100% on save)'}
                     </span>
                     <button className="btn-accent !py-2.5 !px-5 !text-sm" onClick={save} disabled={saving}>
-                        {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : null} Save weights
+                        {saving ? <ButtonLoader /> : null} Save weights
                     </button>
                 </div>
             </div>
@@ -958,7 +971,7 @@ function Dashboard({ submissions, profiles, evaluations, gateEvents, emailLog, m
                 {/* SDG spread */}
                 <div className="card p-6">
                     <div className="flex items-center gap-2 mb-4">
-                        <Sparkles className="w-4 h-4 text-accent-500" />
+                        
                         <h3 className="text-gray-900 dark:text-white text-lg">SDG alignment spread</h3>
                     </div>
                     {sdgRows.length === 0 ? <p className="text-sm text-gray-400">No SDG tags yet.</p> : (
@@ -1190,7 +1203,7 @@ function Reports({ submissions, profiles, evaluations, gateEvents, emailLog }) {
                 {/* SDG spread */}
                 <div className="card p-6">
                     <div className="flex items-center gap-2 mb-4">
-                        <Sparkles className="w-4 h-4 text-accent-500" />
+                        
                         <h3 className="text-gray-900 dark:text-white text-lg">SDG alignment spread</h3>
                     </div>
                     {sdgRows.length === 0 && <p className="text-sm text-gray-400">No SDG tags yet.</p>}

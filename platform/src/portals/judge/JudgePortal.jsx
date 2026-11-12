@@ -7,7 +7,12 @@
  * ═══════════════════════════════════════════════════════════════ */
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { ClipboardList, FileText, Loader2, RefreshCw, Star } from 'lucide-react';
+import {
+    ClipboardList,
+    FileText,
+    RefreshCw,
+    Star,
+} from 'lucide-react';
 import PortalLayout from '../../components/PortalLayout';
 import AttachmentGrid from '../../components/AttachmentGrid';
 import ModalSheet from '../../components/ui/ModalSheet';
@@ -20,6 +25,7 @@ import { STAGE_LABELS, STAGE_COLORS } from '../../lib/pipeline';
 import { useRubric, weightedTotal } from '../../lib/rubric';
 import EmptyState from '../../components/EmptyState';
 import emptyArt from '../../assets/img/illustrations/organising.svg';
+import { ButtonLoader, InlineLoader } from '../../components/Loader';
 
 const NAV = [
     { id: 'assigned', label: 'Assigned Submissions', icon: ClipboardList },
@@ -259,7 +265,7 @@ function ScoringSheet({ submission, existing, onClose, onDone }) {
                     <div className="flex gap-2">
                         <button className="btn-secondary !py-2.5 !px-5 !text-sm" onClick={onClose}>Cancel</button>
                         <button className="btn-accent !py-2.5 !px-5 !text-sm" onClick={handleSubmit} disabled={saving}>
-                            {saving && <Loader2 className="w-4 h-4 animate-spin" />}
+                            {saving && <ButtonLoader />}
                             {existing ? 'Update evaluation' : 'Submit evaluation'}
                         </button>
                     </div>

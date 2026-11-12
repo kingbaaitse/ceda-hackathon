@@ -9,10 +9,10 @@ import React from 'react';
 import Logo from '../Logo';
 
 const LEGAL = [
-    { label: 'Privacy policy', href: '/login' },
-    { label: 'Terms of use', href: '/login' },
-    { label: 'Data protection', href: '/login' },
-    { label: 'Accessibility', href: '/login' },
+    { label: 'Privacy policy', href: '/privacy' },
+    { label: 'Terms of use', href: '/terms' },
+    { label: 'Data protection', href: '/data-protection' },
+    { label: 'Accessibility', href: '/accessibility' },
 ];
 
 export default function MarketingFooter({ children }) {
@@ -49,6 +49,13 @@ export default function MarketingFooter({ children }) {
                         </ul>
 
                         <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-white/45">
+                            <a
+                                href="mailto:kingbaaitse@oratoryleague.xyz"
+                                className="hover:text-gray-900 dark:hover:text-white transition-colors"
+                            >
+                                king.baaitse@oratoryleague.xyz
+                            </a>
+                            <span className="text-white/30">·</span>
                             <span>Designed and developed by</span>
                             <img
                                 src="/partners/oratory-league-logo.png"

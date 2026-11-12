@@ -1,9 +1,18 @@
 import React, { useState } from 'react';
 import PasswordField from '../components/ui/PasswordField';
 import { motion } from 'framer-motion';
-import { Mail, Lock, ArrowRight, ArrowLeft, User, Users, Building2, Eye, EyeOff, Loader2, CheckCircle2 } from 'lucide-react';
+import {
+    Mail,
+    ArrowRight,
+    ArrowLeft,
+    User,
+    Users,
+    Building2,
+    CheckCircle2,
+} from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import Logo from '../components/Logo';
+import { ButtonLoader, InlineLoader } from '../components/Loader';
 
 const Signup = ({ onLogin, onLanding }) => {
     const { signup } = useAuth();
@@ -180,7 +189,7 @@ const Signup = ({ onLogin, onLanding }) => {
                         )}
 
                         <button type="submit" disabled={loading} className="btn-accent w-full disabled:opacity-60">
-                            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
+                            {loading ? <ButtonLoader /> : <ArrowRight className="w-4 h-4" />}
                             Create Account
                         </button>
 

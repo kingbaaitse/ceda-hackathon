@@ -10,8 +10,13 @@
 import React, { useEffect, useMemo, useState, lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import {
-    ArrowRight, Sparkles, Trophy, Handshake, ChevronRight,
-    ShieldCheck, MessageCircle, Scale, Layers, Zap,
+    ArrowRight,
+    History,
+    ShieldCheck,
+    MessageCircle,
+    Scale,
+    Layers,
+    Zap,
 } from 'lucide-react';
 import Logo from '../components/Logo';
 import MarketingNav from '../components/marketing/MarketingNav';
@@ -67,7 +72,7 @@ const REASONS = [
 const FEATURES = [
     { icon: Layers, title: 'Media & documents', body: 'Logos, product shots and pitch decks, served through short-lived signed links.' },
     { icon: MessageCircle, title: 'One conversation', body: 'Ask CEDA anything about your entry, with visibility you control for internal notes.' },
-    { icon: Sparkles, title: 'Version history', body: 'Every resubmission keeps a snapshot, so both sides can see what changed between rounds.' },
+    { icon: History, title: 'Version history', body: 'Every resubmission keeps a snapshot, so both sides can see what changed between rounds.' },
     { icon: ShieldCheck, title: 'Audit trail', body: 'Every gate, score and assignment is recorded with who did it and when.' },
 ];
 

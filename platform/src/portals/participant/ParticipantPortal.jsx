@@ -6,9 +6,23 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    LayoutDashboard, FileEdit, MessageSquareText, Lightbulb,
-    CheckCircle2, Clock, Award, Send, Loader2, RefreshCw, AlertCircle,
-    ChevronLeft, ChevronRight, Plus, Trash2, History, Users, MessageCircle
+    LayoutDashboard,
+    FileEdit,
+    MessageSquareText,
+    Lightbulb,
+    CheckCircle2,
+    Clock,
+    Award,
+    Send,
+    RefreshCw,
+    AlertCircle,
+    ChevronLeft,
+    ChevronRight,
+    Plus,
+    Trash2,
+    History,
+    Users,
+    MessageCircle,
 } from 'lucide-react';
 import PortalLayout from '../../components/PortalLayout';
 import AttachmentGrid from '../../components/AttachmentGrid';
@@ -26,6 +40,7 @@ import { STAGE_LABELS, STAGE_COLORS } from '../../lib/pipeline';
 import { useRubric } from '../../lib/rubric';
 import { SDGS, TEAM_ROLES } from '../../lib/sdgs';
 import { queueDraft, flushDrafts } from '../../lib/offline';
+import { ButtonLoader, InlineLoader } from '../../components/Loader';
 
 const NAV = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
@@ -438,14 +453,14 @@ function SubmissionWizard({ submission, onSaved }) {
                 <div className="flex items-center gap-3">
                     {queued && <span className="text-[11px] text-amber-600 dark:text-amber-400">Saved offline — will sync</span>}
                     {lastSaved && step > 0 && !queued && <span className="text-[11px] text-gray-400">Saved {lastSaved.toLocaleTimeString()}</span>}
-                    {saving && <Loader2 className="w-3.5 h-3.5 text-accent-500 animate-spin" />}
+                    {saving && <InlineLoader size={14} />}
                     {step < 3 ? (
                         <button type="button" onClick={next} disabled={saving} className="btn-accent !py-2.5 !px-5 !text-sm">
                             Continue <ChevronRight className="w-4 h-4" />
                         </button>
                     ) : (
                         <button type="button" onClick={handleSubmitForReview} disabled={submitting} className="btn-accent !py-2.5 !px-5 !text-sm">
-                            {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                            {submitting ? <ButtonLoader /> : <Send className="w-4 h-4" />}
                             Submit for review
                         </button>
                     )}

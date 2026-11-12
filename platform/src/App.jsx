@@ -7,11 +7,13 @@ import Signup from './pages/Signup';
 import Gallery from './pages/Gallery';
 import Landing from './pages/Landing';
 import Team from './pages/Team';
+import Legal from './pages/Legal';
 import Changelog from './pages/Changelog';
 import ParticipantPortal from './portals/participant/ParticipantPortal';
 import JudgePortal from './portals/judge/JudgePortal';
 import AdminPortal from './portals/admin/AdminPortal';
 import { ToastProvider } from './context/ToastContext';
+import { FullscreenLoader } from './components/Loader';
 
 function getPageFromUrl() {
   const path = window.location.pathname.slice(1).replace(/\/$/, '');
@@ -20,6 +22,7 @@ function getPageFromUrl() {
   if (path === 'gallery') return 'gallery';
   if (path === 'changelog') return 'changelog';
   if (path === 'team') return 'team';
+  if (['privacy', 'terms', 'data-protection', 'accessibility'].includes(path)) return `legal:${path}`;
   if (['login', 'admin', 'judge', 'participant'].includes(path)) return 'login';
   return 'landing';
 }
@@ -41,9 +44,7 @@ function Shell() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#0a0a0a]">
-        <div className="w-8 h-8 rounded-full border-2 border-accent-500 border-t-transparent animate-spin" />
-      </div>
+      <FullscreenLoader />
     );
   }
 
@@ -51,6 +52,9 @@ function Shell() {
   if (page === 'gallery') return <Gallery onBack={() => navigate('landing')} />;
   if (page === 'changelog') return <Changelog onBack={() => navigate('landing')} />;
   if (page === 'team') return <Team onSignIn={() => navigate('login')} onRegister={() => navigate('signup')} />;
+  if (page.startsWith('legal:')) {
+    return <Legal slug={page.split(':')[1]} onSignIn={() => navigate('login')} onRegister={() => navigate('signup')} />;
+  }
 
   if (!user) {
     if (page === 'signup') return <Signup onLogin={() => navigate('login')} onLanding={() => navigate('landing')} />;
@@ -58,6 +62,13 @@ function Shell() {
       return <Landing onSignIn={() => navigate('login')} onRegister={() => navigate('signup')} />;
     }
     return <Login onSignup={() => navigate('signup')} onLanding={() => navigate('landing')} />;
+  }
+
+  // Signed in and asking for the landing page: go straight to the portal.
+  if (page === 'landing') {
+    const role = profile?.role || 'participant';
+    const Portal = role === 'admin' ? AdminPortal : role === 'judge' ? JudgePortal : ParticipantPortal;
+    return <Portal key={role} onLogout={logout} />;
   }
 
   // Signed in: render the portal matching the user's role.

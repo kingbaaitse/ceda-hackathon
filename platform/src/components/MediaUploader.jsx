@@ -2,8 +2,13 @@
    Uploads straight to the private ceda-attachments bucket. */
 import React, { useRef, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { UploadCloud, X, Loader2, FileText } from 'lucide-react';
+import {
+    UploadCloud,
+    X,
+    FileText,
+} from 'lucide-react';
 import { uploadAttachment, deleteAttachment, getAttachmentUrl, prettySize } from '../lib/storage';
+import { InlineLoader } from './Loader';
 
 export default function MediaUploader({ ownerId, submissionId, attachments = [], onChange }) {
     const inputRef = useRef(null);
@@ -99,7 +104,7 @@ export default function MediaUploader({ ownerId, submissionId, attachments = [],
                 ))}
                 {Object.keys(busy).map(name => (
                     <div key={name} className="flex items-center gap-3 px-4 py-2.5 rounded-2xl border border-dashed border-gray-200 dark:border-white/10 opacity-70">
-                        <Loader2 className="w-4 h-4 text-accent-500 animate-spin" />
+                        <InlineLoader size={16} />
                         <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{name}</p>
                     </div>
                 ))}
@@ -114,5 +119,5 @@ function ThumbPath({ path }) {
     useEffect(() => { getAttachmentUrl(path).then(setSrc).catch(() => { }); }, [path]);
     return src
         ? <img src={src} alt="" className="w-8 h-8 rounded-full object-cover" />
-        : <Loader2 className="w-3.5 h-3.5 text-gray-400 animate-spin" />;
+        : <InlineLoader size={14} />;
 }
