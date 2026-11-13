@@ -270,7 +270,7 @@ export default function Changelog({ onBack }) {
                                                         const key = `${rel.version}-${g.title}`;
                                                         const gOpen = openGroups[key] !== false;
                                                         return (
-                                                            <div key={g.title} className={`border border-gray-200 dark:border-white/10 overflow-hidden transition-[border-radius] duration-300 ${gOpen ? 'rounded-3xl' : 'rounded-full'}`}>
+                                                            <div key={g.title} className={`border border-gray-200 dark:border-white/10 overflow-hidden transition-[border-radius] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${gOpen ? 'rounded-3xl' : 'rounded-full'}`}>
                                                                 <button
                                                                     onClick={() => toggleGroup(key)}
                                                                     aria-expanded={gOpen}
