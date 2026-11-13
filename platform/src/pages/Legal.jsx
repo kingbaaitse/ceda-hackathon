@@ -361,7 +361,7 @@ export default function Legal({ slug = 'privacy', onSignIn, onRegister }) {
                                         whileInView={{ opacity: 1, y: 0 }}
                                         viewport={{ once: true, margin: '-40px' }}
                                         transition={{ delay: Math.min(i, 5) * 0.03 }}
-                                        className="rounded-full border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.03] overflow-hidden scroll-mt-28"
+                                        className={`border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.03] overflow-hidden scroll-mt-28 transition-[border-radius] duration-300 ${open ? 'rounded-3xl' : 'rounded-full'}`}
                                     >
                                         <button
                                             onClick={() => setOpenSection(open ? null : id)}
