@@ -59,8 +59,8 @@ function Shell() {
     }
 
     // Public marketing pages stay reachable whether or not you are signed in.
-    if (page === 'gallery') return <Suspense fallback={<PageFallback />}><Gallery onBack={() => navigate('landing')} /></Suspense>;
-    if (page === 'changelog') return <Suspense fallback={<PageFallback />}><Changelog onBack={() => navigate('landing')} /></Suspense>;
+    if (page === 'gallery') return <Suspense fallback={<PageFallback />}><Gallery onBack={() => navigate('landing')} onSignIn={() => navigate('login')} onRegister={() => navigate('signup')} /></Suspense>;
+    if (page === 'changelog') return <Suspense fallback={<PageFallback />}><Changelog onBack={() => navigate('landing')} onSignIn={() => navigate('login')} onRegister={() => navigate('signup')} /></Suspense>;
     if (page === 'team') return <Suspense fallback={<PageFallback />}><Team onSignIn={() => navigate('login')} onRegister={() => navigate('signup')} /></Suspense>;
     if (page.startsWith('legal:')) {
         return (

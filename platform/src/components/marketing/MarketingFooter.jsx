@@ -48,7 +48,7 @@ export default function MarketingFooter({ children }) {
                             ))}
                         </ul>
 
-                        <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-white/45">
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-gray-500 dark:text-white/45">
                             <a
                                 href="mailto:kingbaaitse@oratoryleague.xyz"
                                 className="hover:text-gray-900 dark:hover:text-white transition-colors"

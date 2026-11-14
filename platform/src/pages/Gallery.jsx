@@ -23,7 +23,7 @@ import { ButtonLoader, InlineLoader } from '../components/Loader';
    The original component has a named export only, so map it to default. */
 const ArtGallery = lazy(() => import('@/components/block/art-gallery').then(m => ({ default: m.ArtGallery })));
 
-export default function Gallery({ onBack }) {
+export default function Gallery({ onBack, onSignIn, onRegister }) {
     const [awarded, setAwarded] = useState(null);
     const [fatal, setFatal] = useState('');
     const [open, setOpen] = useState(null);
@@ -106,8 +106,8 @@ export default function Gallery({ onBack }) {
                         { id: 'team', label: 'Team', href: '/team' },
                         { id: 'changelog', label: 'Changelog', href: '/changelog' },
                     ]}
-                    onSignIn={onBack}
-                    onRegister={onBack}
+                    onSignIn={onSignIn}
+                    onRegister={onRegister}
                 />
 
                 <div className="relative max-w-6xl mx-auto px-6 pt-32 pb-12 text-center">

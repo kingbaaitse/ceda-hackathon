@@ -187,7 +187,7 @@ const RELEASES = [
     },
 ];
 
-export default function Changelog({ onBack }) {
+export default function Changelog({ onBack, onSignIn, onRegister }) {
     const [openRelease, setOpenRelease] = useState(RELEASES[0].version);
     const [openGroups, setOpenGroups] = useState({});
 
@@ -200,8 +200,8 @@ export default function Changelog({ onBack }) {
                     { id: 'changelog', label: 'Changelog' },
                     { id: 'awards', label: 'Awards', href: '/gallery' },
                 ]}
-                onSignIn={onBack}
-                onRegister={onBack}
+                onSignIn={onSignIn}
+                onRegister={onRegister}
             />
 
             <main className="max-w-4xl mx-auto px-6 pt-32 pb-20">
