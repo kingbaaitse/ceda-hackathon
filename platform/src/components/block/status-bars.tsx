@@ -1,7 +1,7 @@
 "use client";
 
 import NumberFlow from "@number-flow/react";
-import { animate, AnimatePresence, motion, useMotionValue, useReducedMotion, useTransform } from "motion/react";
+import { animate, AnimatePresence, motion, useMotionValue, useReducedMotion, useTransform } from "framer-motion";
 import { useEffect, useId, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import type { ComponentProps, PointerEvent as ReactPointerEvent } from "react";
 import { cn } from "@/lib/utils";

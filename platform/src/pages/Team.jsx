@@ -18,7 +18,7 @@ import {
 import MarketingNav from '../components/marketing/MarketingNav';
 import MarketingFooter from '../components/marketing/MarketingFooter';
 import CursorFollower from '../components/CursorFollower';
-import leatileImg from '../assets/img/team/leatile-king-baaitse.png';
+import leatileImg from '../assets/img/team/leatile-king-baaitse.jpg';
 
 const TEAM = [
     {
@@ -153,6 +153,10 @@ export default function Team({ onSignIn, onRegister }) {
                                 <img
                                     src={m.image}
                                     alt={m.name}
+                                    width={800}
+                                    height={1000}
+                                    loading="lazy"
+                                    decoding="async"
                                     className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-[1.04]"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
@@ -194,7 +198,7 @@ export default function Team({ onSignIn, onRegister }) {
             {/* ── Oratory League strip ── */}
             <section className="border-t border-gray-200 dark:border-white/5 bg-white dark:bg-white/[0.02]">
                 <div className="max-w-5xl mx-auto px-6 py-16 flex flex-col sm:flex-row items-center justify-center gap-6 text-center sm:text-left">
-                    <img src="/partners/oratory-league-logo.png" alt="Oratory League" className="h-14 w-auto max-w-[220px] object-contain dark:brightness-125" />
+                    <img src="/partners/oratory-league-logo.png" alt="Oratory League" width={640} height={214} className="h-14 w-auto max-w-[220px] object-contain dark:brightness-125" />
                     <p className="text-sm text-gray-600 dark:text-white/55 max-w-lg">
                         Oratory League designs, engineers and operates the CEDA Innovation Hub —
                         the product, the security model and the support behind every entrant.

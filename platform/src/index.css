@@ -6,28 +6,28 @@
 /* CEDA Innovation Hub brand fonts — self-hosted so the app never depends on the Google Fonts CDN. */
 @font-face {
   font-family: 'Elms Sans';
-  src: url('/src/assets/fonts/elms-sans-400.ttf') format('truetype');
+  src: url('/src/assets/fonts/elms-sans-400.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Elms Sans';
-  src: url('/src/assets/fonts/elms-sans-500.ttf') format('truetype');
+  src: url('/src/assets/fonts/elms-sans-500.woff2') format('woff2');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Elms Sans';
-  src: url('/src/assets/fonts/elms-sans-700.ttf') format('truetype');
+  src: url('/src/assets/fonts/elms-sans-700.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Rouge Script';
-  src: url('/src/assets/fonts/rouge-script-400.ttf') format('truetype');
+  src: url('/src/assets/fonts/rouge-script-400.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;

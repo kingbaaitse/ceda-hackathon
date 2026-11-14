@@ -12,13 +12,13 @@
  *  - reduced motion freezes every animation
  *  - orbiting art is decorative (alt=""), the product carries the meaning
  */
-import React, { useRef } from 'react';
+import React, { useCallback, useEffect, useRef, lazy, Suspense } from 'react';
 import {
     motion, useScroll, useTransform, useReducedMotion, useSpring,
     useMotionValue,
 } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
-import ParticleRibbon from './ParticleRibbon';
+import { isLowEndDevice } from '../lib/perf';
 
 import winner from '../assets/img/illustrations/winner.svg';
 import ideaToPlan from '../assets/img/illustrations/idea-to-plan.svg';
@@ -32,6 +32,10 @@ import dashboard from '../assets/img/illustrations/dashboard.svg';
 import review from '../assets/img/illustrations/review.svg';
 import harvest from '../assets/img/illustrations/harvest.svg';
 import happyNews from '../assets/img/illustrations/happy-news.svg';
+
+/* The ribbon is a second WebGL scene, so it is fetched after the page has
+   painted instead of competing with the text for bandwidth. */
+const ParticleRibbon = lazy(() => import('./ParticleRibbon'));
 
 /* x/y are percentages of the stage, measured from the centre.
    Items stay clear of the product card in the middle (card is ~46% wide,
@@ -66,6 +70,53 @@ export default function Hero({
     const stageRef = useRef(null);
     const reduced = useReducedMotion();
     const { scrollYProgress } = useScroll({ target: stageRef, offset: ['start end', 'end start'] });
+
+    /* One pointer signal for the whole stage. Reading the element box while
+       the pointer moves forced a layout on every frame; the box is measured
+       once and tracked against the scroll offset instead. */
+    const px = useMotionValue(0);
+    const py = useMotionValue(0);
+    const sx = useSpring(px, { stiffness: 120, damping: 20, mass: 0.5 });
+    const sy = useSpring(py, { stiffness: 120, damping: 20, mass: 0.5 });
+    const box = useRef({ top: 0, left: 0, width: 0, height: 0 });
+
+    const measure = useCallback(() => {
+        const el = stageRef.current;
+        if (!el) return;
+        const r = el.getBoundingClientRect();
+        box.current = {
+            top: r.top + window.scrollY,
+            left: r.left + window.scrollX,
+            width: r.width,
+            height: r.height,
+        };
+    }, []);
+
+    useEffect(() => {
+        measure();
+        const observer = new ResizeObserver(measure);
+        if (stageRef.current) observer.observe(stageRef.current);
+        window.addEventListener('resize', measure);
+        return () => {
+            observer.disconnect();
+            window.removeEventListener('resize', measure);
+        };
+    }, [measure]);
+
+    const onMove = (e) => {
+        if (reduced) return;
+        const b = box.current;
+        if (!b.width || !b.height) return;
+        const cx = b.left - window.scrollX + b.width / 2;
+        const cy = b.top - window.scrollY + b.height / 2;
+        px.set(((e.clientX - cx) / b.width) * 10);
+        py.set(((e.clientY - cy) / b.height) * 10);
+    };
+
+    const onLeave = () => {
+        px.set(0);
+        py.set(0);
+    };
 
     return (
         <section className="relative overflow-hidden">
@@ -106,9 +157,19 @@ export default function Hero({
                 {counters && <div className="mt-10">{counters}</div>}
 
                 {/* ── Orbit stage ── */}
-                <div ref={stageRef} className="relative mt-14 h-[560px] sm:h-[620px]">
-                    {/* the particle ribbon sits behind the composition */}
-                    <ParticleRibbon className="absolute inset-x-[-10%] bottom-0 top-[18%] opacity-70 dark:opacity-100" />
+                <div
+                    ref={stageRef}
+                    onPointerMove={onMove}
+                    onPointerLeave={onLeave}
+                    className="relative mt-14 h-[560px] sm:h-[620px]"
+                >
+                    {/* the particle ribbon sits behind the composition.
+                        Decorative, so low-end devices skip it entirely. */}
+                    {!isLowEndDevice() && (
+                        <Suspense fallback={null}>
+                            <ParticleRibbon className="absolute inset-x-[-10%] bottom-0 top-[18%] opacity-70 dark:opacity-100" />
+                        </Suspense>
+                    )}
 
                     {/* the product, at the centre */}
                     <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(92%,680px)] z-10">
@@ -130,7 +191,7 @@ export default function Hero({
 
                     {/* the orbit */}
                     {ORBITS.map((o, i) => (
-                        <OrbitItem key={i} {...o} reduced={reduced} scrollY={scrollYProgress} />
+                        <OrbitItem key={i} {...o} sx={sx} sy={sy} scrollY={scrollYProgress} reduced={reduced} />
                     ))}
                 </div>
             </div>
@@ -143,6 +204,8 @@ export default function Hero({
                             key={i}
                             src={o.src}
                             alt=""
+                            width={96}
+                            height={96}
                             className="w-24 h-24 flex-shrink-0 opacity-80"
                         />
                     ))}
@@ -153,40 +216,18 @@ export default function Hero({
 }
 
 /* One orbiting illustration: slow drift + pointer parallax + scroll parallax. */
-function OrbitItem({ src, x, y, size, rotate, depth, opacity, reduced, scrollY }) {
-    const ref = useRef(null);
-    const px = useMotionValue(0);
-    const py = useMotionValue(0);
-    const sx = useSpring(px, { stiffness: 120, damping: 20, mass: 0.5 });
-    const sy = useSpring(py, { stiffness: 120, damping: 20, mass: 0.5 });
+function OrbitItem({ src, x, y, size, rotate, depth, opacity, reduced, scrollY, sx, sy }) {
     const moveX = useTransform(sx, v => v * depth);
     const moveY = useTransform(sy, v => v * depth);
     const scrollShift = useTransform(scrollY, [0, 1], [36, -36]);
 
-    const onMove = (e) => {
-        if (reduced) return;
-        const el = ref.current;
-        if (!el) return;
-        const r = el.getBoundingClientRect();
-        const cx = r.left + r.width / 2;
-        const cy = r.top + r.height / 2;
-        px.set(((e.clientX - cx) / (r.width || 1)) * 10);
-        py.set(((e.clientY - cy) / (r.height || 1)) * 10);
-    };
-
-    const onLeave = () => {
-        px.set(0);
-        py.set(0);
-    };
-
     return (
         <motion.img
-            ref={ref}
             src={src}
             alt=""
             aria-hidden="true"
-            onPointerMove={onMove}
-            onPointerLeave={onLeave}
+            loading="lazy"
+            decoding="async"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity, scale: 1 }}
             transition={{ delay: 0.15 + i_delay(src), duration: 0.6, ease: [0.16, 1, 0.3, 1] }}

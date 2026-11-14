@@ -11,8 +11,8 @@
  */
 import React from 'react';
 
-const INLINE_SRC = '/loaders/ceda-glass-logo-inline-loader.gif?v=2';
-const FULLSCREEN_SRC = '/loaders/ceda-glass-logo-fullscreen-loader.webm?v=2';
+const INLINE_SRC = '/loaders/ceda-glass-logo-inline-loader.webp?v=3';
+const FULLSCREEN_SRC = '/loaders/ceda-glass-logo-fullscreen-loader.webm?v=3';
 
 export function InlineLoader({ className = '', size = 28, label = 'Loading' }) {
     return (

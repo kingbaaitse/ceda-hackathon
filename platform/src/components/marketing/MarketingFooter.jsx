@@ -60,6 +60,8 @@ export default function MarketingFooter({ children }) {
                             <img
                                 src="/partners/oratory-league-logo.png"
                                 alt="Oratory League"
+                                width={640}
+                                height={214}
                                 className="h-8 w-auto max-w-[130px] object-contain object-left dark:brightness-125"
                             />
                         </div>

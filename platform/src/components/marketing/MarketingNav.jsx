@@ -17,22 +17,50 @@ export default function MarketingNav({ links = [], onSignIn, onRegister }) {
     const linkRefs = useRef([]);
 
     useEffect(() => {
+        const sectionIds = links.map((l) => l.id).filter(Boolean);
+        let offsets = [];
         let last = window.scrollY;
-        const onScroll = () => {
-            const y = window.scrollY;
-            setScrolled(y > 24);
-            setHidden(y > last && y > 140);
-            last = y;
 
-            let current = '';
-            for (const l of links) {
-                const el = l.id && document.getElementById(l.id);
-                if (el && el.getBoundingClientRect().top <= window.innerHeight * 0.4) current = l.id;
-            }
-            setActive(current);
+        /* Section positions are cached in document space, so scrolling never
+           has to read layout back out of the DOM. */
+        const measure = () => {
+            offsets = sectionIds.map((id) => {
+                const el = document.getElementById(id);
+                return el ? el.getBoundingClientRect().top + window.scrollY : Number.POSITIVE_INFINITY;
+            });
         };
+        measure();
+
+        const bodyObserver = new ResizeObserver(measure);
+        bodyObserver.observe(document.body);
+
+        let frame = 0;
+        const onScroll = () => {
+            if (frame) return;
+            frame = requestAnimationFrame(() => {
+                frame = 0;
+                const y = window.scrollY;
+                setScrolled(y > 24);
+                setHidden(y > last && y > 140);
+                last = y;
+
+                let current = '';
+                const line = y + window.innerHeight * 0.4;
+                for (let i = 0; i < sectionIds.length; i++) {
+                    if (offsets[i] <= line) current = sectionIds[i];
+                }
+                setActive(current);
+            });
+        };
+
         window.addEventListener('scroll', onScroll, { passive: true });
-        return () => window.removeEventListener('scroll', onScroll);
+        window.addEventListener('resize', measure);
+        return () => {
+            if (frame) cancelAnimationFrame(frame);
+            bodyObserver.disconnect();
+            window.removeEventListener('scroll', onScroll);
+            window.removeEventListener('resize', measure);
+        };
     }, [links]);
 
     /* Fit as many links as the pill can hold - never wrap, never overflow.

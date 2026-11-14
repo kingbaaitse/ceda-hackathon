@@ -12,6 +12,7 @@ import {
   FXAAEffect,
 } from 'postprocessing';
 import { DARK_PRESET, LIGHT_PRESET, type SceneSettings } from './v-prism-settings';
+import { isLowEndDevice } from '@/lib/perf';
 
 interface VPrismProps {
   settings?: SceneSettings;
@@ -163,10 +164,31 @@ export function VPrism({ settings, className = '' }: VPrismProps) {
     if (!container || !canvas) return;
 
     let isDisposed = false;
-    let animId: number;
+    let animId: number = 0;
 
     let width = Math.max(1, container.clientWidth || window.innerWidth);
     let height = Math.max(1, container.clientHeight || window.innerHeight);
+
+    /* The scene keeps its full look on a capable GPU and steps down the
+       expensive passes when frames get expensive. */
+    const lowEnd = isLowEndDevice();
+    const baseScale = lowEnd ? 1 : Math.min(window.devicePixelRatio, 1.5);
+    let renderScale = baseScale;
+    /* The scene starts cheap: the bloom and refraction shaders are the most
+       expensive thing to build, and a weak device should never pay for them.
+       It climbs to the full scene once the device proves it can afford it. */
+    let quality = 0;
+    let slowFrames = 0;
+    let heavyFrames = 0;
+    let frameCount = 0;
+    let prevRafTime = 0;
+    let assetsReady = false;
+    let probed = false;
+    let probeFrames = 0;
+    let probeCost = 0;
+    /* The prism drifts slowly, so it does not need a fresh frame every tick.
+       Fewer frames also means less main-thread time taken from the page. */
+    let frameBudget = 1000 / 30;
 
     // --- RENDERER ---
     let renderer: THREE.WebGLRenderer;
@@ -186,7 +208,10 @@ export function VPrism({ settings, className = '' }: VPrismProps) {
     renderer.toneMappingExposure = 1.0;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.setSize(width, height, false);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(renderScale);
+    /* The refractive pass renders the scene a second time. A smaller buffer
+       is invisible through the glass and halves that cost. */
+    renderer.transmissionResolutionScale = 0.4;
 
     // --- SCENE & BACKGROUND ---
     const scene = new THREE.Scene();
@@ -215,7 +240,7 @@ export function VPrism({ settings, className = '' }: VPrismProps) {
 
     const bloomEffect = new BloomEffect({
       intensity: settingsRef.current.bloom,
-      levels: 9,
+      levels: 6,
       luminanceSmoothing: 1,
       luminanceThreshold: 1,
       mipmapBlur: true,
@@ -250,6 +275,36 @@ export function VPrism({ settings, className = '' }: VPrismProps) {
     // Prism & Ray mesh/material declarations
     let prismMesh: THREE.Mesh | null = null;
     let prismPhysicalMat: THREE.MeshPhysicalMaterial | null = null;
+
+    /* Quality ladder, highest first. 2 = bloom + refraction at full
+       resolution, 1 = no bloom, 0 = no post-processing and no refraction.
+       The scene steps down on its own when frames get expensive. */
+    const setQuality = (next: number) => {
+      quality = Math.max(0, Math.min(2, next));
+      slowFrames = 0;
+      heavyFrames = 0;
+
+      bloomPass.enabled = quality >= 2;
+
+      if (prismPhysicalMat) {
+        const refractive = quality >= 1;
+        prismPhysicalMat.transmission = refractive ? 1 : 0;
+        prismPhysicalMat.transparent = !refractive;
+        prismPhysicalMat.opacity = refractive ? 1 : 0.55;
+        prismPhysicalMat.needsUpdate = true;
+      }
+
+      renderer.transmissionResolutionScale = quality >= 1 ? 0.4 : 0.25;
+      renderScale = quality >= 2 ? baseScale : Math.min(baseScale, quality >= 1 ? 1 : 0.6);
+      frameBudget = quality >= 2 ? 1000 / 30 : 1000 / 20;
+      renderer.setPixelRatio(renderScale);
+      composer.setSize(width, height);
+    };
+
+    // Start on the cheapest settings, so a weak device never builds the
+    // expensive shaders.
+    setQuality(quality);
+
     let rayHitProxy: THREE.Mesh | null = null;
     let rayLineMesh: THREE.InstancedMesh | null = null;
     let rayGlowMesh: THREE.InstancedMesh | null = null;
@@ -472,6 +527,10 @@ export function VPrism({ settings, className = '' }: VPrismProps) {
       prismMesh.scale.setScalar(2);
       prismGroup.add(prismMesh);
 
+      // Apply the quality level the device started on.
+      setQuality(quality);
+      assetsReady = true;
+
       // Initial ray update
       updateRayPhysics();
     }).catch(err => {
@@ -588,17 +647,25 @@ export function VPrism({ settings, className = '' }: VPrismProps) {
       }
     }
 
+    /* The canvas box is measured in document space, so aiming the beam
+       never has to read layout while the pointer is moving. */
+    let boxLeft = 0;
+    let boxTop = 0;
+    const measureBox = () => {
+      const rect = container.getBoundingClientRect();
+      boxLeft = rect.left + window.scrollX;
+      boxTop = rect.top + window.scrollY;
+    };
+    measureBox();
+
     // Aim beam at prism from pointer coords (Wh + D)
     function aimRayAt(clientX: number, clientY: number) {
-      const rect = container?.getBoundingClientRect();
-      if (!rect) return;
-
       const Q = getZoomScale(width);
       const N = 0;
       const K = width <= MOBILE_BREAKPOINT ? -0.5 : 0;
 
-      const relX = clientX - rect.left;
-      const relY = clientY - rect.top;
+      const relX = clientX - (boxLeft - window.scrollX);
+      const relY = clientY - (boxTop - window.scrollY);
       const re = (relX - width / 2) / Q;
       const ve = (height / 2 - relY) / Q;
 
@@ -659,6 +726,7 @@ export function VPrism({ settings, className = '' }: VPrismProps) {
 
       renderer.setSize(width, height, false);
       composer.setSize(width, height);
+      measureBox();
 
       camera.left = width / -2;
       camera.right = width / 2;
@@ -682,10 +750,24 @@ export function VPrism({ settings, className = '' }: VPrismProps) {
     let prevTime = performance.now();
     let elapsedTime = 0;
     let lastBgHex = settingsRef.current.background;
+    let lastFrame = 0;
     const dummyObj = new THREE.Object3D();
+
+    /* The loop only runs while the scene can actually be seen. */
+    let onScreen = true;
+    let pageVisible = !document.hidden;
 
     const animate = (currentTime: number) => {
       animId = requestAnimationFrame(animate);
+
+      // How long the browser took to hand over the next frame. On a device
+      // that cannot keep up, this is where the scene's cost shows up.
+      const rafGap = currentTime - prevRafTime;
+      prevRafTime = currentTime;
+
+      // The prism drifts slowly, so it does not need a new frame every tick.
+      if (currentTime - lastFrame < frameBudget) return;
+      lastFrame = currentTime;
 
       // Process throttled pointer updates
       if (pendingPointerX !== null && pendingPointerY !== null) {
@@ -750,18 +832,95 @@ export function VPrism({ settings, className = '' }: VPrismProps) {
 
       // Render: in light mode, bloom is disabled to prevent blowout;
       // in dark mode, postprocessing with BloomEffect renders smoothly
-      if (bloomEffect) {
+      if (bloomEffect && bloomPass.enabled) {
         bloomEffect.intensity = isLight ? 0 : curSettings.bloom;
       }
-      composer.render();
+
+      const renderStart = performance.now();
+      if (quality >= 1) {
+        composer.render();
+      } else {
+        // No post-processing: draw the scene straight to the canvas.
+        renderer.render(scene, camera);
+      }
+      const renderCost = performance.now() - renderStart;
+
+      if (assetsReady && !probed) {
+        // After the 3D assets land, a few steady frames tell us whether the
+        // device can afford the full scene - bloom and refraction included.
+        // Probing before that would measure the cheap placeholder scene.
+        probeFrames++;
+        probeCost += renderCost;
+        if (probeFrames >= 3) {
+          probed = true;
+          if (probeCost / probeFrames < 12) setQuality(2);
+        }
+      } else if (frameCount > 1) {
+        // Adaptive quality. The scene is judged on how well it keeps up, not
+        // on how long the draw call takes: on a slow device the cost shows up
+        // when the frame is presented, which can be outside this function.
+        if (rafGap > frameBudget * 3) {
+          heavyFrames++;
+          slowFrames = 0;
+          if (quality > 0) {
+            if (heavyFrames >= 2) setQuality(0);
+          } else if (heavyFrames >= 4) {
+            // Already at the cheapest settings: draw fewer pixels.
+            heavyFrames = 0;
+            renderScale = Math.max(0.4, renderScale - 0.15);
+            renderer.setPixelRatio(renderScale);
+            composer.setSize(width, height);
+          }
+        } else if (rafGap > frameBudget * 1.6) {
+          slowFrames++;
+          heavyFrames = 0;
+          if (slowFrames >= 5 && quality > 0) setQuality(quality - 1);
+        } else {
+          slowFrames = 0;
+          heavyFrames = 0;
+        }
+      }
+      frameCount++;
     };
 
-    animId = requestAnimationFrame(animate);
+    /* Start and stop the loop with the scene's visibility. */
+    const syncLoop = () => {
+      if (onScreen && pageVisible) {
+        if (!animId) {
+          prevTime = performance.now();
+          prevRafTime = prevTime;
+          animId = requestAnimationFrame(animate);
+        }
+      } else if (animId) {
+        cancelAnimationFrame(animId);
+        animId = 0;
+      }
+    };
+
+    const viewObserver = new IntersectionObserver(
+      (entries) => {
+        onScreen = entries[0].isIntersecting;
+        syncLoop();
+      },
+      { rootMargin: '150px' }
+    );
+    viewObserver.observe(container);
+
+    const handleVisibility = () => {
+      pageVisible = !document.hidden;
+      syncLoop();
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    syncLoop();
 
     // --- CLEANUP ---
     return () => {
       isDisposed = true;
       cancelAnimationFrame(animId);
+      animId = 0;
+      viewObserver.disconnect();
+      document.removeEventListener('visibilitychange', handleVisibility);
       resizeObserver.disconnect();
       window.removeEventListener('resize', handleResize);
       container.removeEventListener('pointerdown', handlePointerDown);

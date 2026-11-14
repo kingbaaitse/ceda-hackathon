@@ -5,7 +5,7 @@
  * (activity recorded, email deliveries that failed, recorded incidents), so
  * the strip moves between green, amber and red on its own.
  */
-import { supabase } from './supabase';
+import { loadSupabase } from './supabase-client';
 
 /**
  * @returns {Promise<{ days: Array<{date:string, status:string, note:string|null, events:number}>, today: string }>}
@@ -16,6 +16,7 @@ export async function fetchServiceStatus(days = 30) {
         today: new Date().toISOString().slice(0, 10),
     };
     try {
+        const supabase = await loadSupabase();
         const { data, error } = await supabase.rpc('ceda_service_status', { days });
         if (error || !data) return fallback;
         return {

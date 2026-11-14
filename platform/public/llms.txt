@@ -1,0 +1,31 @@
+# CEDA Innovation Hub
+
+> Botswana's innovation pipeline platform. Submit an innovation, follow it through every CEDA stage gate — screening, evaluation, selection and award — and get structured written feedback at each one.
+
+## Public pages
+
+- [Home](https://ceda.oratoryleague.xyz/): What the hub is, how to start a submission, and what the entrant gets back at every gate.
+- [Pipeline](https://ceda.oratoryleague.xyz/#pipeline): The six stages an innovation passes through, from draft to award.
+- [In the box](https://ceda.oratoryleague.xyz/#features): Media and documents, one conversation thread, version history and the audit trail.
+- [Awards](https://ceda.oratoryleague.xyz/#awards): Published work that cleared every gate.
+- [Partner](https://ceda.oratoryleague.xyz/#partner): CEDA runs the competition; Oratory League is the official partner and developer.
+- [Gallery](https://ceda.oratoryleague.xyz/gallery): Awarded entries, published openly.
+- [Team](https://ceda.oratoryleague.xyz/team): Who builds and runs the hub.
+- [Changelog](https://ceda.oratoryleague.xyz/changelog): What shipped, and when.
+
+## Getting started
+
+- [Create an account](https://ceda.oratoryleague.xyz/signup): Register as an individual or a team. Progress saves from the first keystroke.
+- [Sign in](https://ceda.oratoryleague.xyz/login): Enter, judge and administer.
+
+## Legal
+
+- [Privacy notice](https://ceda.oratoryleague.xyz/privacy): What personal data is collected and why.
+- [Terms of use](https://ceda.oratoryleague.xyz/terms): The rules of the competition.
+- [Data protection](https://ceda.oratoryleague.xyz/data-protection): Botswana's Data Protection Act, and how the hub complies.
+- [Accessibility](https://ceda.oratoryleague.xyz/accessibility): How accessible the hub is, and how to report a barrier.
+
+## For agents
+
+- [ARD manifest](https://ceda.oratoryleague.xyz/.well-known/ard.json): Machine-readable catalogue of this site's resources.
+- [Sitemap](https://ceda.oratoryleague.xyz/sitemap.xml): Every publicly indexable URL.

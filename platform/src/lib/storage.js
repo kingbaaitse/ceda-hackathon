@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { loadSupabase } from './supabase-client';
 
 /* Supabase Storage helpers for the private ceda-attachments bucket.
    Path convention: {owner_id}/{submission_id}/{ts}-{filename}          */
@@ -9,6 +9,7 @@ export const attachmentPath = (ownerId, submissionId, file) =>
   `${ownerId}/${submissionId}/${Date.now()}-${file.name.replace(/[^\w.\-() ]/g, '_')}`;
 
 export async function uploadAttachment(ownerId, submissionId, file) {
+  const supabase = await loadSupabase();
   const path = attachmentPath(ownerId, submissionId, file);
   const { error } = await supabase.storage.from(BUCKET).upload(path, file, {
     cacheControl: '3600',
@@ -25,12 +26,14 @@ export async function uploadAttachment(ownerId, submissionId, file) {
 }
 
 export async function deleteAttachment(path) {
+  const supabase = await loadSupabase();
   const { error } = await supabase.storage.from(BUCKET).remove([path]);
   if (error) throw error;
 }
 
 /** Signed URL (1h) for inline preview — access is RLS-checked server-side. */
 export async function getAttachmentUrl(path) {
+  const supabase = await loadSupabase();
   const { data, error } = await supabase.storage.from(BUCKET).createSignedUrl(path, 3600);
   if (error) throw error;
   return data.signedUrl;

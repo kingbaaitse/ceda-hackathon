@@ -1,0 +1,112 @@
+{
+  "entries": [
+    {
+      "identifier": "urn:air:ceda.oratoryleague.xyz:ceda:home",
+      "displayName": "CEDA Innovation Hub — home",
+      "type": "text/html",
+      "url": "https://ceda.oratoryleague.xyz/",
+      "description": "The landing page of Botswana's national innovation pipeline: how to submit an innovation, what happens at each stage gate, and who is behind the platform.",
+      "capabilities": ["SubmitAnInnovation", "TrackSubmission", "ReadStageFeedback"],
+      "tags": ["Botswana", "CEDA", "innovation", "competition", "pipeline"],
+      "representativeQueries": [
+        "How do I submit an innovation to CEDA?",
+        "What happens after I submit an innovation?",
+        "Who runs the CEDA Innovation Hub?"
+      ],
+      "trustManifest": {
+        "identity": "https://ceda.oratoryleague.xyz/",
+        "identityType": "https"
+      }
+    },
+    {
+      "identifier": "urn:air:ceda.oratoryleague.xyz:ceda:pipeline",
+      "displayName": "CEDA Innovation Hub — six-stage pipeline",
+      "type": "text/html",
+      "url": "https://ceda.oratoryleague.xyz/#pipeline",
+      "description": "The six stages every innovation passes through: draft, compliance, screening, evaluation, selection and award, with what the entrant receives at each one.",
+      "capabilities": ["ReadPipelineStages", "ReadStageFeedback"],
+      "tags": ["CEDA", "stages", "screening", "evaluation", "award"],
+      "representativeQueries": [
+        "What are the CEDA stage gates?",
+        "What does the entrant receive at each stage?",
+        "How is an innovation screened and evaluated?"
+      ],
+      "trustManifest": {
+        "identity": "https://ceda.oratoryleague.xyz/",
+        "identityType": "https"
+      }
+    },
+    {
+      "identifier": "urn:air:ceda.oratoryleague.xyz:ceda:gallery",
+      "displayName": "CEDA Innovation Hub — awarded work gallery",
+      "type": "text/html",
+      "url": "https://ceda.oratoryleague.xyz/gallery",
+      "description": "Published innovations that cleared every CEDA gate. Entries still in the pipeline stay private.",
+      "capabilities": ["BrowseAwardedWork"],
+      "tags": ["CEDA", "award", "winners", "gallery"],
+      "representativeQueries": [
+        "Which innovations won a CEDA award?",
+        "Show me awarded CEDA entries",
+        "Who has been recognised by CEDA?"
+      ],
+      "trustManifest": {
+        "identity": "https://ceda.oratoryleague.xyz/",
+        "identityType": "https"
+      }
+    },
+    {
+      "identifier": "urn:air:ceda.oratoryleague.xyz:ceda:team",
+      "displayName": "CEDA Innovation Hub — team",
+      "type": "text/html",
+      "url": "https://ceda.oratoryleague.xyz/team",
+      "description": "The people who build and run the Innovation Hub, and their roles.",
+      "capabilities": ["ReadTeamProfiles"],
+      "tags": ["CEDA", "team", "Oratory League"],
+      "representativeQueries": [
+        "Who builds the CEDA Innovation Hub?",
+        "Who is the partner behind the platform?",
+        "Who do I contact about CEDA?"
+      ],
+      "trustManifest": {
+        "identity": "https://ceda.oratoryleague.xyz/",
+        "identityType": "https"
+      }
+    },
+    {
+      "identifier": "urn:air:ceda.oratoryleague.xyz:ceda:changelog",
+      "displayName": "CEDA Innovation Hub — changelog",
+      "type": "text/html",
+      "url": "https://ceda.oratoryleague.xyz/changelog",
+      "description": "A dated record of what shipped on the platform, grouped by release.",
+      "capabilities": ["ReadReleaseHistory"],
+      "tags": ["CEDA", "changelog", "releases"],
+      "representativeQueries": [
+        "What changed in the latest CEDA Hub release?",
+        "Show the release history of the platform",
+        "When did CEDA add version history to submissions?"
+      ],
+      "trustManifest": {
+        "identity": "https://ceda.oratoryleague.xyz/",
+        "identityType": "https"
+      }
+    },
+    {
+      "identifier": "urn:air:ceda.oratoryleague.xyz:ceda:llms",
+      "displayName": "CEDA Innovation Hub — llms.txt",
+      "type": "text/plain",
+      "url": "https://ceda.oratoryleague.xyz/llms.txt",
+      "description": "A Markdown map of the site's public pages, written for language models.",
+      "capabilities": ["ReadSiteMap"],
+      "tags": ["CEDA", "llms.txt", "agents"],
+      "representativeQueries": [
+        "What pages does the CEDA Innovation Hub have?",
+        "Give me the machine-readable map of the site",
+        "Which CEDA pages are public?"
+      ],
+      "trustManifest": {
+        "identity": "https://ceda.oratoryleague.xyz/",
+        "identityType": "https"
+      }
+    }
+  ]
+}

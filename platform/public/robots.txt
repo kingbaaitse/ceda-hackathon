@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /judge
+Disallow: /participant
+
+Sitemap: https://ceda.oratoryleague.xyz/sitemap.xml
+Agentmap: https://ceda.oratoryleague.xyz/.well-known/ard.json

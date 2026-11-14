@@ -1,7 +1,17 @@
 /* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useCallback, useContext, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AlertCircle, CheckCircle2, Info, X } from '../components/AnimatedIcons';
+import { animated } from '../components/animated-icon';
+import AlertCircleIcon from 'lucide-animated-icons/icons/circle-alert';
+import CheckCircle2Icon from 'lucide-animated-icons/icons/circle-check-big';
+import InfoIcon from 'lucide-animated-icons/icons/info';
+import XIcon from 'lucide-animated-icons/icons/x';
+
+/* Only the four icons a toast needs are pulled in. */
+const AlertCircle = animated(AlertCircleIcon);
+const CheckCircle2 = animated(CheckCircle2Icon);
+const Info = animated(InfoIcon);
+const X = animated(XIcon);
 
 const ToastContext = createContext(null);
 

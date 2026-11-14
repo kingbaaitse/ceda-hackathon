@@ -9,8 +9,7 @@
  * Export names match `lucide-react`, so a file swaps its import source and
  * nothing else changes.
  */
-import { forwardRef, useEffect, useRef } from 'react';
-import { AnimatedIconTriggerContext, useAnimatedIconTrigger } from 'lucide-animated-icons/core';
+import { animated } from './animated-icon';
 
 import AlertCircleIcon from 'lucide-animated-icons/icons/circle-alert';
 import ArrowLeftIcon from 'lucide-animated-icons/icons/arrow-left';
@@ -70,38 +69,6 @@ import XIcon from 'lucide-animated-icons/icons/x';
  * Wrap an animated icon in its own trigger so it animates on hover and on
  * tap. The wrapper is `display: contents`, so it never changes layout.
  */
-function animated(Icon) {
-    const Component = forwardRef(function AnimatedIcon(props, ref) {
-        const { hub, handlers } = useAnimatedIconTrigger();
-        const timer = useRef(null);
-
-        useEffect(() => () => clearTimeout(timer.current), []);
-
-        const tap = () => {
-            // `open` replays the hover scene even while the pointer rests on
-            // the icon; `rest` first so a second tap replays it again.
-            hub.emit('rest');
-            hub.emit('open');
-            clearTimeout(timer.current);
-            timer.current = setTimeout(() => hub.emit('rest'), 900);
-        };
-
-        return (
-            <AnimatedIconTriggerContext.Provider value={hub}>
-                <span
-                    {...handlers}
-                    style={{ display: 'contents' }}
-                    onClick={tap}
-                >
-                    <Icon {...props} ref={ref} />
-                </span>
-            </AnimatedIconTriggerContext.Provider>
-        );
-    });
-    Component.displayName = 'AnimatedIcon';
-    return Component;
-}
-
 export const AlertCircle = animated(AlertCircleIcon);
 export const ArrowLeft = animated(ArrowLeftIcon);
 export const ArrowRight = animated(ArrowRightIcon);

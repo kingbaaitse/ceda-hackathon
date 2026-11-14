@@ -7,41 +7,44 @@
  * (grey = inactive, blue = with CEDA, orange = moving, amber = decision due,
  * green = awarded, red = out).
  */
-import React, { useEffect, useMemo, useState, lazy, Suspense } from 'react';
+import React, { useEffect, useMemo, useState, useRef, lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import {
     ArrowRight,
-    History,
     ShieldCheck,
-    MessageCircle,
     Scale,
-    Layers,
     Zap,
 } from 'lucide-react';
-import Logo from '../components/Logo';
 import MarketingNav from '../components/marketing/MarketingNav';
 import MarketingFooter from '../components/marketing/MarketingFooter';
-import PipelineSection from '../components/marketing/PipelineSection';
-import BentoFeatures from '../components/marketing/BentoFeatures';
 import CursorFollower from '../components/CursorFollower';
 import { FlipText } from '@/components/block/flip-text';
 import stepRegister from '../assets/img/illustrations/profile.svg';
 import stepSubmit from '../assets/img/illustrations/upload.svg';
 import stepFeedback from '../assets/img/illustrations/feedback.svg';
-import { DraggableMarquee } from '@/components/block/draggable-marquee';
 import { SplitShowcase } from '@/components/block/split-showcase';
-import { ParallaxSlider } from '@/components/block/parallax-slider';
-import { TextStream } from '@/components/block/text-stream';
-import { StatusBars, fillStatusDays } from '@/components/block/status-bars';
-import { SEMANTIC, stageTone } from '../lib/semantics';
+import Hero from '../components/Hero';
+import { SEMANTIC } from '../lib/semantics';
 import { fetchServiceStatus, toStatusBarDays, todayStatus } from '../lib/status';
-import { supabase } from '../lib/supabase';
+import { loadSupabase } from '../lib/supabase-client';
+import { useInView } from '../lib/perf';
+
+
 import { getAttachmentUrls } from '../lib/storage';
 import cedaLogo from '../assets/img/ceda-full-logo-icon.png';
 
+/* The hero is above the fold and carries the largest contentful paint, so it
+   ships in the entry chunk. The 3D preview behind it is not: it pulls in
+   three.js, which is fetched only once the page has painted. */
 const VPrism = lazy(() => import('@/components/block/v-prism').then(m => ({ default: m.VPrism })));
-/* the hero carries three.js + r3f, so it loads only on this page */
-const Hero = lazy(() => import('../components/Hero'));
+/* Everything below the fold is split out so the first frame only pays for
+   what the reader can actually see. */
+const DraggableMarquee = lazy(() => import('@/components/block/draggable-marquee').then(m => ({ default: m.DraggableMarquee })));
+const ParallaxSlider = lazy(() => import('@/components/block/parallax-slider').then(m => ({ default: m.ParallaxSlider })));
+const TextStream = lazy(() => import('@/components/block/text-stream').then(m => ({ default: m.TextStream })));
+const StatusBars = lazy(() => import('@/components/block/status-bars').then(m => ({ default: m.StatusBars })));
+const PipelineSection = lazy(() => import('../components/marketing/PipelineSection'));
+const BentoFeatures = lazy(() => import('../components/marketing/BentoFeatures'));
 
 const DARK_PRESET = {
     ambientLight: 0.015, pointLights: 0.05, spotIntensity: 1.0, rainbowGlow: 2.5,
@@ -70,13 +73,6 @@ const REASONS = [
     { icon: Scale, title: 'Fair, calibrated scoring', body: 'Weights are set by CEDA, judges score against them, and calibration uses anonymous panel aggregates only.' },
 ];
 
-const FEATURES = [
-    { icon: Layers, title: 'Media & documents', body: 'Logos, product shots and pitch decks, served through short-lived signed links.' },
-    { icon: MessageCircle, title: 'One conversation', body: 'Ask CEDA anything about your entry, with visibility you control for internal notes.' },
-    { icon: History, title: 'Version history', body: 'Every resubmission keeps a snapshot, so both sides can see what changed between rounds.' },
-    { icon: ShieldCheck, title: 'Audit trail', body: 'Every gate, score and assignment is recorded with who did it and when.' },
-];
-
 
 export default function Landing({ onSignIn, onRegister }) {
     const [awarded, setAwarded] = useState([]);
@@ -84,16 +80,20 @@ export default function Landing({ onSignIn, onRegister }) {
     const [mediaUrls, setMediaUrls] = useState({});
 
     useEffect(() => {
-        supabase
-            .from('ceda_submissions')
-            .select('id, title, sdgs, stage_of_development, updated_at, attachments')
-            .eq('stage', 'awarded')
-            .then(async ({ data }) => {
-                setAwarded(data || []);
-                setLoading(false);
-                const paths = (data || []).flatMap(s => (s.attachments || []).filter(a => a.kind === 'image').map(a => a.path));
-                if (paths.length) setMediaUrls(await getAttachmentUrls(paths));
-            });
+        let cancelled = false;
+        (async () => {
+            const supabase = await loadSupabase();
+            const { data } = await supabase
+                .from('ceda_submissions')
+                .select('id, title, sdgs, stage_of_development, updated_at, attachments')
+                .eq('stage', 'awarded');
+            if (cancelled) return;
+            setAwarded(data || []);
+            setLoading(false);
+            const paths = (data || []).flatMap(s => (s.attachments || []).filter(a => a.kind === 'image').map(a => a.path));
+            if (paths.length) setMediaUrls(await getAttachmentUrls(paths));
+        })();
+        return () => { cancelled = true; };
     }, []);
 
     const goals = useMemo(() => {
@@ -106,11 +106,6 @@ export default function Landing({ onSignIn, onRegister }) {
         const img = (a.attachments || []).find(x => x.kind === 'image');
         return { title: a.title, image: img ? mediaUrls[img.path] : null, focus: '50% 50%' };
     }).filter(s => s.image), [awarded, mediaUrls]);
-
-    const windowDays = useMemo(() => {
-        const days = fillStatusDays('2026-11-09', '2026-11-12', []);
-        return days.length ? days : null;
-    }, []);
 
     /* live platform status - computed from real operational data */
     const [status, setStatus] = useState({ days: [], today: 'up' });
@@ -136,33 +131,35 @@ export default function Landing({ onSignIn, onRegister }) {
             />
 
             {/* ── Hero: orbit ── */}
-            <Suspense fallback={<div className="h-[560px]" />}>
-                <Hero
-                    eyebrow="Citizen Entrepreneurial Development Agency · Botswana"
-                    title="From idea to"
-                    accent={<FlipText className="text-accent-600 dark:text-accent-400">award</FlipText>}
-                    body="Submit your innovation, follow it through every CEDA stage gate, and get structured feedback at each one — screening, evaluation, selection and award."
-                    ctaPrimary="Start your submission"
-                    ctaSecondary="Sign in"
-                    onPrimary={onRegister}
-                    onSecondary={onSignIn}
-                    counters={
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl mx-auto">
-                            <Counter label="Pipeline stages" value={PIPELINE.length} tone="info" />
-                            <Counter label="Awarded" value={loading ? '—' : awarded.length} tone="success" />
-                            <Counter label="SDGs covered" value={loading ? '—' : goals} tone="progress" />
-                            <Counter label="Feedback per entry" value="4+" tone="warning" />
-                        </div>
-                    }
-                    preview={
-                        <Suspense fallback={<div className="h-full w-full flex items-center justify-center text-white/30 text-sm">Loading the preview</div>}>
-                            <VPrism settings={DARK_PRESET} />
-                        </Suspense>
-                    }
-                />
-            </Suspense>
+            <Hero
+                eyebrow="Citizen Entrepreneurial Development Agency · Botswana"
+                title="From idea to"
+                accent={<FlipText className="text-accent-600 dark:text-accent-400">award</FlipText>}
+                body="Submit your innovation, follow it through every CEDA stage gate, and get structured feedback at each one — screening, evaluation, selection and award."
+                ctaPrimary="Start your submission"
+                ctaSecondary="Sign in"
+                onPrimary={onRegister}
+                onSecondary={onSignIn}
+                counters={
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl mx-auto">
+                        <Counter label="Pipeline stages" value={PIPELINE.length} tone="info" />
+                        <Counter label="Awarded" value={loading ? '—' : awarded.length} tone="success" />
+                        <Counter label="SDGs covered" value={loading ? '—' : goals} tone="progress" />
+                        <Counter label="Feedback per entry" value="4+" tone="warning" />
+                    </div>
+                }
+                preview={
+                    <Suspense fallback={<div className="h-full w-full flex items-center justify-center text-white/30 text-sm">Loading the preview</div>}>
+                        <VPrism settings={DARK_PRESET} />
+                    </Suspense>
+                }
+            />
 
-            <PipelineSection />
+            <Defer h="h-[560px]">
+                <Suspense fallback={<div className="h-[560px]" />}>
+                    <PipelineSection />
+                </Suspense>
+            </Defer>
 
             {/* ── Getting started ── */}
             <section className="border-t border-gray-200 bg-white dark:border-white/5 dark:bg-white/[0.02]">
@@ -223,7 +220,11 @@ export default function Landing({ onSignIn, onRegister }) {
                 </div>
             </section>
 
-            <BentoFeatures />
+            <Defer h="h-[720px]">
+                <Suspense fallback={<div className="h-[720px]" />}>
+                    <BentoFeatures />
+                </Suspense>
+            </Defer>
 
             {/* ── Awards ── */}
             <section id="awards" className="border-t border-gray-200 dark:border-white/5">
@@ -239,32 +240,40 @@ export default function Landing({ onSignIn, onRegister }) {
                         <>
                             {slides.length > 0 && (
                                 <div className="mt-12">
-                                    <ParallaxSlider
-                                        slides={slides}
-                                        eyebrow="Awarded work"
-                                        title="Drag through the winners"
-                                        description="Every entry here cleared every gate."
-                                        orientation="landscape"
-                                        className="text-gray-900 dark:text-white"
-                                    />
+                                    <Defer h="h-[420px]">
+                                        <Suspense fallback={<div className="h-[420px]" />}>
+                                            <ParallaxSlider
+                                            slides={slides}
+                                            eyebrow="Awarded work"
+                                            title="Drag through the winners"
+                                            description="Every entry here cleared every gate."
+                                            orientation="landscape"
+                                            className="text-gray-900 dark:text-white"
+                                        />
+                                        </Suspense>
+                                    </Defer>
                                 </div>
                             )}
                             <div className="mt-10 flex items-center gap-6 pb-10">
                                 <span className="text-[10px] uppercase tracking-[0.2em] text-gray-400 dark:text-white/30 flex-shrink-0">Awarded</span>
                                 <div className="flex-1 min-w-0">
-                                    <DraggableMarquee
-                                        items={awarded.map(a => ({
-                                            id: a.id, src: '', alt: a.title, width: 320, height: 200, title: a.title,
-                                        }))}
-                                        speed={0.5}
-                                        repeatCount={2}
-                                        className="py-2"
-                                        renderItem={(item) => (
-                                            <span className="px-3.5 py-2 rounded-full text-xs bg-black/[0.05] dark:bg-white/5 text-gray-700 dark:text-white/60 whitespace-nowrap leading-5">
-                                                {item.title}
-                                            </span>
-                                        )}
-                                    />
+                                    <Defer h="h-9">
+                                        <Suspense fallback={<div className="h-9" />}>
+                                            <DraggableMarquee
+                                            items={awarded.map(a => ({
+                                                id: a.id, src: '', alt: a.title, width: 320, height: 200, title: a.title,
+                                            }))}
+                                            speed={0.5}
+                                            repeatCount={2}
+                                            className="py-2"
+                                            renderItem={(item) => (
+                                                <span className="px-3.5 py-2 rounded-full text-xs bg-black/[0.05] dark:bg-white/5 text-gray-700 dark:text-white/60 whitespace-nowrap leading-5">
+                                                    {item.title}
+                                                </span>
+                                            )}
+                                        />
+                                        </Suspense>
+                                    </Defer>
                                 </div>
                             </div>
                         </>
@@ -300,7 +309,7 @@ export default function Landing({ onSignIn, onRegister }) {
                                     title: 'Oratory League',
                                     tag: 'Official partner & developer',
                                     description: 'Designs and engineers the Innovation Hub: the submission wizard, the judging workflow, the security model and the analytics.',
-                                    icon: <img src="/partners/oratory-league-logo.png" alt="Oratory League" className="h-20 w-auto max-w-[320px] object-contain object-left" />,
+                                    icon: <img src="/partners/oratory-league-logo.png" alt="Oratory League" width={640} height={214} className="h-20 w-auto max-w-[320px] object-contain object-left" />,
                                 },
                             ]}
                             className="text-left"
@@ -331,20 +340,28 @@ export default function Landing({ onSignIn, onRegister }) {
                                             {statusTone === 'up' ? 'All systems operational' : statusTone === 'degraded' ? 'Partial degradation' : 'Service incident'}
                                         </span>
                                     </div>
-                                    <StatusBars label="Platform" days={statusDays} maxDays={statusDays.length} compact />
+                                    <Defer h="h-[120px]">
+                                        <Suspense fallback={<div className="h-[120px]" />}>
+                                            <StatusBars label="Platform" days={statusDays} maxDays={statusDays.length} compact />
+                                        </Suspense>
+                                    </Defer>
                                     <p className="text-[11px] text-gray-400 dark:text-white/35 mt-3">
                                         Computed from live platform activity and delivery health — updated automatically.
                                     </p>
                                 </div>
                             )}
                         </div>
-                        <TextStream
-                            items={['Screening', 'Evaluation', 'Selection', 'Award']}
-                            prefix="The pipeline"
-                            height="240px"
-                            fontSize="1.75rem"
-                            className="text-gray-900 dark:text-white"
-                        />
+                        <Defer h="h-[240px]">
+                            <Suspense fallback={<div className="h-[240px]" />}>
+                                <TextStream
+                                    items={['Screening', 'Evaluation', 'Selection', 'Award']}
+                                    prefix="The pipeline"
+                                    height="240px"
+                                    fontSize="1.75rem"
+                                    className="text-gray-900 dark:text-white"
+                                />
+                            </Suspense>
+                        </Defer>
                     </div>
                 </div>
             </section>
@@ -376,6 +393,18 @@ export default function Landing({ onSignIn, onRegister }) {
 }
 
 /* ── small pieces ─────────────────────────────────────────────── */
+
+/* Mounts its children only once they are near the viewport. Before that a
+   height-matched placeholder keeps the layout stable, so lazy chunks below
+   the fold never compete with the hero for bandwidth or main-thread time. */
+function Defer({ h, children }) {
+    const ref = useRef(null);
+    const seen = useInView(ref, '800px');
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => { if (seen) setMounted(true); }, [seen]);
+    return mounted ? children : <div ref={ref} className={h} aria-hidden="true" />;
+}
+
 function SectionHead({ eyebrow, title, body, center = true }) {
     return (
         <div className={center ? 'text-center mx-auto max-w-3xl' : 'max-w-3xl'}>

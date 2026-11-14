@@ -34,6 +34,10 @@ self.addEventListener('fetch', event => {
     // Never cache the API or the realtime socket
     if (url.origin !== self.location.origin || url.pathname.startsWith('/rest/')) return;
 
+    // The worker must never serve a cached copy of itself, or an update can
+    // never reach the browser.
+    if (url.pathname === '/sw.js') return;
+
     // Navigations: network first, shell fallback
     if (request.mode === 'navigate') {
         event.respondWith(
@@ -51,7 +55,7 @@ self.addEventListener('fetch', event => {
     // Static assets: cache first, then network + cache the result
     event.respondWith(
         caches.match(request).then(cached => cached || fetch(request).then(res => {
-            if (res.ok && (url.pathname.startsWith('/assets/') || url.pathname.match(/\.(png|svg|ttf|woff2?|css|js)$/))) {
+            if (res.ok && (url.pathname.startsWith('/assets/') || url.pathname.match(/\.(png|svg|webp|ttf|woff2?|css|js)$/))) {
                 const copy = res.clone();
                 caches.open(ASSET_CACHE).then(c => c.put(request, copy));
             }
